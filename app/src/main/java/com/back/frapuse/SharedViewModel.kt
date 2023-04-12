@@ -1,7 +1,9 @@
 package com.back.frapuse
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
+import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +30,7 @@ class SharedViewModel : ViewModel() {
     }
 
     fun decodeImage(imageBase64: TextToImage) {
-        TODO("Convert Base64 image to image")
+        val decodedByte = Base64.decode(imageBase64.images[0], Base64.DEFAULT)
+        _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.AppRepository
 import com.back.frapuse.data.datamodels.TextToImage
+import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.launch
 
@@ -23,9 +24,9 @@ class SharedViewModel : ViewModel() {
     val image: LiveData<Bitmap>
         get() = _image
 
-    fun loadPrompt(prompt: String) {
+    fun loadPrompt(textToImageRequest: TextToImageRequest) {
         viewModelScope.launch {
-            repository.getPrompt(prompt, 5, 256, 256)
+            repository.getPrompt(textToImageRequest)
         }
     }
 

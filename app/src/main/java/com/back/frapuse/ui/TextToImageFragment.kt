@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.R
 import com.back.frapuse.SharedViewModel
+import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.databinding.FragmentTextToImageBinding
 
 class TextToImageFragment : Fragment() {
@@ -37,7 +38,9 @@ class TextToImageFragment : Fragment() {
             // binding.btnGenerate.isClickable = !prompt.isNullOrEmpty()
             binding.btnGenerate.setOnClickListener { btnGenerate ->
                 btnGenerate.isClickable = !prompt.isNullOrEmpty()
-                viewModel.loadPrompt(prompt.toString())
+                viewModel.loadPrompt(TextToImageRequest(
+                    prompt.toString(), 20, 512, 512)
+                )
             }
         }
 

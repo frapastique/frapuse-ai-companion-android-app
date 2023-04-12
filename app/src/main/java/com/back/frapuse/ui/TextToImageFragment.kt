@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
-import com.back.frapuse.R
 import com.back.frapuse.SharedViewModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.databinding.FragmentTextToImageBinding

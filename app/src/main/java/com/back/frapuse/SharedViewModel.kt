@@ -2,7 +2,6 @@ package com.back.frapuse
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.Image
 import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

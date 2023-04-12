@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nav_graph"
+        app:startDestination="@id/textToImageFragment">
+
+    <fragment
+            android:id="@+id/textToImageFragment"
+            android:name="com.back.frapuse.ui.TextToImageFragment"
+            android:label="TextToImageFragment"
+            tools:layout="@layout/fragment_text_to_image" />
+</navigation>

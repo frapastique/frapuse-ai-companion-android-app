@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">frapuse</string>
     <string name="prompt">PROMPT</string>
+    <string name="generate">generate</string>
 </resources>

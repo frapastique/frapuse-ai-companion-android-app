@@ -1,5 +1,6 @@
 package com.back.frapuse
 
+import android.graphics.Bitmap
 import android.media.Image
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,8 +17,8 @@ class SharedViewModel : ViewModel() {
 
     val imageBase64 = repository.image
 
-    private var _image = MutableLiveData<Image>()
-    val image: LiveData<Image>
+    private var _image = MutableLiveData<Bitmap>()
+    val image: LiveData<Bitmap>
         get() = _image
 
     fun loadPrompt(prompt: String) {

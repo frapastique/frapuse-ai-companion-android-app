@@ -51,14 +51,16 @@ class TextToImageFragment : Fragment() {
             viewModel.setHeight(height.toString())
         }
 
-        viewModel.textToImageRequest.observe(viewLifecycleOwner) {
+        viewModel.generationData.observe(viewLifecycleOwner) { (prompt, steps, width, height) ->
             binding.btnGenerate.isClickable = true
             binding.btnGenerate.setBackgroundColor(
                 ContextCompat.getColor(requireContext(), R.color.purple_500)
             )
-            binding.btnGenerate.setOnClickListener { btnGenerate ->
-                viewModel.loadTextToImage()
-            }
+            viewModel.setTextToImageRequest(prompt, steps, width, height)
+        }
+
+        binding.btnGenerate.setOnClickListener {
+            viewModel.loadTextToImage()
         }
 
         viewModel.imageBase64.observe(viewLifecycleOwner) { imageBase64 ->

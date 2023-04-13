@@ -3,6 +3,7 @@ package com.back.frapuse
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +13,10 @@ import com.back.frapuse.data.AppRepository
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+private val TAG = "SharedViewModel"
 
 data class Quadruple<out A, out B, out C, out D>(
     val first: A,
@@ -91,6 +95,10 @@ class SharedViewModel : ViewModel() {
     val image: LiveData<Bitmap>
         get() = _image
 
+    private var _progress = MutableLiveData<Double>()
+    val progress: LiveData<Double>
+        get() = _progress
+
     fun setPrompt(prompt: String) {
         _prompt.value = prompt
     }
@@ -125,6 +133,18 @@ class SharedViewModel : ViewModel() {
     fun loadTextToImage() {
         viewModelScope.launch {
             repository.getPrompt(textToImageRequest.value!!)
+            try {
+                do {
+                    repository.getProgress()
+                    try {
+                        _progress.value = repository.progress.value
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error loading progress: $e")
+                    }
+                } while (progress.value!! < 1.00)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading progress loop: $e")
+            }
         }
     }
 

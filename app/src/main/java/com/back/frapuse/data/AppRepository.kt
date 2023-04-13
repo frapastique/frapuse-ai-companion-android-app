@@ -15,9 +15,25 @@ class AppRepository(private val api: TextToImageAPI) {
     val image: LiveData<TextToImage>
         get() = _image
 
+    private var _currentImage = MutableLiveData<String>()
+    val currentImage: LiveData<String>
+        get() = _currentImage
+
+    private var _progress = MutableLiveData<Double>()
+    val progress: LiveData<Double>
+        get() = _progress
+
     suspend fun getPrompt(textToImageRequest: TextToImageRequest) {
         try {
             _image.value = api.retrofitService.getPrompt(textToImageRequest)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading Data from API: $e")
+        }
+    }
+
+    suspend fun getProgress() {
+        try {
+            _progress.value = api.retrofitService.getProgress().progress
         } catch (e: Exception) {
             Log.e(TAG, "Error loading Data from API: $e")
         }

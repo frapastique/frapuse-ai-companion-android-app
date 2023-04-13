@@ -1,5 +1,6 @@
 package com.back.frapuse.data.remote
 
+import com.back.frapuse.data.datamodels.Progress
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.squareup.moshi.Moshi
@@ -9,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.Retrofit.*
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +37,9 @@ interface TextToImageAPIService {
     suspend fun getPrompt(
         @Body body: TextToImageRequest
     ): TextToImage
+
+    @GET("sdapi/v1/progress?skip_current_image=true")
+    suspend fun getProgress(): Progress
 }
 
 object TextToImageAPI {

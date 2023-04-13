@@ -2,4 +2,7 @@
     <string name="app_name">frapuse</string>
     <string name="prompt">PROMPT</string>
     <string name="generate">generate</string>
+    <string name="steps">STEPS</string>
+    <string name="width">WIDTH</string>
+    <string name="height">HEIGHT</string>
 </resources>

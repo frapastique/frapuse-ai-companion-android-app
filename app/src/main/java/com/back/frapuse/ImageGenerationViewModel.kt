@@ -32,6 +32,8 @@ class ImageGenerationViewModel : ViewModel() {
 
     val models = repository.models.value
 
+    val options = repository.options
+
     private var _prompt = MutableLiveData<String>()
     val prompt: LiveData<String>
         get() = _prompt
@@ -152,5 +154,11 @@ class ImageGenerationViewModel : ViewModel() {
     fun decodeImage(imageBase64: TextToImage) {
         val decodedByte = Base64.decode(imageBase64.images[0], Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+    }
+
+    fun loadOptions() {
+        viewModelScope.launch {
+            repository.getOptions()
+        }
     }
 }

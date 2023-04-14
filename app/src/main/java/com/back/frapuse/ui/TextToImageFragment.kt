@@ -36,6 +36,11 @@ class TextToImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        viewModel.loadOptions()
+        viewModel.options.observe(viewLifecycleOwner) { options ->
+            binding.actvModel.setText(options.sd_model_checkpoint)
+        }
+
         binding.etPrompt.addTextChangedListener { prompt ->
             viewModel.setPrompt(prompt.toString())
         }

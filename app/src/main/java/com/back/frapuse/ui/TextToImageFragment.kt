@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import com.back.frapuse.R
 import com.back.frapuse.SharedViewModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
@@ -92,6 +93,12 @@ class TextToImageFragment : Fragment() {
 
         viewModel.image.observe(viewLifecycleOwner) { image ->
             binding.ivTextToImage.setImageBitmap(image)
+        }
+
+        binding.fabBack.setOnClickListener { fabBack ->
+            fabBack.findNavController().navigate(
+                TextToImageFragmentDirections.actionTextToImageFragmentToHomeFragment()
+            )
         }
     }
 }

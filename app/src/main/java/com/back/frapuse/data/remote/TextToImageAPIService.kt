@@ -33,8 +33,11 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface TextToImageAPIService {
+    @GET("sdapi/v1/sd-models")
+    suspend fun getModels()
+
     @POST("sdapi/v1/txt2img")
-    suspend fun getPrompt(
+    suspend fun startTextToImage(
         @Body body: TextToImageRequest
     ): TextToImage
 

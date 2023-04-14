@@ -7,9 +7,9 @@ import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
 
-const val TAG = "AppRepository"
+const val TAG = "ImageGenerationRepository"
 
-class AppRepository(private val api: TextToImageAPI) {
+class ImageGenerationRepository(private val api: TextToImageAPI) {
 
     private var _image = MutableLiveData<TextToImage>()
     val image: LiveData<TextToImage>
@@ -23,9 +23,9 @@ class AppRepository(private val api: TextToImageAPI) {
     val progress: LiveData<Double>
         get() = _progress
 
-    suspend fun getPrompt(textToImageRequest: TextToImageRequest) {
+    suspend fun startTextToImage(textToImageRequest: TextToImageRequest) {
         try {
-            _image.value = api.retrofitService.getPrompt(textToImageRequest)
+            _image.value = api.retrofitService.startTextToImage(textToImageRequest)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading Data from API: $e")
         }

@@ -11,13 +11,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.back.frapuse.R
-import com.back.frapuse.SharedViewModel
-import com.back.frapuse.data.datamodels.TextToImageRequest
+import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
 
 class TextToImageFragment : Fragment() {
     // Hier wird das ViewModel, in dem die Logik stattfindet, geholt
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val viewModel: ImageGenerationViewModel by activityViewModels()
 
     // Das binding für das QuizFragment wird deklariert
     private lateinit var binding: FragmentTextToImageBinding

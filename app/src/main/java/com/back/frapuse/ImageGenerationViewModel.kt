@@ -9,14 +9,13 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.back.frapuse.data.AppRepository
+import com.back.frapuse.data.ImageGenerationRepository
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val TAG = "SharedViewModel"
+private val TAG = "ImageGenerationViewModel"
 
 data class Quadruple<out A, out B, out C, out D>(
     val first: A,
@@ -25,9 +24,9 @@ data class Quadruple<out A, out B, out C, out D>(
     val fourth: D
 )
 
-class SharedViewModel : ViewModel() {
+class ImageGenerationViewModel : ViewModel() {
 
-    private val repository = AppRepository(TextToImageAPI)
+    private val repository = ImageGenerationRepository(TextToImageAPI)
 
     val imageBase64 = repository.image
 
@@ -132,7 +131,7 @@ class SharedViewModel : ViewModel() {
 
     fun loadTextToImage() {
         viewModelScope.launch {
-            repository.getPrompt(textToImageRequest.value!!)
+            repository.startTextToImage(textToImageRequest.value!!)
             try {
                 do {
                     repository.getProgress()

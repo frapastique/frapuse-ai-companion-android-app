@@ -1,6 +1,7 @@
 package com.back.frapuse.data.remote
 
 import com.back.frapuse.data.datamodels.Progress
+import com.back.frapuse.data.datamodels.SDModels
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.squareup.moshi.Moshi
@@ -34,7 +35,7 @@ private val retrofit = Retrofit.Builder()
 
 interface TextToImageAPIService {
     @GET("sdapi/v1/sd-models")
-    suspend fun getModels()
+    suspend fun getModels(): List<SDModels>
 
     @POST("sdapi/v1/txt2img")
     suspend fun startTextToImage(

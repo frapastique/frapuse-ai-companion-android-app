@@ -30,6 +30,8 @@ class ImageGenerationViewModel : ViewModel() {
 
     val imageBase64 = repository.image
 
+    val models = repository.models.value
+
     private var _prompt = MutableLiveData<String>()
     val prompt: LiveData<String>
         get() = _prompt

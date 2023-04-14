@@ -9,4 +9,7 @@
     <string name="text_to_image">Text To Image</string>
     <string name="chat">chat</string>
     <string name="back_button">back button</string>
+    <string name="model">MODEL</string>
+    <string name="height_width_512">512</string>
+    <string name="steps_20">20</string>
 </resources>

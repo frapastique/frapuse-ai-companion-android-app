@@ -40,18 +40,17 @@ class TextToImageFragment : Fragment() {
             viewModel.setPrompt(prompt.toString())
         }
 
+        viewModel.setSteps(binding.etSteps.text.toString())
         binding.etSteps.addTextChangedListener { steps ->
-            val message = "Please use at least 20 steps!" // The text to display
-            val duration = Toast.LENGTH_SHORT // The duration to show the toast
-            val toast = Toast.makeText(requireContext(), message, duration) // Create a toast object
-            toast.show() // Show the toast
             viewModel.setSteps(steps.toString())
         }
 
+        viewModel.setWidth(binding.etWidth.text.toString())
         binding.etWidth.addTextChangedListener { width ->
             viewModel.setWidth(width.toString())
         }
 
+        viewModel.setHeight(binding.etHeight.text.toString())
         binding.etHeight.addTextChangedListener { height ->
             viewModel.setHeight(height.toString())
         }

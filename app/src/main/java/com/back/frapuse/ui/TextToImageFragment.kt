@@ -38,9 +38,12 @@ class TextToImageFragment : Fragment() {
 
         viewModel.loadOptions()
         viewModel.options.observe(viewLifecycleOwner) { options ->
-            binding.actvModel.setText(options.sd_model_checkpoint)
+            binding.actvModel.setText(Regex("^[^.]*").find(options.sd_model_checkpoint)?.value)
         }
 
+        if (!viewModel.prompt.value.isNullOrEmpty()) {
+            binding.etPrompt.setText(viewModel.prompt.value)
+        }
         binding.etPrompt.addTextChangedListener { prompt ->
             viewModel.setPrompt(prompt.toString())
         }

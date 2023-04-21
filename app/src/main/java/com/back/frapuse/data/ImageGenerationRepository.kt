@@ -9,12 +9,13 @@ import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
+import com.back.frapuse.data.local.ImageGenDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.delay
 
 private const val TAG = "ImageGenerationRepository"
 
-class ImageGenerationRepository(private val api: TextToImageAPI) {
+class ImageGenerationRepository(private val api: TextToImageAPI, private val database: ImageGenDatabase) {
 
     private var _models = MutableLiveData<List<SDModel>>()
     val models: LiveData<List<SDModel>>
@@ -45,7 +46,6 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
     suspend fun getModels() {
         try {
             _models.value = api.retrofitService.getModels()
-            Log.e(TAG, "Models count: \n\t${_models.value!!.size}")
         } catch (e: Exception) {
             Log.e(TAG, "Error loading models from API: \n\t$e")
         }
@@ -93,9 +93,8 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
         }
     }
 
-    suspend fun getImageMetaData(imageBase64: ImageBase64) {
+    suspend fun getImageInfo(imageBase64: ImageBase64) {
         try {
-            Log.e(TAG, "\n\t$imageBase64")
             _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
             Log.e(TAG, "Error image info from API: \n\t$e")

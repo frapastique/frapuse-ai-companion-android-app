@@ -10,7 +10,7 @@ data class ImageMetadata(
     val seed: Long,
     val positivePrompt: String,
     val negativePrompt: String,
-    val image: ImageBase64,
+    val image: String,
     val steps: Int,
     val size: String,
     val width: Int,

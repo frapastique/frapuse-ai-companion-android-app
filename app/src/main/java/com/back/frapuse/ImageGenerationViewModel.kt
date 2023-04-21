@@ -1,19 +1,21 @@
 package com.back.frapuse
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
 import com.back.frapuse.data.datamodels.ImageBase64
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
+import com.back.frapuse.data.local.getDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,10 +31,13 @@ data class Quadruple<out A, out B, out C, out D>(
 
 enum class ApiOptionsStatus { LOADING, ERROR, DONE }
 
-class ImageGenerationViewModel : ViewModel() {
+class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
+
+    // Database value
+    private val database = getDatabase(application)
 
     // Repository value
-    private val repository = ImageGenerationRepository(TextToImageAPI)
+    private val repository = ImageGenerationRepository(TextToImageAPI, database)
 
     // Image in Base64 format
     val imageBase64 = repository.image
@@ -120,6 +125,8 @@ class ImageGenerationViewModel : ViewModel() {
 
     val imageInfo = repository.imageInfo
 
+
+
     /* ____________________________________ Methods ____________________________________ */
 
     fun setPrompt(prompt: String) {
@@ -179,7 +186,7 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun decodeImage(imageBase64: String) {
         viewModelScope.launch {
-            repository.getImageMetaData(ImageBase64(imageBase64))
+            repository.getImageInfo(ImageBase64(imageBase64))
         }
         val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
@@ -195,7 +202,7 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun loadModels() {
         viewModelScope.launch {
-            delay(500)
+            delay(1000)
             repository.getModels()
             try {
                 _models.value = repository.models.value!!

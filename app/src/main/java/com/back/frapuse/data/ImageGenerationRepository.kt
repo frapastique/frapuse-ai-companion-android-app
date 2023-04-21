@@ -36,9 +36,9 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
     suspend fun getModels() {
         try {
             _models.value = api.retrofitService.getModels()
-            Log.e(TAG, "Models count: ${_models.value!!.size}")
+            Log.e(TAG, "Models count: \n\t${_models.value!!.size}")
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: $e")
+            Log.e(TAG, "Error loading Data from API: \n\t$e")
         }
     }
 
@@ -46,7 +46,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
         try {
             _options.value = api.retrofitService.getOptions()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: $e")
+            Log.e(TAG, "Error loading Data from API: \n\t$e")
         }
     }
 
@@ -54,7 +54,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
         try {
             _image.value = api.retrofitService.startTextToImage(textToImageRequest)
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: $e")
+            Log.e(TAG, "Error loading Data from API: \n\t$e")
         }
     }
 
@@ -62,7 +62,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
         try {
             _progress.value = api.retrofitService.getProgress().progress
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: $e")
+            Log.e(TAG, "Error loading Data from API: \n\t$e")
         }
     }
 }

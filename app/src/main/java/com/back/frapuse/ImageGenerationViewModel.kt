@@ -14,6 +14,11 @@ import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.cancelFutureOnCompletion
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val TAG = "ImageGenerationViewModel"
@@ -138,20 +143,26 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun loadTextToImage() {
         viewModelScope.launch {
-            repository.startTextToImage(_textToImageRequest.value!!)
             try {
-                // TODO -> Fix the endless loop
                 do {
                     repository.getProgress()
+                    delay(100)
                     try {
                         _progress.value = repository.progress.value
                     } catch (e: Exception) {
                         Log.e(TAG, "Error loading progress: $e")
                     }
-                } while (progress.value!! < 1.00)
+                } while (progress.value!! < 0.95)
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: $e")
             }
+            _progress.value = 1.00
+            delay(100)
+            _progress.value = 0.00
+        }
+
+        viewModelScope.launch {
+            repository.startTextToImage(_textToImageRequest.value!!)
         }
     }
 
@@ -168,6 +179,7 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun loadModels() {
         viewModelScope.launch {
+            delay(500)
             repository.getModels()
             try {
                 _models.value = repository.models.value!!
@@ -177,7 +189,7 @@ class ImageGenerationViewModel : ViewModel() {
         }
     }
 
-    fun setModel() {
+    fun setModel(model: String) {
 
     }
 }

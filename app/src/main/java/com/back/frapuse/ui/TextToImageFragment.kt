@@ -149,13 +149,17 @@ class TextToImageFragment : Fragment() {
             )
         }
 
-        // Set models into the dropdown menu
+        // Place models into the dropdown menu
         viewModel.models.observe(viewLifecycleOwner) { models ->
             var modelNameList: MutableList<String> = mutableListOf()
             for (element in models) {
                 modelNameList.add(element.model_name)
             }
-            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sd_models_item, modelNameList.toTypedArray())
+            val arrayAdapter = ArrayAdapter(
+                requireContext(),
+                R.layout.sd_models_item,
+                modelNameList.toTypedArray()
+            )
             binding.actvModel.setAdapter(arrayAdapter)
         }
 

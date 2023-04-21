@@ -165,7 +165,8 @@ class TextToImageFragment : Fragment() {
 
 
         binding.actvModel.setOnItemClickListener { parent, _, position, _ ->
-            val model = parent.getItemAtPosition(position) as String
+            val modelName = parent.getItemAtPosition(position) as String
+            viewModel.setModel(modelName)
         }
     }
 }

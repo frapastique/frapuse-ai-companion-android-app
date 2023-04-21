@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
+import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
@@ -146,19 +147,18 @@ class ImageGenerationViewModel : ViewModel() {
             try {
                 do {
                     repository.getProgress()
-                    delay(100)
                     try {
                         _progress.value = repository.progress.value
                     } catch (e: Exception) {
                         Log.e(TAG, "Error loading progress: $e")
                     }
-                } while (progress.value!! < 0.95)
+                    delay(100)
+                } while (_progress.value!! < 0.95)
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: $e")
             }
-            _progress.value = 1.00
             delay(100)
-            _progress.value = 0.00
+            _progress.value = 1.0
         }
 
         viewModelScope.launch {
@@ -189,7 +189,13 @@ class ImageGenerationViewModel : ViewModel() {
         }
     }
 
-    fun setModel(model: String) {
-
+    fun setModel(modelName: String) {
+        val newModel = _models.value!!.find { it.model_name == modelName }
+        val newOptions = Options(
+            sd_model_checkpoint = newModel!!.title
+        )
+        viewModelScope.launch {
+            repository.setOptions(newOptions)
+        }
     }
 }

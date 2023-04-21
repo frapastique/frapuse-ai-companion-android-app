@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.back.frapuse.data.datamodels.Options
-import com.back.frapuse.data.datamodels.SDModels
+import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
@@ -13,8 +13,8 @@ const val TAG = "ImageGenerationRepository"
 
 class ImageGenerationRepository(private val api: TextToImageAPI) {
 
-    private var _models = MutableLiveData<List<SDModels>>()
-    val models: LiveData<List<SDModels>>
+    private var _models = MutableLiveData<List<SDModel>>()
+    val models: LiveData<List<SDModel>>
         get() = _models
 
     private var _options = MutableLiveData<Options>()
@@ -36,6 +36,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
     suspend fun getModels() {
         try {
             _models.value = api.retrofitService.getModels()
+            Log.e(TAG, "Models count: ${_models.value!!.size}")
         } catch (e: Exception) {
             Log.e(TAG, "Error loading Data from API: $e")
         }

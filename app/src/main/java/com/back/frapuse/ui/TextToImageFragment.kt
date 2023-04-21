@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -40,6 +40,9 @@ class TextToImageFragment : Fragment() {
         val stepsInit: Int = binding.etSteps.text.toString().toInt()
         val widthInit: Int = binding.etWidth.text.toString().toInt()
         val heightInit: Int = binding.etHeight.text.toString().toInt()
+
+        // Load installed models
+        viewModel.loadModels()
 
         // Load the initial configuration options
         viewModel.loadOptions()
@@ -144,6 +147,21 @@ class TextToImageFragment : Fragment() {
             fabBack.findNavController().navigate(
                 TextToImageFragmentDirections.actionTextToImageFragmentToHomeFragment()
             )
+        }
+
+        // Set models into the dropdown menu
+        viewModel.models.observe(viewLifecycleOwner) { models ->
+            var modelNameList: MutableList<String> = mutableListOf()
+            for (element in models) {
+                modelNameList.add(element.model_name)
+            }
+            val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sd_models_item, modelNameList.toTypedArray())
+            binding.actvModel.setAdapter(arrayAdapter)
+        }
+
+
+        binding.actvModel.setOnItemClickListener { parent, _, position, _ ->
+            val model = parent.getItemAtPosition(position) as String
         }
     }
 }

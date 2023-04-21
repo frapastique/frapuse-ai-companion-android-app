@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
+import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
@@ -30,7 +31,9 @@ class ImageGenerationViewModel : ViewModel() {
 
     val imageBase64 = repository.image
 
-    val models = repository.models.value
+    private val _models = MutableLiveData<List<SDModel>>()
+    val models: LiveData<List<SDModel>>
+        get() = _models
 
     val options = repository.options
 
@@ -161,5 +164,20 @@ class ImageGenerationViewModel : ViewModel() {
         viewModelScope.launch {
             repository.getOptions()
         }
+    }
+
+    fun loadModels() {
+        viewModelScope.launch {
+            repository.getModels()
+            try {
+                _models.value = repository.models.value!!
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading models: \n\t$e")
+            }
+        }
+    }
+
+    fun setModel() {
+
     }
 }

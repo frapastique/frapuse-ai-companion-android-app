@@ -32,7 +32,7 @@ private val retrofit = Retrofit.Builder()
 
 interface TextToImageAPIService {
     @GET("sd-models")
-    suspend fun getModels(): List<SDModels>
+    suspend fun getModels(): List<SDModel>
 
     @GET("options")
     suspend fun getOptions(): Options

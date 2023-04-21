@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.back.frapuse.ApiOptionsStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
@@ -101,22 +102,10 @@ class TextToImageFragment : Fragment() {
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
         viewModel.generationData.observe(viewLifecycleOwner) { (prompt, steps, width, height) ->
             if (prompt.isNotEmpty() && steps > 0 && width >= 256 && height >= 256) {
-                binding.btnGenerate.isClickable = true
-                binding.btnGenerate.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200
-                    )
-                )
+                setButtonsState()
                 viewModel.setTextToImageRequest(prompt, steps, width, height)
             } else {
-                binding.btnGenerate.isClickable = false
-                binding.btnGenerate.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        androidx.cardview.R.color.cardview_dark_background
-                    )
-                )
+                setButtonsState()
             }
         }
 
@@ -168,10 +157,34 @@ class TextToImageFragment : Fragment() {
             binding.actvModel.setAdapter(arrayAdapter)
         }
 
-
         binding.actvModel.setOnItemClickListener { parent, _, position, _ ->
             val modelName = parent.getItemAtPosition(position) as String
             viewModel.setModel(modelName)
+        }
+    }
+
+    private fun setButtonsState() {
+        viewModel.optionsStatus.observe(viewLifecycleOwner) { status ->
+            when(status) {
+                ApiOptionsStatus.DONE -> {
+                    binding.btnGenerate.isClickable = true
+                    binding.btnGenerate.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.purple_200
+                        )
+                    )
+                }
+                else -> {
+                    binding.btnGenerate.isClickable = false
+                    binding.btnGenerate.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            androidx.cardview.R.color.cardview_dark_background
+                        )
+                    )
+                }
+            }
         }
     }
 }

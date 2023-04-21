@@ -12,7 +12,6 @@ import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
-import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.delay
@@ -26,6 +25,8 @@ data class Quadruple<out A, out B, out C, out D>(
     val third: C,
     val fourth: D
 )
+
+enum class ApiOptionsStatus { LOADING, ERROR, DONE }
 
 class ImageGenerationViewModel : ViewModel() {
 
@@ -109,6 +110,12 @@ class ImageGenerationViewModel : ViewModel() {
     val progress: LiveData<Double>
         get() = _progress
 
+    private val _optionsStatus = MutableLiveData<ApiOptionsStatus>()
+    val optionsStatus: LiveData<ApiOptionsStatus>
+        get() = _optionsStatus
+
+    /* ____________________________________ Methods ____________________________________ */
+
     fun setPrompt(prompt: String) {
         _prompt.value = prompt
     }
@@ -170,8 +177,10 @@ class ImageGenerationViewModel : ViewModel() {
     }
 
     fun loadOptions() {
+        _optionsStatus.value = ApiOptionsStatus.LOADING
         viewModelScope.launch {
             repository.getOptions()
+            _optionsStatus.value = ApiOptionsStatus.DONE
         }
     }
 
@@ -188,12 +197,14 @@ class ImageGenerationViewModel : ViewModel() {
     }
 
     fun setModel(modelName: String) {
+        _optionsStatus.value = ApiOptionsStatus.LOADING
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
             sd_model_checkpoint = newModel!!.title,
         )
         viewModelScope.launch {
             repository.setOptions(newOptions)
+            _optionsStatus.value = ApiOptionsStatus.DONE
         }
     }
 }

@@ -12,4 +12,5 @@
     <string name="model">MODEL</string>
     <string name="height_width_512">512</string>
     <string name="steps_20">20</string>
+    <string name="negative_prompt">NEGATIVE PROMPT</string>
 </resources>

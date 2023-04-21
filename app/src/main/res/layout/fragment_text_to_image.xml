@@ -33,6 +33,25 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_negative_prompt"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ti_prompt"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="@string/negative_prompt">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_negative_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/negative_prompt" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/dropdown_menu_model"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:layout_width="0dp"
@@ -41,8 +60,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="4dp"
-                app:hintTextColor="@color/white"
-                app:layout_constraintTop_toBottomOf="@+id/ti_prompt"
+                app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ti_steps">
 
@@ -62,12 +80,13 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/progressBar"
+                app:layout_constraintTop_toBottomOf="@+id/btn_generate"
                 tools:src="@tools:sample/avatars" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_generate"
-                android:text="@string/generate"
+                android:src="@drawable/xmark_seal"
+                android:contentDescription="@string/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -75,7 +94,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/ti_width"
                 app:layout_constraintBottom_toBottomOf="@+id/ti_width"
-                android:layout_marginEnd="32dp" />
+                android:layout_marginEnd="24dp" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_steps"
@@ -87,7 +106,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ti_prompt"
+                app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
                 app:layout_constraintEnd_toStartOf="@+id/dropdown_menu_model">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -152,8 +171,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="@+id/iv_text_to_image"
                 app:layout_constraintEnd_toEndOf="@+id/iv_text_to_image"
-                app:layout_constraintTop_toBottomOf="@+id/btn_generate"
-                app:layout_constraintBottom_toTopOf="@+id/iv_text_to_image" />
+                app:layout_constraintTop_toBottomOf="@+id/iv_text_to_image" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_back"
@@ -174,7 +192,7 @@
                 android:text="@string/app_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="46dp"
                 android:maxWidth="300dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

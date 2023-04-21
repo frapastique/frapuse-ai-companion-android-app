@@ -185,6 +185,7 @@ class TextToImageFragment : Fragment() {
                             R.color.purple_200
                         )
                     )
+                    binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
                 }
                 else -> {
                     binding.btnGenerate.isClickable = false
@@ -194,6 +195,7 @@ class TextToImageFragment : Fragment() {
                             androidx.cardview.R.color.cardview_dark_background
                         )
                     )
+                    binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
                 }
             }
         }

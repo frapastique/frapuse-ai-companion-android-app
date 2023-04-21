@@ -134,7 +134,12 @@ class TextToImageFragment : Fragment() {
 
         // Observer which initiates decoding of image in Base64 when api delivers response
         viewModel.imageBase64.observe(viewLifecycleOwner) { imageBase64 ->
-            viewModel.decodeImage(imageBase64)
+            viewModel.decodeImage(imageBase64.images.first())
+        }
+
+        // Observer which initiates decoding of progress image in Base64 when api delivers response
+        viewModel.progressImageBase64.observe(viewLifecycleOwner) { progressImageBase64 ->
+            viewModel.decodeImage(progressImageBase64)
         }
 
         // Observer which loads image in ImageView when decoder sets decoded image

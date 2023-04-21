@@ -62,6 +62,14 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
     suspend fun getProgress() {
         try {
             _progress.value = api.retrofitService.getProgress().progress
+            try {
+                val currentImage = api.retrofitService.getProgress().current_image
+                if (!currentImage.isNullOrEmpty()) {
+                    _currentImage.value = currentImage.toString()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading progress image from API: \n\t$e")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading progress from API: \n\t$e")
         }

@@ -15,10 +15,6 @@ import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.cancelFutureOnCompletion
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -36,6 +32,8 @@ class ImageGenerationViewModel : ViewModel() {
     private val repository = ImageGenerationRepository(TextToImageAPI)
 
     val imageBase64 = repository.image
+
+    val progressImageBase64 = repository.currentImage
 
     private val _models = MutableLiveData<List<SDModel>>()
     val models: LiveData<List<SDModel>>
@@ -144,6 +142,10 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun loadTextToImage() {
         viewModelScope.launch {
+            repository.startTextToImage(_textToImageRequest.value!!)
+        }
+
+        viewModelScope.launch {
             try {
                 do {
                     repository.getProgress()
@@ -153,21 +155,17 @@ class ImageGenerationViewModel : ViewModel() {
                         Log.e(TAG, "Error loading progress: $e")
                     }
                     delay(100)
-                } while (_progress.value!! < 0.95)
+                } while (_progress.value!! < 0.90)
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: $e")
             }
-            delay(100)
+            delay(200)
             _progress.value = 1.0
-        }
-
-        viewModelScope.launch {
-            repository.startTextToImage(_textToImageRequest.value!!)
         }
     }
 
-    fun decodeImage(imageBase64: TextToImage) {
-        val decodedByte = Base64.decode(imageBase64.images[0], Base64.DEFAULT)
+    fun decodeImage(imageBase64: String) {
+        val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
@@ -192,7 +190,7 @@ class ImageGenerationViewModel : ViewModel() {
     fun setModel(modelName: String) {
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
-            sd_model_checkpoint = newModel!!.title
+            sd_model_checkpoint = newModel!!.title,
         )
         viewModelScope.launch {
             repository.setOptions(newOptions)

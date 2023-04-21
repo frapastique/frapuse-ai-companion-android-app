@@ -42,7 +42,7 @@ interface TextToImageAPIService {
         @Body body: TextToImageRequest
     ): TextToImage
 
-    @GET("progress?skip_current_image=true")
+    @GET("progress")
     suspend fun getProgress(): Progress
 
     @POST("options")

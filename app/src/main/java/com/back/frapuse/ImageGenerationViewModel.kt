@@ -30,10 +30,13 @@ enum class ApiOptionsStatus { LOADING, ERROR, DONE }
 
 class ImageGenerationViewModel : ViewModel() {
 
+    // Repository value
     private val repository = ImageGenerationRepository(TextToImageAPI)
 
+    // Image in Base64 format
     val imageBase64 = repository.image
 
+    // Live preview image in Base64 format
     val progressImageBase64 = repository.currentImage
 
     private val _models = MutableLiveData<List<SDModel>>()

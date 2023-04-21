@@ -157,6 +157,7 @@ class TextToImageFragment : Fragment() {
             binding.actvModel.setAdapter(arrayAdapter)
         }
 
+        // Set model according the selection from dropdown menu
         binding.actvModel.setOnItemClickListener { parent, _, position, _ ->
             val modelName = parent.getItemAtPosition(position) as String
             viewModel.setModel(modelName)

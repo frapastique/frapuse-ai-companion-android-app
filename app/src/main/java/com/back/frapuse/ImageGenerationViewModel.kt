@@ -135,8 +135,9 @@ class ImageGenerationViewModel : ViewModel() {
 
     fun loadTextToImage() {
         viewModelScope.launch {
-            repository.startTextToImage(textToImageRequest.value!!)
+            repository.startTextToImage(_textToImageRequest.value!!)
             try {
+                // TODO -> Fix the endless loop
                 do {
                     repository.getProgress()
                     try {

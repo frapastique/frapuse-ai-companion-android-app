@@ -1,7 +1,13 @@
 package com.back.frapuse.data.datamodels
 
-data class ImageMetaData(
-    val id: Long,
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "imageGenMetadata_table")
+data class ImageMetadata(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val seed: Long,
     val positivePrompt: String,
     val negativePrompt: String,
     val image: ImageBase64,
@@ -11,7 +17,6 @@ data class ImageMetaData(
     val height: Int,
     val sampler: String,
     val CFGScale: Double,
-    val seed: Long,
     val model: String,
-    val modelHash: String
+    val modelHash: String,
 )

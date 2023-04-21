@@ -1,5 +1,6 @@
 package com.back.frapuse.ui
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -30,7 +31,7 @@ class TextToImageFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentTextToImageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -179,22 +180,20 @@ class TextToImageFragment : Fragment() {
             when(status) {
                 ApiOptionsStatus.DONE -> {
                     binding.btnGenerate.isClickable = true
-                    binding.btnGenerate.setBackgroundColor(
-                        ContextCompat.getColor(
+                    binding.btnGenerate.backgroundTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(
                             requireContext(),
-                            R.color.purple_200
+                            R.color.purple_200)
                         )
-                    )
                     binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
                 }
                 else -> {
                     binding.btnGenerate.isClickable = false
-                    binding.btnGenerate.setBackgroundColor(
-                        ContextCompat.getColor(
+                    binding.btnGenerate.backgroundTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(
                             requireContext(),
-                            androidx.cardview.R.color.cardview_dark_background
+                            androidx.cardview.R.color.cardview_dark_background)
                         )
-                    )
                     binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
                 }
             }

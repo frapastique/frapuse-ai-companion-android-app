@@ -12,7 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
-const val BASE_URL = "http://192.168.178.56:7860/sdapi/v1/"
+private const val BASE_URL = "http://192.168.178.20:7861/sdapi/v1/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())

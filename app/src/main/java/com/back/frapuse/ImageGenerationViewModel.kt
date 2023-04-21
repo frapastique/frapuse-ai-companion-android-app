@@ -15,7 +15,7 @@ import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.launch
 
-private val TAG = "ImageGenerationViewModel"
+private const val TAG = "ImageGenerationViewModel"
 
 data class Quadruple<out A, out B, out C, out D>(
     val first: A,

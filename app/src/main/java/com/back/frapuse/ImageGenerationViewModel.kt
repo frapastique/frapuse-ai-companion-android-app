@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
 import com.back.frapuse.data.datamodels.ImageBase64
-import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImageRequest

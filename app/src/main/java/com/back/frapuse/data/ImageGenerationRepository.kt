@@ -12,7 +12,7 @@ import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.delay
 
-const val TAG = "ImageGenerationRepository"
+private const val TAG = "ImageGenerationRepository"
 
 class ImageGenerationRepository(private val api: TextToImageAPI) {
 

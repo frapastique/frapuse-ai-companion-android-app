@@ -167,6 +167,11 @@ class TextToImageFragment : Fragment() {
         viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
             binding.tvImageMetaData.text = imageInfo.info
         }
+
+        // Observe imageMetadata and when created save into database
+        viewModel.imageMetadata.observe(viewLifecycleOwner) {
+            viewModel.saveImage()
+        }
     }
 
     private fun setButtonsState() {

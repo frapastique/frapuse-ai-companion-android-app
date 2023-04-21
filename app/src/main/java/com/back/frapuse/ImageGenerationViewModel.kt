@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
 import com.back.frapuse.data.datamodels.ImageBase64
+import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
@@ -125,6 +126,10 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     val imageInfo = repository.imageInfo
 
+    private val _imageMetadata = MutableLiveData<ImageMetadata>()
+    val imageMetadata: LiveData<ImageMetadata>
+        get() = _imageMetadata
+
     /* ____________________________________ Methods Remote _____________________________ */
 
     fun setPrompt(prompt: String) {
@@ -170,12 +175,12 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                     try {
                         _progress.value = repository.progress.value
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error loading progress: $e")
+                        Log.e(TAG, "Error loading progress: \n\t $e")
                     }
                     delay(100)
                 } while (_progress.value!! < 0.90)
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading progress loop: $e")
+                Log.e(TAG, "Error loading progress loop: \n\t $e")
             }
             delay(200)
             _progress.value = 1.0
@@ -188,6 +193,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
         val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+
+        applyImageMetadata()
     }
 
     fun loadOptions() {
@@ -205,7 +212,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             try {
                 _models.value = repository.models.value!!
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading models: \n\t$e")
+                Log.e(TAG, "Error loading models: \n\t $e")
             }
         }
     }
@@ -224,4 +231,30 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     /* ____________________________________ Methods Local ______________________________ */
 
+    private fun applyImageMetadata() {
+        _imageMetadata.value = ImageMetadata(
+            seed = 0,
+            positivePrompt = _prompt.value!!,
+            negativePrompt = "",
+            image = imageBase64.value!!.images.first(),
+            steps = _steps.value!!,
+            size = "${_width.value}x${_height.value}",
+            width = _width.value!!,
+            height = _height.value!!,
+            sampler = "",
+            CFGScale = 0.0,
+            model = "",
+            modelHash = ""
+        )
+    }
+
+    fun saveImage() {
+        viewModelScope.launch {
+            try {
+                repository.insertImage(_imageMetadata.value!!)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error saving image in database: \n\t $e")
+            }
+        }
+    }
 }

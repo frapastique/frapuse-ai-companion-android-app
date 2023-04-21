@@ -125,9 +125,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     val imageInfo = repository.imageInfo
 
-
-
-    /* ____________________________________ Methods ____________________________________ */
+    /* ____________________________________ Methods Remote _____________________________ */
 
     fun setPrompt(prompt: String) {
         _prompt.value = prompt
@@ -223,4 +221,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             _optionsStatus.value = ApiOptionsStatus.DONE
         }
     }
+
+    /* ____________________________________ Methods Local ______________________________ */
+
 }

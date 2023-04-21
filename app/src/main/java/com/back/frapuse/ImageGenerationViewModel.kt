@@ -10,6 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
+import com.back.frapuse.data.datamodels.ImageBase64
+import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
@@ -117,6 +119,8 @@ class ImageGenerationViewModel : ViewModel() {
     val optionsStatus: LiveData<ApiOptionsStatus>
         get() = _optionsStatus
 
+    val imageInfo = repository.imageInfo
+
     /* ____________________________________ Methods ____________________________________ */
 
     fun setPrompt(prompt: String) {
@@ -175,6 +179,9 @@ class ImageGenerationViewModel : ViewModel() {
     }
 
     fun decodeImage(imageBase64: String) {
+        viewModelScope.launch {
+            repository.getImageMetaData(ImageBase64(imageBase64))
+        }
         val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }

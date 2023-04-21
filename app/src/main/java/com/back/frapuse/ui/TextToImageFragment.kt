@@ -162,6 +162,11 @@ class TextToImageFragment : Fragment() {
             val modelName = parent.getItemAtPosition(position) as String
             viewModel.setModel(modelName)
         }
+
+        // Place image metadata into the TextView
+        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
+            binding.tvImageMetaData.text = imageInfo.info
+        }
     }
 
     private fun setButtonsState() {

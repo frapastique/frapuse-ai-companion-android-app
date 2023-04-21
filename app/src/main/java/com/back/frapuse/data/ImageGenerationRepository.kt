@@ -3,6 +3,8 @@ package com.back.frapuse.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.back.frapuse.data.datamodels.ImageBase64
+import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImage
@@ -33,6 +35,12 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
     private var _progress = MutableLiveData<Double>()
     val progress: LiveData<Double>
         get() = _progress
+
+    private var _imageInfo = MutableLiveData<ImageInfo>()
+    val imageInfo: LiveData<ImageInfo>
+        get() = _imageInfo
+
+    /* ____________________________________ Methods ____________________________________ */
 
     suspend fun getModels() {
         try {
@@ -82,6 +90,15 @@ class ImageGenerationRepository(private val api: TextToImageAPI) {
             getModels()
         } catch (e: Exception) {
             Log.e(TAG, "Error setting options: \n\t$e")
+        }
+    }
+
+    suspend fun getImageMetaData(imageBase64: ImageBase64) {
+        try {
+            Log.e(TAG, "\n\t$imageBase64")
+            _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error image info from API: \n\t$e")
         }
     }
 }

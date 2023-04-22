@@ -52,8 +52,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val negativePrompt: LiveData<String>
         get() = _negativePrompt
 
-    private val _cfgScale = MutableLiveData<Int>()
-    val cfgScale: LiveData<Int>
+    private val _cfgScale = MutableLiveData<Double>()
+    val cfgScale: LiveData<Double>
         get() = _cfgScale
 
     private var _steps = MutableLiveData<Int>()
@@ -106,27 +106,27 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         checkGenData()
     }
 
-    fun setSteps(steps: String) {
-        if (steps.isNotEmpty()) {
-            _steps.value = steps.toInt()
+    fun setSteps(steps: Int) {
+        if (steps > 0) {
+            _steps.value = steps
         }
     }
 
-    fun setCfgScale(cfgScale: String) {
-        if (cfgScale.isNotEmpty()) {
-            _cfgScale.value = cfgScale.toInt()
+    fun setCfgScale(cfgScale: Double) {
+        if (cfgScale > 0.0) {
+            _cfgScale.value = cfgScale
         }
     }
 
-    fun setWidth(width: String) {
-        if (width.isNotEmpty()) {
-            _width.value = width.toInt()
+    fun setWidth(width: Int) {
+        if (width > 0) {
+            _width.value = width
         }
     }
 
-    fun setHeight(height: String) {
-        if (height.isNotEmpty()) {
-            _height.value = height.toInt()
+    fun setHeight(height: Int) {
+        if (height > 0) {
+            _height.value = height
         }
     }
 

@@ -189,37 +189,30 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.card.MaterialCardView
-                android:id="@+id/mcv_text_to_image"
+        <ImageView
+                android:id="@+id/iv_text_to_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:elevation="6dp"
-                app:cardCornerRadius="16dp"
+                android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-                android:id="@+id/iv_text_to_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                tools:src="@tools:sample/avatars" />
-
-        </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:src="@tools:sample/avatars"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintVertical_bias="0.0" />
 
         <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@+id/mcv_text_to_image"
-                app:layout_constraintEnd_toEndOf="@+id/mcv_text_to_image"
+                app:layout_constraintStart_toStartOf="@+id/iv_text_to_image"
+                app:layout_constraintEnd_toEndOf="@+id/iv_text_to_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginBottom="16dp" />
 
@@ -241,10 +234,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="300dp"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="@string/app_name"
-                app:layout_constraintBottom_toBottomOf="@+id/mcv_text_to_image" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/app_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

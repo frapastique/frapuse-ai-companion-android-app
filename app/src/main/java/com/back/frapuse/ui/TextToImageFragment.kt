@@ -2,6 +2,7 @@ package com.back.frapuse.ui
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -38,10 +39,10 @@ class TextToImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         // Get the hardcoded launch values for steps, width and height
-        val stepsInit = binding.etSteps.text.toString()
-        val cfgInit = binding.etCfgScale.text.toString()
-        val widthInit = binding.etWidth.text.toString()
-        val heightInit = binding.etHeight.text.toString()
+        val stepsInit = binding.etSteps.text.toString().toInt()
+        val cfgInit = binding.etCfgScale.text.toString().toDouble()
+        val widthInit = binding.etWidth.text.toString().toInt()
+        val heightInit = binding.etHeight.text.toString().toInt()
 
         // Load installed models
         viewModel.loadModels()
@@ -81,7 +82,7 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etSteps.addTextChangedListener { steps ->
-            viewModel.setSteps(steps.toString())
+            viewModel.setSteps(steps.toString().toInt())
         }
 
         // If statement to update cfg scale value with hardcoded value only when no value is saved
@@ -93,7 +94,7 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etCfgScale.addTextChangedListener { cfgScale ->
-            viewModel.setCfgScale(cfgScale.toString())
+            viewModel.setCfgScale(cfgScale.toString().toDouble())
         }
 
         // If statement to update width value with hardcoded value only when no value is saved
@@ -105,7 +106,7 @@ class TextToImageFragment : Fragment() {
         }
         // Width value gets Updated when input text changes
         binding.etWidth.addTextChangedListener { width ->
-            viewModel.setWidth(width.toString())
+            viewModel.setWidth(width.toString().toString().toInt())
         }
 
         // If statement to update height value with hardcoded value only when no value is saved
@@ -117,7 +118,8 @@ class TextToImageFragment : Fragment() {
         }
         // Height value gets Updated when input text changes
         binding.etHeight.addTextChangedListener { height ->
-            viewModel.setHeight(height.toString())
+            Log.e("DAAAAMN", "\n\t height = ${height.toString()}")
+            viewModel.setHeight(height.toString().toInt())
         }
 
         // Update the color and clickable state of generate button when min values of

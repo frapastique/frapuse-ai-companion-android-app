@@ -39,10 +39,10 @@ class TextToImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         // Get the hardcoded launch values for steps, width and height
-        val stepsInit = binding.etSteps.text.toString().toInt()
-        val cfgInit = binding.etCfgScale.text.toString().toDouble()
-        val widthInit = binding.etWidth.text.toString().toInt()
-        val heightInit = binding.etHeight.text.toString().toInt()
+        var stepsInit: Int = binding.etSteps.text.toString().toInt()
+        var cfgInit: Double = binding.etCfgScale.text.toString().toDouble()
+        var widthInit: Int = binding.etWidth.text.toString().toInt()
+        var heightInit: Int = binding.etHeight.text.toString().toInt()
 
         // Load installed models
         viewModel.loadModels()
@@ -82,7 +82,8 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etSteps.addTextChangedListener { steps ->
-            viewModel.setSteps(steps.toString().toInt())
+            stepsInit = steps.toString().toInt()
+            viewModel.setSteps(stepsInit)
         }
 
         // If statement to update cfg scale value with hardcoded value only when no value is saved
@@ -94,7 +95,7 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etCfgScale.addTextChangedListener { cfgScale ->
-            viewModel.setCfgScale(cfgScale.toString().toDouble())
+            viewModel.setCfgScale(cfgInit)
         }
 
         // If statement to update width value with hardcoded value only when no value is saved
@@ -106,7 +107,7 @@ class TextToImageFragment : Fragment() {
         }
         // Width value gets Updated when input text changes
         binding.etWidth.addTextChangedListener { width ->
-            viewModel.setWidth(width.toString().toString().toInt())
+            viewModel.setWidth(widthInit)
         }
 
         // If statement to update height value with hardcoded value only when no value is saved
@@ -119,14 +120,23 @@ class TextToImageFragment : Fragment() {
         // Height value gets Updated when input text changes
         binding.etHeight.addTextChangedListener { height ->
             Log.e("DAAAAMN", "\n\t height = ${height.toString()}")
-            viewModel.setHeight(height.toString().toInt())
+            if (height.toString().isNotEmpty()) {
+                viewModel.setHeight(heightInit)
+            } else {
+                Log.e("dmnit", "ERROR")
+            }
         }
 
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.genDataStatus.observe(viewLifecycleOwner) {
-            setButtonsState()
-            viewModel.setTextToImageRequest()
+        viewModel.genDataStatus.observe(viewLifecycleOwner) { state ->
+            if (state) {
+                setButtonsState()
+                viewModel.setTextToImageRequest()
+
+            } else {
+                setButtonsState()
+            }
         }
 
         // Set maximum progressBar percentage

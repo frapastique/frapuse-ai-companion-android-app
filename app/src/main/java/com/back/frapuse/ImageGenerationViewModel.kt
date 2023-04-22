@@ -108,25 +108,25 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setSteps(steps: Int) {
         if (steps > 0) {
-            _steps.value = steps
+            _steps.value = steps.toString().toInt()
         }
     }
 
     fun setCfgScale(cfgScale: Double) {
         if (cfgScale > 0.0) {
-            _cfgScale.value = cfgScale
+            _cfgScale.value = cfgScale.toString().toDouble()
         }
     }
 
     fun setWidth(width: Int) {
         if (width > 0) {
-            _width.value = width
+            _width.value = width.toString().toInt()
         }
     }
 
     fun setHeight(height: Int) {
         if (height > 0) {
-            _height.value = height
+            _height.value = height.toString().toInt()
         }
     }
 

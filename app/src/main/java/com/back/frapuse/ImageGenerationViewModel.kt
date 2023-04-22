@@ -23,13 +23,6 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ImageGenerationViewModel"
 
-data class Quadruple<out A, out B, out C, out D>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D
-)
-
 enum class ApiOptionsStatus { LOADING, ERROR, DONE }
 
 class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
@@ -56,6 +49,12 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val prompt: LiveData<String>
         get() = _prompt
 
+    var negativePrompt: String = ""
+
+    private val _cfgScale = MutableLiveData<Int>()
+    val cfgScale: LiveData<Int>
+        get() = _cfgScale
+
     private var _steps = MutableLiveData<Int>()
     val steps: LiveData<Int>
         get() = _steps
@@ -67,46 +66,6 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     private var _height = MutableLiveData<Int>()
     val height: LiveData<Int>
         get() = _height
-
-    val generationData: LiveData<Quadruple<String, Int, Int, Int>> =
-        MediatorLiveData<Quadruple<String, Int, Int, Int>>().apply {
-            var setPrompt: String? = null
-            var setSteps: Int? = null
-            var setWidth: Int? = null
-            var setHeight: Int? = null
-
-            addSource(prompt) { promptVal ->
-                setPrompt = promptVal
-                if (setSteps != null && setWidth != null && setHeight != null) {
-                    value = Quadruple(setPrompt!!, setSteps!!, setWidth!!, setHeight!!)
-                }
-            }
-
-            addSource(steps) { stepsVal ->
-                setSteps = stepsVal
-                if (setPrompt != null && setWidth != null && setHeight != null) {
-                    value = Quadruple(setPrompt!!, setSteps!!, setWidth!!, setHeight!!)
-                }
-            }
-
-            addSource(width) { widthVal ->
-                setWidth = widthVal
-                if (setPrompt != null && setSteps != null && setHeight != null) {
-                    value = Quadruple(setPrompt!!, setSteps!!, setWidth!!, setHeight!!)
-                }
-            }
-
-            addSource(height) { heightVal ->
-                setHeight = heightVal
-                if (setPrompt != null && setSteps != null && setWidth != null) {
-                    value = Quadruple(setPrompt!!, setSteps!!, setWidth!!, setHeight!!)
-                }
-            }
-
-            if (setPrompt != null && setSteps != null && setWidth != null && setHeight != null) {
-                value = Quadruple(setPrompt!!, setSteps!!, setWidth!!, setHeight!!)
-            }
-        }
 
     private var _textToImageRequest = MutableLiveData<TextToImageRequest>()
     val textToImageRequest: LiveData<TextToImageRequest>
@@ -154,12 +113,14 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun setTextToImageRequest(prompt: String, steps: Int, width: Int, height: Int) {
+    fun setTextToImageRequest() {
         _textToImageRequest.value = TextToImageRequest(
-            prompt,
-            steps,
-            width,
-            height
+            _prompt.value!!,
+            _cfgScale.value!!,
+            _steps.value!!,
+            _width.value!!,
+            _height.value!!,
+            negativePrompt
         )
     }
 

@@ -13,4 +13,8 @@
     <string name="height_width_512">512</string>
     <string name="steps_20">20</string>
     <string name="negative_prompt">NEGATIVE PROMPT</string>
+    <string name="cfg">CFG</string>
+    <string name="cfg_scale_7">7</string>
+    <string name="sampler">SAMPLER</string>
+    <string name="euler_a">Euler a</string>
 </resources>

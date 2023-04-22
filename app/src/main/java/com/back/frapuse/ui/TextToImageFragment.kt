@@ -63,6 +63,8 @@ class TextToImageFragment : Fragment() {
             viewModel.setPrompt(prompt.toString())
         }
 
+
+
         // If statement to update steps value with hardcoded value only when no value is saved
         // else place text from LiveData
         if (viewModel.steps.value == null) {
@@ -101,10 +103,11 @@ class TextToImageFragment : Fragment() {
 
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.generationData.observe(viewLifecycleOwner) { (prompt, steps, width, height) ->
-            if (prompt.isNotEmpty() && steps > 0 && width >= 256 && height >= 256) {
+        viewModel.textToImageRequest.observe(viewLifecycleOwner) {
+                (prompt, cfgScale, steps, width, height) ->
+            if (prompt.isNotEmpty() && cfgScale > 0 && steps > 0 && width > 0 && height > 0) {
                 setButtonsState()
-                viewModel.setTextToImageRequest(prompt, steps, width, height)
+                viewModel.setTextToImageRequest()
             } else {
                 setButtonsState()
             }

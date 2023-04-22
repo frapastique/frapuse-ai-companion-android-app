@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import com.back.frapuse.ApiOptionsStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
@@ -39,9 +38,10 @@ class TextToImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         // Get the hardcoded launch values for steps, width and height
-        val stepsInit: Int = binding.etSteps.text.toString().toInt()
-        val widthInit: Int = binding.etWidth.text.toString().toInt()
-        val heightInit: Int = binding.etHeight.text.toString().toInt()
+        val stepsInit = binding.etSteps.text.toString()
+        val cfgInit = binding.etCfgScale.text.toString()
+        val widthInit = binding.etWidth.text.toString()
+        val heightInit = binding.etHeight.text.toString()
 
         // Load installed models
         viewModel.loadModels()
@@ -58,17 +58,24 @@ class TextToImageFragment : Fragment() {
         if (!viewModel.prompt.value.isNullOrEmpty()) {
             binding.etPrompt.setText(viewModel.prompt.value)
         }
-        // Prompt value gets Updated when input text changes
+        // Prompt value gets updated when input text changes
         binding.etPrompt.addTextChangedListener { prompt ->
             viewModel.setPrompt(prompt.toString())
         }
 
-
+        // When the negative prompt is not empty set the text of prompt field
+        if (!viewModel.negativePrompt.value.isNullOrEmpty()) {
+            binding.etNegativePrompt.setText(viewModel.negativePrompt.value)
+        }
+        // Negative prompt gets updated when input text changes
+        binding.etNegativePrompt.addTextChangedListener { negativePrompt ->
+            viewModel.setNegativePrompt(negativePrompt.toString())
+        }
 
         // If statement to update steps value with hardcoded value only when no value is saved
         // else place text from LiveData
         if (viewModel.steps.value == null) {
-            viewModel.setSteps(stepsInit.toString())
+            viewModel.setSteps(stepsInit)
         } else {
             binding.etSteps.setText(viewModel.steps.value.toString())
         }
@@ -77,10 +84,22 @@ class TextToImageFragment : Fragment() {
             viewModel.setSteps(steps.toString())
         }
 
+        // If statement to update cfg scale value with hardcoded value only when no value is saved
+        // else place text from LiveData
+        if (viewModel.cfgScale.value == null) {
+            viewModel.setCfgScale(cfgInit)
+        } else {
+            binding.etCfgScale.setText(viewModel.cfgScale.value.toString())
+        }
+        // Steps value gets Updated when input text changes
+        binding.etCfgScale.addTextChangedListener { cfgScale ->
+            viewModel.setCfgScale(cfgScale.toString())
+        }
+
         // If statement to update width value with hardcoded value only when no value is saved
         // else place text from LiveData
         if (viewModel.width.value == null) {
-            viewModel.setWidth(widthInit.toString())
+            viewModel.setWidth(widthInit)
         } else {
             binding.etWidth.setText(viewModel.width.value.toString())
         }
@@ -92,7 +111,7 @@ class TextToImageFragment : Fragment() {
         // If statement to update height value with hardcoded value only when no value is saved
         // else place text from LiveData
         if (viewModel.height.value == null) {
-            viewModel.setHeight(heightInit.toString())
+            viewModel.setHeight(heightInit)
         } else {
             binding.etHeight.setText(viewModel.height.value.toString())
         }
@@ -103,14 +122,9 @@ class TextToImageFragment : Fragment() {
 
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.textToImageRequest.observe(viewLifecycleOwner) {
-                (prompt, cfgScale, steps, width, height) ->
-            if (prompt.isNotEmpty() && cfgScale > 0 && steps > 0 && width > 0 && height > 0) {
-                setButtonsState()
-                viewModel.setTextToImageRequest()
-            } else {
-                setButtonsState()
-            }
+        viewModel.genDataStatus.observe(viewLifecycleOwner) {
+            setButtonsState()
+            viewModel.setTextToImageRequest()
         }
 
         // Set maximum progressBar percentage
@@ -138,13 +152,6 @@ class TextToImageFragment : Fragment() {
         // Observer which loads image in ImageView when decoder sets decoded image
         viewModel.image.observe(viewLifecycleOwner) { image ->
             binding.ivTextToImage.setImageBitmap(image)
-        }
-
-        // Back button to navigate to home screen
-        binding.fabBack.setOnClickListener { fabBack ->
-            fabBack.findNavController().navigate(
-                TextToImageFragmentDirections.actionTextToImageFragmentToHomeFragment()
-            )
         }
 
         // Place models into the dropdown menu

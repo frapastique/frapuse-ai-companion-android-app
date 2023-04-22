@@ -7,7 +7,6 @@ import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.ImageGenerationRepository
@@ -49,7 +48,9 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val prompt: LiveData<String>
         get() = _prompt
 
-    var negativePrompt: String = ""
+    private val _negativePrompt = MutableLiveData<String>("")
+    val negativePrompt: LiveData<String>
+        get() = _negativePrompt
 
     private val _cfgScale = MutableLiveData<Int>()
     val cfgScale: LiveData<Int>
@@ -89,15 +90,31 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val imageMetadata: LiveData<ImageMetadata>
         get() = _imageMetadata
 
+    private val _genDataStatus = MutableLiveData<Boolean>()
+    val genDataStatus: LiveData<Boolean>
+        get() = _genDataStatus
+
     /* ____________________________________ Methods Remote _____________________________ */
 
     fun setPrompt(prompt: String) {
         _prompt.value = prompt
+        checkGenData()
+    }
+
+    fun setNegativePrompt(newNegativePrompt: String) {
+        _negativePrompt.value = newNegativePrompt
+        checkGenData()
     }
 
     fun setSteps(steps: String) {
         if (steps.isNotEmpty()) {
             _steps.value = steps.toInt()
+        }
+    }
+
+    fun setCfgScale(cfgScale: String) {
+        if (cfgScale.isNotEmpty()) {
+            _cfgScale.value = cfgScale.toInt()
         }
     }
 
@@ -113,6 +130,14 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    private fun checkGenData() {
+        _genDataStatus.value = _prompt.value!!.isNotBlank()
+                && _cfgScale.value!! > 0
+                && _steps.value!! > 0
+                && _width.value!! > 0
+                && _height.value!! > 0
+    }
+
     fun setTextToImageRequest() {
         _textToImageRequest.value = TextToImageRequest(
             _prompt.value!!,
@@ -120,7 +145,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             _steps.value!!,
             _width.value!!,
             _height.value!!,
-            negativePrompt
+            _negativePrompt.value!!
         )
     }
 

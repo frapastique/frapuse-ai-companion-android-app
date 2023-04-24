@@ -40,11 +40,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginTop="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ti_prompt"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
                 tools:text="@string/negative_prompt">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -84,9 +83,8 @@
                 android:layout_width="0dp"
                 android:layout_height="53dp"
                 android:hint="@string/model"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/ti_negative_prompt"
                 app:layout_constraintStart_toEndOf="@+id/ti_steps"
                 app:layout_constraintTop_toTopOf="@+id/ti_steps">
 
@@ -149,7 +147,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_width"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="71dp"
+                android:layout_width="77dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/width"
                 android:layout_marginStart="8dp"
@@ -167,16 +165,36 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_seed"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/seed"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@+id/ti_width"
+                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale"
+                app:layout_constraintEnd_toEndOf="@+id/dropdown_menu_model">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_seed"
+                    android:text="@string/random_seed"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/dropdown_menu_sampler_index"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="53dp"
                 android:hint="@string/sampler"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/ti_width"
-                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
+                app:layout_constraintStart_toStartOf="@+id/ti_cfg_scale"
+                app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="@+id/ti_width">
 
             <AutoCompleteTextView
                     android:id="@+id/actv_sampler_index"
@@ -194,17 +212,17 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
                 android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale"
+                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintVertical_bias="0.0"
-                tools:src="@tools:sample/avatars" />
+                tools:src="@tools:sample/avatars"
+                android:layout_marginTop="4dp" />
 
         <ProgressBar
                 android:id="@+id/progressBar"

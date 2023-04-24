@@ -43,6 +43,7 @@ class TextToImageFragment : Fragment() {
         val cfgInit: Double = binding.etCfgScale.text.toString().toDouble()
         val widthInit: Int = binding.etWidth.text.toString().toInt()
         val heightInit: Int = binding.etHeight.text.toString().toInt()
+        val seedInit: Long = binding.etSeed.text.toString().toLong()
         val samplerInit: String = binding.actvSamplerIndex.text.toString()
 
         // Load installed models
@@ -130,6 +131,20 @@ class TextToImageFragment : Fragment() {
         binding.etHeight.addTextChangedListener { height ->
             if (height.toString().isNotBlank()) {
                 viewModel.setHeight(height.toString().toInt())
+            }
+        }
+
+        // If statement to update height value with hardcoded value only when no value is saved
+        // else place text from LiveData
+        if (viewModel.seed.value == null) {
+            viewModel.setSeed(seedInit)
+        } else {
+            binding.etSeed.setText(viewModel.seed.value.toString())
+        }
+        // Height value gets Updated when input text changes
+        binding.etSeed.addTextChangedListener { seed ->
+            if (seed.toString().isNotBlank() && seed.toString() != "-") {
+                viewModel.setSeed(seed.toString().toLong())
             }
         }
 

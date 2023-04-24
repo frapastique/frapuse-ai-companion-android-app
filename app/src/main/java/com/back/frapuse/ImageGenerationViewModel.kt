@@ -103,7 +103,9 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     var currentSampler: String = ""
 
-    var seed: Long = -1
+    private var _seed = MutableLiveData<Long>()
+    val seed: LiveData<Long>
+        get() = _seed
 
     /* ____________________________________ Methods Remote _____________________________ */
 
@@ -141,6 +143,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         setTextToImageRequest()
     }
 
+    fun setSeed(seed: Long) {
+        _seed.value = seed
+        setTextToImageRequest()
+    }
+
     private fun checkGenData() {
         _genDataStatus.value = _prompt.value!!.isNotBlank()
                 && _cfgScale.value!! > 0
@@ -153,7 +160,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         if (!_prompt.value.isNullOrEmpty()) {
             _textToImageRequest.value = TextToImageRequest(
                 prompt = _prompt.value!!,
-                seed = seed,
+                seed = _seed.value!!,
                 cfg_scale = _cfgScale.value!!,
                 sampler_name = currentSampler,
                 steps = _steps.value!!,
@@ -242,10 +249,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         viewModelScope.launch {
             repository.getImageInfo(ImageBase64(finalImageBase64.value!!.images.first()))
 
-            var seed: Long = 0
-
             try {
-                seed = Regex("Seed: (\\d+)")
+                _seed.value = Regex("Seed: (\\d+)")
                     .find(imageInfo.value!!.info)
                     ?.groupValues!![1].toLong()
             } catch (e: Exception) {
@@ -253,7 +258,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             }
 
             _imageMetadata.value = ImageMetadata(
-                seed = seed,
+                seed = _seed.value!!,
                 positivePrompt = _prompt.value!!,
                 negativePrompt = _negativePrompt.value!!,
                 image = finalImageBase64.value!!.images.first(),

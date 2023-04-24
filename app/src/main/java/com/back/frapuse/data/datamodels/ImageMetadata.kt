@@ -1,5 +1,6 @@
 package com.back.frapuse.data.datamodels
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,6 +11,7 @@ data class ImageMetadata(
     val seed: Long,
     val positivePrompt: String,
     val negativePrompt: String,
+    @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
     val image: String,
     val steps: Int,
     val size: String,

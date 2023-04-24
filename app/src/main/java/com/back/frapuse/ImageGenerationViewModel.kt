@@ -227,8 +227,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* ____________________________________ Methods Local ______________________________ */
 
     private fun applyImageMetadata() {
+        val seed = Regex("Seed: (\\d+)").find(imageInfo.value!!.info).toString().toLong()
+        val sampler = Regex("Sampler: (\\d+)").find(imageInfo.value!!.info).toString()
+
         _imageMetadata.value = ImageMetadata(
-            seed = -1,
+            seed = seed,
             positivePrompt = _prompt.value!!,
             negativePrompt = _negativePrompt.value!!,
             image = imageBase64.value!!.images.first(),
@@ -236,7 +239,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             size = "${_width.value}x${_height.value}",
             width = _width.value!!,
             height = _height.value!!,
-            sampler = "",
+            sampler = sampler,
             CFGScale = _cfgScale.value!!,
             model = options.value!!.sd_model_checkpoint,
             modelHash = options.value!!.sd_checkpoint_hash,

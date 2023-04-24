@@ -8,7 +8,7 @@
 
     <fragment
             android:id="@+id/textToImageFragment"
-            android:name="com.back.frapuse.ui.TextToImageFragment"
+            android:name="com.back.frapuse.ui.imagegen.TextToImageFragment"
             android:label="TextToImageFragment"
             tools:layout="@layout/fragment_text_to_image" >
         <action

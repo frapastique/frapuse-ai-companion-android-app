@@ -93,20 +93,18 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
     suspend fun setOptions(options: Options) {
         try {
             api.retrofitService.setOptions(options)
-            delay(100)
-            getModels()
         } catch (e: Exception) {
             Log.e(TAG, "Error setting options: \n\t $e")
         }
     }
 
-    suspend fun getImageInfo(imageBase64: ImageBase64) {
+    /*suspend fun getImageInfo(imageBase64: ImageBase64) {
         try {
             _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading image info from API: \n\t $e")
         }
-    }
+    }*/
 
     suspend fun getSamplers() {
         try {

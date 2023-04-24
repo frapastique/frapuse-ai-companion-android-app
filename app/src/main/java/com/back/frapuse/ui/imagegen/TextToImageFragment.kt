@@ -2,6 +2,7 @@ package com.back.frapuse.ui.imagegen
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,14 @@ import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import com.back.frapuse.ApiOptionsStatus
 import com.back.frapuse.ApiTxt2ImgStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
+
+private const val TAG = "TextToImageFragment"
 
 class TextToImageFragment : Fragment() {
     // Hier wird das ViewModel, in dem die Logik stattfindet, geholt
@@ -46,14 +50,6 @@ class TextToImageFragment : Fragment() {
         val seedInit: Long = binding.etSeed.text.toString().toLong()
         val samplerInit: String = binding.actvSamplerIndex.text.toString()
 
-        // Load installed models
-        viewModel.loadModels()
-
-        // Load samplers
-        viewModel.getSamplers()
-
-        // Load the initial configuration options
-        viewModel.loadOptions()
         // Observe the config and set the currently loaded sd_model_checkpoint
         viewModel.options.observe(viewLifecycleOwner) { options ->
             binding.actvModel.setText(Regex("^[^.]*")
@@ -161,9 +157,9 @@ class TextToImageFragment : Fragment() {
 
         // Observe the text to image request api status and set the visibility of ProgressBar
         viewModel.txt2imgStatus.observe(viewLifecycleOwner) { status ->
+            Log.e(TAG, "txt2img status: \n\t $status")
             if (status == ApiTxt2ImgStatus.LOADING) {
                 binding.progressBar.visibility = View.VISIBLE
-                binding.tvImageMetaData.visibility = View.GONE
                 // Set maximum progressBar percentage
                 binding.progressBar.max = 100
                 // Update progressBar whenever the progress LiveData changes
@@ -172,10 +168,10 @@ class TextToImageFragment : Fragment() {
                 }
             } else {
                 binding.progressBar.visibility = View.GONE
-                binding.tvImageMetaData.visibility = View.VISIBLE
-                viewModel.applyImageMetadata()
             }
         }
+
+
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
@@ -195,11 +191,6 @@ class TextToImageFragment : Fragment() {
         // Observer which loads image in ImageView when decoder sets decoded image
         viewModel.image.observe(viewLifecycleOwner) { image ->
             binding.ivTextToImage.setImageBitmap(image)
-        }
-
-        // Place image metadata into the TextView
-        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
-            binding.tvImageMetaData.text = imageInfo.info
         }
 
         // Place models into the model dropdown menu
@@ -248,6 +239,19 @@ class TextToImageFragment : Fragment() {
             val samplerName = parent.getItemAtPosition(position) as String
             viewModel.setSampler(samplerName)
         }
+
+        // When the image is clicked long navigate to the RecyclerView Fragment
+        binding.ivTextToImage.setOnLongClickListener { ivTextToImage ->
+            ivTextToImage.findNavController()
+                .navigate(TextToImageFragmentDirections.actionTextToImageFragmentToImageGenRecyclerViewFragment())
+
+            true
+        }
+
+        /*// Observer for image metadata safe in database on change
+        viewModel.imageMetadata.observe(viewLifecycleOwner) {
+            viewModel.saveImage()
+        }*/
     }
 
     private fun setButtonsState() {

@@ -17,6 +17,7 @@ import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.local.getDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val txt2imgStatus: LiveData<ApiTxt2ImgStatus>
         get() = _txt2imgStatus
 
-    val imageInfo = repository.imageInfo
+    // private var imageInfo = repository.imageInfo.value
 
     private val _imageMetadata = MutableLiveData<ImageMetadata>()
     val imageMetadata: LiveData<ImageMetadata>
@@ -106,6 +107,19 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     private var _seed = MutableLiveData<Long>()
     val seed: LiveData<Long>
         get() = _seed
+
+    private var _imageLibrary = MutableLiveData<List<ImageMetadata>>()
+    val imageLibrary: LiveData<List<ImageMetadata>>
+        get() = _imageLibrary
+
+    init {
+        viewModelScope.launch {
+            _imageLibrary.value = repository.getAllImages()
+            loadOptions()
+            loadSamplers()
+            loadModels()
+        }
+    }
 
     /* ____________________________________ Methods Remote _____________________________ */
 
@@ -176,6 +190,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             _txt2imgStatus.value = ApiTxt2ImgStatus.LOADING
             repository.startTextToImage(_textToImageRequest.value!!)
             _txt2imgStatus.value = ApiTxt2ImgStatus.DONE
+            applyImageMetadata()
+            cancel()
         }
 
         viewModelScope.launch {
@@ -192,23 +208,20 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: \n\t $e")
             }
+            cancel()
         }
     }
 
-    fun decodeImage(imageBase: String) {
-        val decodedByte = Base64.decode(imageBase, Base64.DEFAULT)
-        _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
-    }
-
-    fun loadOptions() {
+    private fun loadOptions() {
         _optionsStatus.value = ApiOptionsStatus.LOADING
         viewModelScope.launch {
             repository.getOptions()
             _optionsStatus.value = ApiOptionsStatus.DONE
+            cancel()
         }
     }
 
-    fun loadModels() {
+    private fun loadModels() {
         viewModelScope.launch {
             delay(1000)
             repository.getModels()
@@ -217,6 +230,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading models: \n\t $e")
             }
+            cancel()
         }
     }
 
@@ -232,7 +246,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun getSamplers() {
+    private fun loadSamplers() {
         viewModelScope.launch {
             repository.getSamplers()
         }
@@ -245,44 +259,61 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     /* ____________________________________ Methods Local ______________________________ */
 
+    fun decodeImage(imageBase: String) {
+        val decodedByte = Base64.decode(imageBase, Base64.DEFAULT)
+        _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+    }
+
     fun applyImageMetadata() {
         viewModelScope.launch {
-            repository.getImageInfo(ImageBase64(finalImageBase64.value!!.images.first()))
+            /*try {
+                repository.getImageInfo(ImageBase64(finalImageBase64.value!!.images.first()))
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting image info: \n\t $e")
+            }
 
             try {
                 _seed.value = Regex("Seed: (\\d+)")
-                    .find(imageInfo.value!!.info)
+                    .find(imageInfo!!.info)
                     ?.groupValues!![1].toLong()
             } catch (e: Exception) {
                 Log.e(TAG, "Error finding seed: \n\t $e")
+            }*/
+
+            try {
+                _imageMetadata.value = ImageMetadata(
+                    // seed = _seed.value!!,
+                    positivePrompt = _prompt.value!!,
+                    negativePrompt = _negativePrompt.value!!,
+                    image = finalImageBase64.value!!.images.first(),
+                    steps = _steps.value!!,
+                    size = "${_width.value}x${_height.value}",
+                    width = _width.value!!,
+                    height = _height.value!!,
+                    sampler = currentSampler,
+                    CFGScale = _cfgScale.value!!,
+                    model = options.value!!.sd_model_checkpoint,
+                    // info = imageInfo!!.info
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error applying image metadata: \n\t $e")
             }
-
-            _imageMetadata.value = ImageMetadata(
-                seed = _seed.value!!,
-                positivePrompt = _prompt.value!!,
-                negativePrompt = _negativePrompt.value!!,
-                image = finalImageBase64.value!!.images.first(),
-                steps = _steps.value!!,
-                size = "${_width.value}x${_height.value}",
-                width = _width.value!!,
-                height = _height.value!!,
-                sampler = currentSampler,
-                CFGScale = _cfgScale.value!!,
-                model = options.value!!.sd_model_checkpoint,
-                info = imageInfo.value!!.info
-            )
-
             saveImage()
+            cancel()
         }
     }
 
     private fun saveImage() {
         viewModelScope.launch {
             try {
+                Log.e(TAG, "someone called me..")
                 repository.insertImage(_imageMetadata.value!!)
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving image in database: \n\t $e")
             }
+
+            _imageLibrary.value = repository.getAllImages()
+            cancel()
         }
     }
 }

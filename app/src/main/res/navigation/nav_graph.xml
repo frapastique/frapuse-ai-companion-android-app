@@ -7,6 +7,15 @@
         app:startDestination="@id/homeFragment">
 
     <fragment
+            android:id="@+id/homeFragment"
+            android:name="com.back.frapuse.ui.HomeFragment"
+            android:label="HomeFragment"
+            tools:layout="@layout/fragment_home">
+        <action
+                android:id="@+id/action_homeFragment_to_textToImageFragment"
+                app:destination="@id/textToImageFragment" />
+    </fragment>
+    <fragment
             android:id="@+id/textToImageFragment"
             android:name="com.back.frapuse.ui.imagegen.TextToImageFragment"
             android:label="TextToImageFragment"
@@ -14,14 +23,17 @@
         <action
                 android:id="@+id/action_textToImageFragment_to_homeFragment"
                 app:destination="@id/homeFragment" />
+        <action
+                android:id="@+id/action_textToImageFragment_to_imageGenRecyclerViewFragment"
+                app:destination="@id/imageGenRecyclerViewFragment" />
     </fragment>
     <fragment
-            android:id="@+id/homeFragment"
-            android:name="com.back.frapuse.ui.HomeFragment"
-            android:label="HomeFragment"
-            tools:layout="@layout/fragment_home">
+            android:id="@+id/imageGenRecyclerViewFragment"
+            android:name="com.back.frapuse.ui.imagegen.ImageGenRecyclerViewFragment"
+            android:label="ImageGenRecyclerViewFragment"
+            tools:layout="@layout/fragment_image_gen_recycler_view" >
         <action
-                android:id="@+id/action_homeFragment_to_textToImageFragment"
+                android:id="@+id/action_imageGenRecyclerViewFragment_to_textToImageFragment"
                 app:destination="@id/textToImageFragment" />
     </fragment>
 </navigation>

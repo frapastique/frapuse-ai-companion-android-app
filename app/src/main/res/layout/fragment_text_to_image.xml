@@ -248,19 +248,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-                android:id="@+id/tv_image_meta_data"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="300dp"
-                android:textColor="@color/black"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/app_name" />
-
         <Button
                 android:id="@+id/btn_reset"
                 android:text="@string/reset"

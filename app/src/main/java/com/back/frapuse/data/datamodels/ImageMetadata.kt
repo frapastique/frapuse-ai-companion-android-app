@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class ImageMetadata(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val seed: Long,
+    // val seed: Long,
     val positivePrompt: String,
     val negativePrompt: String,
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
@@ -20,5 +20,5 @@ data class ImageMetadata(
     val sampler: String,
     val CFGScale: Double,
     val model: String,
-    val info: String,
+    // val info: String,
 )

@@ -19,4 +19,5 @@ data class ImageMetadata(
     val CFGScale: Double,
     val model: String,
     val modelHash: String,
+    val info: String,
 )

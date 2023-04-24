@@ -216,6 +216,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
             sd_model_checkpoint = newModel!!.title,
+            sd_checkpoint_hash = newModel!!.hash,
         )
         viewModelScope.launch {
             repository.setOptions(newOptions)
@@ -227,18 +228,19 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     private fun applyImageMetadata() {
         _imageMetadata.value = ImageMetadata(
-            seed = 0,
+            seed = -1,
             positivePrompt = _prompt.value!!,
-            negativePrompt = "",
+            negativePrompt = _negativePrompt.value!!,
             image = imageBase64.value!!.images.first(),
             steps = _steps.value!!,
             size = "${_width.value}x${_height.value}",
             width = _width.value!!,
             height = _height.value!!,
             sampler = "",
-            CFGScale = 0.0,
-            model = "",
-            modelHash = ""
+            CFGScale = _cfgScale.value!!,
+            model = options.value!!.sd_model_checkpoint,
+            modelHash = options.value!!.sd_checkpoint_hash,
+            info = imageInfo.value!!.info
         )
     }
 

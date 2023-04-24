@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.ApiOptionsStatus
+import com.back.frapuse.ApiTxt2ImgStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
@@ -140,6 +141,20 @@ class TextToImageFragment : Fragment() {
             }
         }
 
+        // Observe the text to image request api status and set the visibility of ProgressBar
+        viewModel.txt2imgStatus.observe(viewLifecycleOwner) { status ->
+            if (status == ApiTxt2ImgStatus.LOADING) {
+                binding.progressBar.visibility = View.VISIBLE
+                // Set maximum progressBar percentage
+                binding.progressBar.max = 100
+                // Update progressBar whenever the progress LiveData changes
+                viewModel.progress.observe(viewLifecycleOwner) { progress ->
+                    binding.progressBar.progress = (progress.times(100)).toInt()
+                }
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
         // Set maximum progressBar percentage
         binding.progressBar.max = 100
         // Update progressBar whenever the progress LiveData changes

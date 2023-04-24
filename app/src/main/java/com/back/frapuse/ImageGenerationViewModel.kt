@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "ImageGenerationViewModel"
 
 enum class ApiOptionsStatus { LOADING, ERROR, DONE }
+enum class ApiTxt2ImgStatus { LOADING, ERROR, DONE }
 
 class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -84,6 +85,10 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     private val _optionsStatus = MutableLiveData<ApiOptionsStatus>()
     val optionsStatus: LiveData<ApiOptionsStatus>
         get() = _optionsStatus
+
+    private val _txt2imgStatus = MutableLiveData<ApiTxt2ImgStatus>()
+    val txt2imgStatus: LiveData<ApiTxt2ImgStatus>
+        get() = _txt2imgStatus
 
     val imageInfo = repository.imageInfo
 
@@ -154,7 +159,9 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun loadTextToImage() {
         viewModelScope.launch {
+            _txt2imgStatus.value = ApiTxt2ImgStatus.LOADING
             repository.startTextToImage(_textToImageRequest.value!!)
+            _txt2imgStatus.value = ApiTxt2ImgStatus.DONE
         }
 
         viewModelScope.launch {
@@ -167,12 +174,10 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                         Log.e(TAG, "Error loading progress: \n\t $e")
                     }
                     delay(100)
-                } while (_progress.value!! < 0.90)
+                } while (_txt2imgStatus.value == ApiTxt2ImgStatus.LOADING)
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: \n\t $e")
             }
-            delay(200)
-            _progress.value = 1.0
         }
     }
 

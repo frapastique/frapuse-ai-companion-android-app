@@ -39,10 +39,10 @@ class TextToImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         // Get the hardcoded launch values for steps, width and height
-        var stepsInit: Int = binding.etSteps.text.toString().toInt()
-        var cfgInit: Double = binding.etCfgScale.text.toString().toDouble()
-        var widthInit: Int = binding.etWidth.text.toString().toInt()
-        var heightInit: Int = binding.etHeight.text.toString().toInt()
+        val stepsInit: Int = binding.etSteps.text.toString().toInt()
+        val cfgInit: Double = binding.etCfgScale.text.toString().toDouble()
+        val widthInit: Int = binding.etWidth.text.toString().toInt()
+        val heightInit: Int = binding.etHeight.text.toString().toInt()
 
         // Load installed models
         viewModel.loadModels()
@@ -82,8 +82,9 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etSteps.addTextChangedListener { steps ->
-            stepsInit = steps.toString().toInt()
-            viewModel.setSteps(stepsInit)
+            if (steps.toString().isNotBlank()) {
+                viewModel.setSteps(steps.toString().toInt())
+            }
         }
 
         // If statement to update cfg scale value with hardcoded value only when no value is saved
@@ -95,7 +96,9 @@ class TextToImageFragment : Fragment() {
         }
         // Steps value gets Updated when input text changes
         binding.etCfgScale.addTextChangedListener { cfgScale ->
-            viewModel.setCfgScale(cfgInit)
+            if (cfgScale.toString().isNotBlank()) {
+                viewModel.setCfgScale(cfgScale.toString().toDouble())
+            }
         }
 
         // If statement to update width value with hardcoded value only when no value is saved
@@ -107,7 +110,9 @@ class TextToImageFragment : Fragment() {
         }
         // Width value gets Updated when input text changes
         binding.etWidth.addTextChangedListener { width ->
-            viewModel.setWidth(widthInit)
+            if (width.toString().isNotBlank()) {
+                viewModel.setWidth(width.toString().toInt())
+            }
         }
 
         // If statement to update height value with hardcoded value only when no value is saved
@@ -119,11 +124,8 @@ class TextToImageFragment : Fragment() {
         }
         // Height value gets Updated when input text changes
         binding.etHeight.addTextChangedListener { height ->
-            Log.e("DAAAAMN", "\n\t height = ${height.toString()}")
-            if (height.toString().isNotEmpty()) {
-                viewModel.setHeight(heightInit)
-            } else {
-                Log.e("dmnit", "ERROR")
+            if (height.toString().isNotBlank()) {
+                viewModel.setHeight(height.toString().toInt())
             }
         }
 
@@ -133,7 +135,6 @@ class TextToImageFragment : Fragment() {
             if (state) {
                 setButtonsState()
                 viewModel.setTextToImageRequest()
-
             } else {
                 setButtonsState()
             }
@@ -168,7 +169,7 @@ class TextToImageFragment : Fragment() {
 
         // Place models into the dropdown menu
         viewModel.models.observe(viewLifecycleOwner) { models ->
-            var modelNameList: MutableList<String> = mutableListOf()
+            val modelNameList: MutableList<String> = mutableListOf()
             for (element in models) {
                 modelNameList.add(element.model_name)
             }

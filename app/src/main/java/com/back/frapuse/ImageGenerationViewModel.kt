@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -103,31 +104,31 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setNegativePrompt(newNegativePrompt: String) {
         _negativePrompt.value = newNegativePrompt
-        checkGenData()
+        setTextToImageRequest()
     }
 
     fun setSteps(steps: Int) {
         if (steps > 0) {
-            _steps.value = steps.toString().toInt()
+            _steps.value = steps
+            setTextToImageRequest()
         }
     }
 
     fun setCfgScale(cfgScale: Double) {
         if (cfgScale > 0.0) {
-            _cfgScale.value = cfgScale.toString().toDouble()
+            _cfgScale.value = cfgScale
+            setTextToImageRequest()
         }
     }
 
     fun setWidth(width: Int) {
-        if (width > 0) {
-            _width.value = width.toString().toInt()
-        }
+        _width.value = width
+        setTextToImageRequest()
     }
 
     fun setHeight(height: Int) {
-        if (height > 0) {
-            _height.value = height.toString().toInt()
-        }
+        _height.value = height
+        setTextToImageRequest()
     }
 
     private fun checkGenData() {
@@ -139,14 +140,16 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun setTextToImageRequest() {
-        _textToImageRequest.value = TextToImageRequest(
-            _prompt.value!!,
-            _cfgScale.value!!,
-            _steps.value!!,
-            _width.value!!,
-            _height.value!!,
-            _negativePrompt.value!!
-        )
+        if (!_prompt.value.isNullOrEmpty()) {
+            _textToImageRequest.value = TextToImageRequest(
+                _prompt.value!!,
+                _cfgScale.value!!,
+                _steps.value!!,
+                _width.value!!,
+                _height.value!!,
+                _negativePrompt.value!!
+            )
+        }
     }
 
     fun loadTextToImage() {

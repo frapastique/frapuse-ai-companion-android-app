@@ -19,4 +19,5 @@
     <string name="euler_a">Euler a</string>
     <string name="seed">SEED</string>
     <string name="random_seed">-1</string>
+    <string name="reset">reset</string>
 </resources>

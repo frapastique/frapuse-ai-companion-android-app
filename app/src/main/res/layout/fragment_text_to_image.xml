@@ -178,7 +178,7 @@
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_seed"
                     android:text="@string/random_seed"
-                    android:inputType="number"
+                    android:inputType="numberSigned"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center" />
@@ -188,12 +188,12 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/dropdown_menu_sampler_index"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_marginTop="4dp"
                 android:layout_width="0dp"
                 android:layout_height="53dp"
                 android:hint="@string/sampler"
                 app:layout_constraintStart_toStartOf="@+id/ti_cfg_scale"
                 app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale"
-                android:layout_marginTop="4dp"
                 app:layout_constraintEnd_toEndOf="@+id/ti_width">
 
             <AutoCompleteTextView
@@ -212,6 +212,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
                 android:scaleType="fitCenter"
@@ -221,8 +222,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintVertical_bias="0.0"
-                tools:src="@tools:sample/avatars"
-                android:layout_marginTop="4dp" />
+                tools:src="@tools:sample/avatars" />
 
         <ProgressBar
                 android:id="@+id/progressBar"
@@ -254,11 +254,25 @@
                 android:layout_height="wrap_content"
                 android:maxWidth="300dp"
                 android:textColor="@color/black"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@string/app_name" />
+
+        <Button
+                android:id="@+id/btn_reset"
+                android:text="@string/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:clickable="false"
+                app:backgroundTint="@color/cardview_dark_background"
+                app:layout_constraintEnd_toEndOf="@+id/ti_seed"
+                app:layout_constraintTop_toTopOf="@+id/dropdown_menu_sampler_index"
+                app:layout_constraintBottom_toBottomOf="@+id/dropdown_menu_sampler_index"
+                app:layout_constraintStart_toStartOf="@+id/ti_seed" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

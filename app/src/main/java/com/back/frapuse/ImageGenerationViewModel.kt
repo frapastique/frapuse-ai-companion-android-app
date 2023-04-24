@@ -147,12 +147,12 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     fun setTextToImageRequest() {
         if (!_prompt.value.isNullOrEmpty()) {
             _textToImageRequest.value = TextToImageRequest(
-                _prompt.value!!,
-                _cfgScale.value!!,
-                _steps.value!!,
-                _width.value!!,
-                _height.value!!,
-                _negativePrompt.value!!
+                prompt = _prompt.value!!,
+                cfg_scale = _cfgScale.value!!,
+                steps = _steps.value!!,
+                width = _width.value!!,
+                height = _height.value!!,
+                negative_prompt = _negativePrompt.value!!
             )
         }
     }

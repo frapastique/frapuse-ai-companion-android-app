@@ -184,11 +184,10 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     fun decodeImage(imageBase64: String) {
         viewModelScope.launch {
             repository.getImageInfo(ImageBase64(imageBase64))
+            applyImageMetadata()
         }
         val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
-
-        applyImageMetadata()
     }
 
     fun loadOptions() {
@@ -215,8 +214,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         _optionsStatus.value = ApiOptionsStatus.LOADING
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
-            sd_model_checkpoint = newModel!!.title,
-            sd_checkpoint_hash = newModel!!.hash,
+            sd_model_checkpoint = newModel!!.title
         )
         viewModelScope.launch {
             repository.setOptions(newOptions)
@@ -227,8 +225,33 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* ____________________________________ Methods Local ______________________________ */
 
     private fun applyImageMetadata() {
-        val seed = Regex("Seed: (\\d+)").find(imageInfo.value!!.info).toString().toLong()
-        val sampler = Regex("Sampler: (\\d+)").find(imageInfo.value!!.info).toString()
+        var seed: Long = 0
+        var sampler: String = "none"
+        var modelHash: String = "none"
+
+        try {
+            seed = Regex("Seed: (\\d+)")
+                .find(imageInfo.value!!.info)
+                ?.groupValues!![1].toLong()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error finding seed: \n\t $e")
+        }
+
+        try {
+            sampler = Regex("Sampler: (\\w+)")
+                .find(imageInfo.value!!.info)
+                ?.groupValues!![1]
+        } catch (e: Exception) {
+            Log.e(TAG, "Error finding sampler: \n\t $e")
+        }
+
+        try {
+            modelHash = Regex("Model hash: ([\\w\\d]+)")
+                .find(imageInfo.value!!.info)
+                ?.groupValues!![1]
+        } catch (e: Exception) {
+            Log.e(TAG, "Error finding model hash: \n\t $e")
+        }
 
         _imageMetadata.value = ImageMetadata(
             seed = seed,
@@ -242,7 +265,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             sampler = sampler,
             CFGScale = _cfgScale.value!!,
             model = options.value!!.sd_model_checkpoint,
-            modelHash = options.value!!.sd_checkpoint_hash,
+            modelHash = modelHash,
             info = imageInfo.value!!.info
         )
     }

@@ -166,15 +166,15 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
         viewModelScope.launch {
             try {
-                do {
+                while (_txt2imgStatus.value == ApiTxt2ImgStatus.LOADING) {
+                    delay(100)
                     repository.getProgress()
                     try {
                         _progress.value = repository.progress.value
                     } catch (e: Exception) {
                         Log.e(TAG, "Error loading progress: \n\t $e")
                     }
-                    delay(100)
-                } while (_txt2imgStatus.value == ApiTxt2ImgStatus.LOADING)
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: \n\t $e")
             }

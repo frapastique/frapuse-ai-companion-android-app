@@ -155,12 +155,6 @@ class TextToImageFragment : Fragment() {
                 binding.progressBar.visibility = View.GONE
             }
         }
-        // Set maximum progressBar percentage
-        binding.progressBar.max = 100
-        // Update progressBar whenever the progress LiveData changes
-        viewModel.progress.observe(viewLifecycleOwner) { progress ->
-            binding.progressBar.progress = (progress.times(100)).toInt()
-        }
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {

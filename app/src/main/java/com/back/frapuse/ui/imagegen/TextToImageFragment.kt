@@ -43,9 +43,13 @@ class TextToImageFragment : Fragment() {
         val cfgInit: Double = binding.etCfgScale.text.toString().toDouble()
         val widthInit: Int = binding.etWidth.text.toString().toInt()
         val heightInit: Int = binding.etHeight.text.toString().toInt()
+        val samplerInit: String = binding.actvSamplerIndex.text.toString()
 
         // Load installed models
         viewModel.loadModels()
+
+        // Load samplers
+        viewModel.getSamplers()
 
         // Load the initial configuration options
         viewModel.loadOptions()
@@ -175,7 +179,7 @@ class TextToImageFragment : Fragment() {
             binding.ivTextToImage.setImageBitmap(image)
         }
 
-        // Place models into the dropdown menu
+        // Place models into the model dropdown menu
         viewModel.models.observe(viewLifecycleOwner) { models ->
             val modelNameList: MutableList<String> = mutableListOf()
             for (element in models) {
@@ -193,6 +197,33 @@ class TextToImageFragment : Fragment() {
         binding.actvModel.setOnItemClickListener { parent, _, position, _ ->
             val modelName = parent.getItemAtPosition(position) as String
             viewModel.setModel(modelName)
+        }
+
+        // Place samplers into the sampler dropdown menu
+        viewModel.samplers.observe(viewLifecycleOwner) { samplers ->
+            val samplerNameList: MutableList<String> = mutableListOf()
+            for (sampler in samplers) {
+                samplerNameList.add(sampler.name)
+            }
+            val arrayAdapter = ArrayAdapter(
+                requireContext(),
+                R.layout.sd_samplers_item,
+                samplerNameList.toTypedArray()
+            )
+            binding.actvSamplerIndex.setAdapter(arrayAdapter)
+        }
+
+        // If statement to update sampler with hardcoded value only when no value is saved
+        // else place sampler from viewModel
+        if (viewModel.currentSampler.isEmpty()) {
+            viewModel.setSampler(samplerInit)
+        } else {
+            binding.actvSamplerIndex.setText(viewModel.currentSampler)
+        }
+        // Set sampler according the selection from dropdown menu
+        binding.actvSamplerIndex.setOnItemClickListener { parent, _, position, _ ->
+            val samplerName = parent.getItemAtPosition(position) as String
+            viewModel.setSampler(samplerName)
         }
 
         // Place image metadata into the TextView

@@ -100,6 +100,12 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val genDataStatus: LiveData<Boolean>
         get() = _genDataStatus
 
+    val samplers = repository.samplers
+
+    var currentSampler: String = ""
+
+    var seed: Long = -1
+
     /* ____________________________________ Methods Remote _____________________________ */
 
     fun setPrompt(prompt: String) {
@@ -148,7 +154,9 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         if (!_prompt.value.isNullOrEmpty()) {
             _textToImageRequest.value = TextToImageRequest(
                 prompt = _prompt.value!!,
+                seed = seed,
                 cfg_scale = _cfgScale.value!!,
+                sampler_name = currentSampler,
                 steps = _steps.value!!,
                 width = _width.value!!,
                 height = _height.value!!,
@@ -220,6 +228,17 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             repository.setOptions(newOptions)
             _optionsStatus.value = ApiOptionsStatus.DONE
         }
+    }
+
+    fun getSamplers() {
+        viewModelScope.launch {
+            repository.getSamplers()
+        }
+    }
+
+    fun setSampler(samplerName: String) {
+        currentSampler = samplerName
+        setTextToImageRequest()
     }
 
     /* ____________________________________ Methods Local ______________________________ */

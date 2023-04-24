@@ -55,6 +55,9 @@ interface TextToImageAPIService {
     suspend fun getImageMetaData(
         @Body body: ImageBase64
     ): ImageInfo
+
+    @GET("samplers")
+    suspend fun getSamplers(): List<Sampler>
 }
 
 object TextToImageAPI {

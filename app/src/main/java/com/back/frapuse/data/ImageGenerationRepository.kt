@@ -8,6 +8,7 @@ import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.data.datamodels.Options
 import com.back.frapuse.data.datamodels.SDModel
+import com.back.frapuse.data.datamodels.Sampler
 import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.local.ImageGenDatabase
@@ -42,13 +43,17 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
     val imageInfo: LiveData<ImageInfo>
         get() = _imageInfo
 
+    private var _samplers = MutableLiveData<List<Sampler>>()
+    val samplers: LiveData<List<Sampler>>
+        get() = _samplers
+
     /* ____________________________________ Methods Remote _____________________________ */
 
     suspend fun getModels() {
         try {
             _models.value = api.retrofitService.getModels()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading models from API: \n\t$e")
+            Log.e(TAG, "Error loading models from API: \n\t $e")
         }
     }
 
@@ -56,7 +61,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
         try {
             _options.value = api.retrofitService.getOptions()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading options from API: \n\t$e")
+            Log.e(TAG, "Error loading options from API: \n\t $e")
         }
     }
 
@@ -64,7 +69,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
         try {
             _image.value = api.retrofitService.startTextToImage(textToImageRequest)
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: \n\t$e")
+            Log.e(TAG, "Error loading Data from API: \n\t $e")
         }
     }
 
@@ -77,10 +82,10 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
                     _currentImage.value = currentImage.toString()
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading progress image from API: \n\t$e")
+                Log.e(TAG, "Error loading progress image from API: \n\t $e")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading progress from API: \n\t$e")
+            Log.e(TAG, "Error loading progress from API: \n\t $e")
         }
     }
 
@@ -90,7 +95,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
             delay(100)
             getModels()
         } catch (e: Exception) {
-            Log.e(TAG, "Error setting options: \n\t$e")
+            Log.e(TAG, "Error setting options: \n\t $e")
         }
     }
 
@@ -98,7 +103,15 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
         try {
             _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
-            Log.e(TAG, "Error image info from API: \n\t$e")
+            Log.e(TAG, "Error image info from API: \n\t $e")
+        }
+    }
+
+    suspend fun getSamplers() {
+        try {
+            _samplers.value = api.retrofitService.getSamplers()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading samplers from API: \n\t $e")
         }
     }
 

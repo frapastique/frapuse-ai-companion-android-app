@@ -7,6 +7,7 @@ import com.back.frapuse.data.datamodels.ImageBase64
 import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.data.datamodels.Options
+import com.back.frapuse.data.datamodels.Progress
 import com.back.frapuse.data.datamodels.SDModel
 import com.back.frapuse.data.datamodels.Sampler
 import com.back.frapuse.data.datamodels.TextToImage
@@ -35,8 +36,8 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
     val currentImage: LiveData<String>
         get() = _currentImage
 
-    private var _progress = MutableLiveData<Double>()
-    val progress: LiveData<Double>
+    private var _progress = MutableLiveData<Progress>()
+    val progress: LiveData<Progress>
         get() = _progress
 
     private var _imageInfo = MutableLiveData<ImageInfo>()
@@ -75,9 +76,9 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
 
     suspend fun getProgress() {
         try {
-            _progress.value = api.retrofitService.getProgress().progress
+            _progress.value = api.retrofitService.getProgress()
             try {
-                val currentImage = api.retrofitService.getProgress().current_image
+                val currentImage = _progress.value!!.current_image
                 if (!currentImage.isNullOrEmpty()) {
                     _currentImage.value = currentImage.toString()
                 }
@@ -103,7 +104,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
         try {
             _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
-            Log.e(TAG, "Error image info from API: \n\t $e")
+            Log.e(TAG, "Error loading image info from API: \n\t $e")
         }
     }
 

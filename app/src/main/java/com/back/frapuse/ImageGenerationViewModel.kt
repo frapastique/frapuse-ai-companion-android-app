@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -35,7 +34,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     private val repository = ImageGenerationRepository(TextToImageAPI, database)
 
     // Image in Base64 format
-    val imageBase64 = repository.image
+    val finalImageBase64 = repository.image
 
     // Live preview image in Base64 format
     val progressImageBase64 = repository.currentImage
@@ -178,7 +177,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                     delay(100)
                     repository.getProgress()
                     try {
-                        _progress.value = repository.progress.value
+                        _progress.value = repository.progress.value!!.progress
                     } catch (e: Exception) {
                         Log.e(TAG, "Error loading progress: \n\t $e")
                     }
@@ -189,12 +188,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun decodeImage(imageBase64: String) {
-        viewModelScope.launch {
-            repository.getImageInfo(ImageBase64(imageBase64))
-            applyImageMetadata()
-        }
-        val decodedByte = Base64.decode(imageBase64, Base64.DEFAULT)
+    fun decodeImage(imageBase: String) {
+        val decodedByte = Base64.decode(imageBase, Base64.DEFAULT)
         _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
@@ -243,53 +238,40 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     /* ____________________________________ Methods Local ______________________________ */
 
-    private fun applyImageMetadata() {
-        var seed: Long = 0
-        var sampler: String = "none"
-        var modelHash: String = "none"
+    fun applyImageMetadata() {
+        viewModelScope.launch {
+            repository.getImageInfo(ImageBase64(finalImageBase64.value!!.images.first()))
 
-        try {
-            seed = Regex("Seed: (\\d+)")
-                .find(imageInfo.value!!.info)
-                ?.groupValues!![1].toLong()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error finding seed: \n\t $e")
+            var seed: Long = 0
+
+            try {
+                seed = Regex("Seed: (\\d+)")
+                    .find(imageInfo.value!!.info)
+                    ?.groupValues!![1].toLong()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error finding seed: \n\t $e")
+            }
+
+            _imageMetadata.value = ImageMetadata(
+                seed = seed,
+                positivePrompt = _prompt.value!!,
+                negativePrompt = _negativePrompt.value!!,
+                image = finalImageBase64.value!!.images.first(),
+                steps = _steps.value!!,
+                size = "${_width.value}x${_height.value}",
+                width = _width.value!!,
+                height = _height.value!!,
+                sampler = currentSampler,
+                CFGScale = _cfgScale.value!!,
+                model = options.value!!.sd_model_checkpoint,
+                info = imageInfo.value!!.info
+            )
+
+            saveImage()
         }
-
-        try {
-            sampler = Regex("Sampler: (\\w+)")
-                .find(imageInfo.value!!.info)
-                ?.groupValues!![1]
-        } catch (e: Exception) {
-            Log.e(TAG, "Error finding sampler: \n\t $e")
-        }
-
-        try {
-            modelHash = Regex("Model hash: ([\\w\\d]+)")
-                .find(imageInfo.value!!.info)
-                ?.groupValues!![1]
-        } catch (e: Exception) {
-            Log.e(TAG, "Error finding model hash: \n\t $e")
-        }
-
-        _imageMetadata.value = ImageMetadata(
-            seed = seed,
-            positivePrompt = _prompt.value!!,
-            negativePrompt = _negativePrompt.value!!,
-            image = imageBase64.value!!.images.first(),
-            steps = _steps.value!!,
-            size = "${_width.value}x${_height.value}",
-            width = _width.value!!,
-            height = _height.value!!,
-            sampler = sampler,
-            CFGScale = _cfgScale.value!!,
-            model = options.value!!.sd_model_checkpoint,
-            modelHash = modelHash,
-            info = imageInfo.value!!.info
-        )
     }
 
-    fun saveImage() {
+    private fun saveImage() {
         viewModelScope.launch {
             try {
                 repository.insertImage(_imageMetadata.value!!)

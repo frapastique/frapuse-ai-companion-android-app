@@ -127,7 +127,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_height"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="80dp"
+                android:layout_width="77dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/height"
                 android:layout_marginEnd="4dp"
@@ -149,7 +149,7 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_width"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="80dp"
+                android:layout_width="71dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/width"
                 android:layout_marginStart="8dp"

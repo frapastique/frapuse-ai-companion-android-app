@@ -148,6 +148,7 @@ class TextToImageFragment : Fragment() {
         viewModel.txt2imgStatus.observe(viewLifecycleOwner) { status ->
             if (status == ApiTxt2ImgStatus.LOADING) {
                 binding.progressBar.visibility = View.VISIBLE
+                binding.tvImageMetaData.visibility = View.GONE
                 // Set maximum progressBar percentage
                 binding.progressBar.max = 100
                 // Update progressBar whenever the progress LiveData changes
@@ -156,6 +157,8 @@ class TextToImageFragment : Fragment() {
                 }
             } else {
                 binding.progressBar.visibility = View.GONE
+                binding.tvImageMetaData.visibility = View.VISIBLE
+                viewModel.applyImageMetadata()
             }
         }
 
@@ -165,7 +168,7 @@ class TextToImageFragment : Fragment() {
         }
 
         // Observer which initiates decoding of image in Base64 when api delivers response
-        viewModel.imageBase64.observe(viewLifecycleOwner) { imageBase64 ->
+        viewModel.finalImageBase64.observe(viewLifecycleOwner) { imageBase64 ->
             viewModel.decodeImage(imageBase64.images.first())
         }
 
@@ -177,6 +180,11 @@ class TextToImageFragment : Fragment() {
         // Observer which loads image in ImageView when decoder sets decoded image
         viewModel.image.observe(viewLifecycleOwner) { image ->
             binding.ivTextToImage.setImageBitmap(image)
+        }
+
+        // Place image metadata into the TextView
+        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
+            binding.tvImageMetaData.text = imageInfo.info
         }
 
         // Place models into the model dropdown menu
@@ -224,16 +232,6 @@ class TextToImageFragment : Fragment() {
         binding.actvSamplerIndex.setOnItemClickListener { parent, _, position, _ ->
             val samplerName = parent.getItemAtPosition(position) as String
             viewModel.setSampler(samplerName)
-        }
-
-        // Place image metadata into the TextView
-        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
-            binding.tvImageMetaData.text = imageInfo.info
-        }
-
-        // Observe imageMetadata and when created save into database
-        viewModel.imageMetadata.observe(viewLifecycleOwner) {
-            viewModel.saveImage()
         }
     }
 

@@ -1,8 +1,6 @@
 package com.back.frapuse.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.back.frapuse.data.datamodels.ImageBase64
 import com.back.frapuse.data.datamodels.ImageInfo
 import com.back.frapuse.data.datamodels.ImageMetadata
@@ -14,7 +12,6 @@ import com.back.frapuse.data.datamodels.TextToImage
 import com.back.frapuse.data.datamodels.TextToImageRequest
 import com.back.frapuse.data.local.ImageGenDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
-import kotlinx.coroutines.delay
 
 private const val TAG = "ImageGenerationRepository"
 

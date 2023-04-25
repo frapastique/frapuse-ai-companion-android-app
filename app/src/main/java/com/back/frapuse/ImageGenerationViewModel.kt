@@ -176,7 +176,6 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             loadSamplers()
             loadModels()
         }
-        _appStatusTextToImageRequest.value = AppStatus.ERROR
     }
 
     /* _______ Methods Generation Parameters ___________________________________________ */
@@ -307,9 +306,15 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             try {
                 while (_apiStatusTextToImg.value == AppStatus.LOADING) {
                     delay(100)
-                    repository.getProgress()
                     try {
                         _progress.value = repository.getProgress()
+                        try {
+                            if (_progress.value!!.current_image != null) {
+                                _progressImageBase64.value = _progress.value!!.current_image!!
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error loading progress image: \n\t $e")
+                        }
                     } catch (e: Exception) {
                         Log.e(TAG, "Error loading progress: \n\t $e")
                     }

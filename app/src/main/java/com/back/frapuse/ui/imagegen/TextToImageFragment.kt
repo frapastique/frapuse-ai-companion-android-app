@@ -172,6 +172,7 @@ class TextToImageFragment : Fragment() {
             }
         }*/
 
+        // Save image when button is clicked
         binding.btnSave.setOnClickListener {
             viewModel.saveImage()
         }
@@ -279,43 +280,41 @@ class TextToImageFragment : Fragment() {
         }
     }
 
-    private fun setButtonsState(passedStatus: AppStatus) {
-        viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
-            if (status == AppStatus.DONE && passedStatus == AppStatus.DONE) {
-                // Apply appearance for generate button
-                binding.btnGenerate.isClickable = true
-                binding.btnGenerate.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200)
-                    )
-                binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
+    private fun setButtonsState(status: AppStatus) {
+        if (status == AppStatus.DONE) {
+            // Apply appearance for generate button
+            binding.btnGenerate.isClickable = true
+            binding.btnGenerate.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(
+                    requireContext(),
+                    R.color.purple_200)
+                )
+            binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
 
-                // Apply appearance for save button
-                binding.btnSave.isClickable = true
-                binding.btnSave.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200)
-                    )
-            } else {
-                // Apply appearance for generate button
-                binding.btnGenerate.isClickable = false
-                binding.btnGenerate.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(
-                        requireContext(),
-                        androidx.cardview.R.color.cardview_dark_background)
-                    )
-                binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
+            // Apply appearance for save button
+            binding.btnSave.isClickable = true
+            binding.btnSave.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(
+                    requireContext(),
+                    R.color.purple_200)
+                )
+        } else {
+            // Apply appearance for generate button
+            binding.btnGenerate.isClickable = false
+            binding.btnGenerate.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(
+                    requireContext(),
+                    androidx.cardview.R.color.cardview_dark_background)
+                )
+            binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
 
-                // Apply appearance for save button
-                binding.btnSave.isClickable = false
-                binding.btnSave.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(
-                        requireContext(),
-                        androidx.cardview.R.color.cardview_dark_background)
-                    )
-            }
+            // Apply appearance for save button
+            binding.btnSave.isClickable = false
+            binding.btnSave.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(
+                    requireContext(),
+                    androidx.cardview.R.color.cardview_dark_background)
+                )
         }
     }
 }

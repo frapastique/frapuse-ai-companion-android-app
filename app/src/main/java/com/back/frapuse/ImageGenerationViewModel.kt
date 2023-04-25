@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ImageGenerationViewModel"
 
-enum class AppStatus { LOADING, ERROR, DONE }
+enum class AppStatus { LOADING, ERROR, DONE, WAITING }
 
 class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -160,9 +160,9 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* _______ Local Status ____________________________________________________________ */
 
     // Current app status for text to image request data
-    private val _appStatusTextToImageRequest = MutableLiveData<AppStatus>()
-    val appStatusTextToImageRequest: LiveData<AppStatus>
-        get() = _appStatusTextToImageRequest
+    private val _appStatusSetTextToImageRequest = MutableLiveData<AppStatus>()
+    val appStatusSetTextToImageRequest: LiveData<AppStatus>
+        get() = _appStatusSetTextToImageRequest
 
     // Current status of apply image metadata
     private val _appStatusApplyMetaData = MutableLiveData<AppStatus>()
@@ -178,8 +178,10 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+
     /* _______ Methods Generation Parameters ___________________________________________ */
 
+    // Set current prompt
     fun setPrompt(newPrompt: String) {
         if (newPrompt != _prompt.value) {
             Log.e(
@@ -194,6 +196,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current negative prompt
     fun setNegativePrompt(newNegativePrompt: String) {
         if (newNegativePrompt != _negativePrompt.value) {
             Log.e(
@@ -208,6 +211,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current steps
     fun setSteps(newSteps: Int) {
         Log.e(TAG, "Steps status: \n\t CHECK \n\t new: $newSteps")
         if (newSteps > 0 && newSteps != _steps.value) {
@@ -220,6 +224,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current CFG scale
     fun setCfgScale(newCfgScale: Double) {
         Log.e(TAG, "CFG scale status: \n\t CHECK \n\t new: $newCfgScale")
         if (newCfgScale > 0.0 && newCfgScale != _cfgScale.value) {
@@ -232,6 +237,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current width
     fun setWidth(newWidth: Int) {
         Log.e(TAG, "Width status: \n\t CHECK \n\t new: $newWidth")
         if (newWidth > 0 && newWidth != _width.value) {
@@ -244,6 +250,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current height
     fun setHeight(newHeight: Int) {
         Log.e(TAG, "Height status: \n\t CHECK \n\t new: $newHeight")
         if (newHeight > 0 && newHeight != _height.value) {
@@ -256,6 +263,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Set current seed
     fun setSeed(newSeed: Long) {
         Log.e(TAG, "Seed status: \n\t CHECK \n\t new: $newSeed")
         if (newSeed >= (-1) && newSeed != seed.value) {
@@ -268,8 +276,32 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun setTextToImageRequest() {
-        _appStatusTextToImageRequest.value = AppStatus.LOADING
+    // Set current Sampler
+    fun setSampler(newSamplerName: String) {
+        Log.e(TAG, "Sampler status: \n\t SETTING")
+        _sampler.value = Sampler(
+            name = newSamplerName
+        )
+        Log.e(TAG, "Sampler status: \n\t SET")
+    }
+
+    // Set current model, set options and update options value
+    fun setModel(modelName: String) {
+        _apiStatusOptions.value = AppStatus.LOADING
+        val newModel = _models.value!!.find { it.model_name == modelName }
+        val newOptions = Options(
+            sd_model_checkpoint = newModel!!.title
+        )
+        viewModelScope.launch {
+            repository.setOptions(newOptions)
+            _options.value = repository.getOptions()
+            _apiStatusOptions.value = AppStatus.DONE
+        }
+    }
+
+    // Set and fill text to image request and update status
+    fun setTextToImageRequest(from: String) {
+        _appStatusSetTextToImageRequest.value = AppStatus.LOADING
         Log.e(TAG, "TextToImageRequest status: \n\t CHECK")
         if (!_prompt.value.isNullOrEmpty()) {
             Log.e(TAG, "TextToImageRequest status: \n\t VALID")
@@ -285,22 +317,66 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                 negative_prompt = _negativePrompt.value!!
             )
             Log.e(TAG, "TextToImageRequest status: \n\t SET")
-            _appStatusTextToImageRequest.value = AppStatus.DONE
+            _appStatusSetTextToImageRequest.value = AppStatus.DONE
         } else {
             Log.e(TAG, "TextToImageRequest status: \n\t INVALID")
-            _appStatusTextToImageRequest.value = AppStatus.ERROR
+            _appStatusSetTextToImageRequest.value = AppStatus.ERROR
         }
     }
 
-    fun loadTextToImage() {
+
+    /* _______ Load Methods Remote _____________________________________________________ */
+
+    // Load current options from server
+    private fun loadOptions() {
+        _apiStatusOptions.value = AppStatus.LOADING
         viewModelScope.launch {
-            _apiStatusTextToImg.value = AppStatus.LOADING
-            _finalImageBase64.value = repository.startTextToImage(_textToImageRequest.value!!)
-            _apiStatusTextToImg.value = AppStatus.DONE
+            Log.e(TAG, "Option status: \n\t LOADING")
+            _options.value = repository.getOptions()
+            Log.e(TAG, "Option status: \n\t LOADED")
+            _apiStatusOptions.value = AppStatus.DONE
             cancel()
         }
     }
 
+    // Load all available models from server
+    private fun loadModels() {
+        viewModelScope.launch {
+            delay(1000)
+            try {
+                Log.e(TAG, "Model status: \n\t LOADING")
+                _models.value = repository.getModels()
+                Log.e(TAG, "Model status: \n\t LOADED")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading models: \n\t $e")
+            }
+            cancel()
+        }
+    }
+
+    // Load all available samplers from server
+    private fun loadSamplers() {
+        viewModelScope.launch {
+            Log.e(TAG, "Samplers status: \n\t LOADING")
+            _samplersList.value = repository.getSamplers()
+            Log.e(TAG, "Samplers status: \n\t LOADED")
+        }
+    }
+
+    // Start text to image request
+    fun startTextToImageRequest(from: String) {
+        Log.e(TAG, "startTextToImageRequest calles from: \n\t$from")
+        _apiStatusTextToImg.value = AppStatus.LOADING
+        viewModelScope.launch {
+            _finalImageBase64.value = repository.startTextToImage(_textToImageRequest.value!!)
+            _appStatusSetTextToImageRequest.value = AppStatus.WAITING
+            _apiStatusTextToImg.value = AppStatus.DONE
+            cancel()
+            loadImageInfo("startTextToImageRequest")
+        }
+    }
+
+    // Load the progress of current text to image request
     fun loadProgress() {
         viewModelScope.launch {
             try {
@@ -326,83 +402,38 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun loadOptions() {
-        _apiStatusOptions.value = AppStatus.LOADING
-        viewModelScope.launch {
-            Log.e(TAG, "Option status: \n\t LOADING")
-            _options.value = repository.getOptions()
-            Log.e(TAG, "Option status: \n\t LOADED")
-            _apiStatusOptions.value = AppStatus.DONE
-            cancel()
-        }
-    }
-
-    fun loadModels() {
-        viewModelScope.launch {
-            delay(1000)
-            try {
-                Log.e(TAG, "Model status: \n\t LOADING")
-                _models.value = repository.getModels()
-                Log.e(TAG, "Model status: \n\t LOADED")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading models: \n\t $e")
-            }
-            cancel()
-        }
-    }
-
-    fun setModel(modelName: String) {
-        _apiStatusOptions.value = AppStatus.LOADING
-        val newModel = _models.value!!.find { it.model_name == modelName }
-        val newOptions = Options(
-            sd_model_checkpoint = newModel!!.title
-        )
-        viewModelScope.launch {
-            repository.setOptions(newOptions)
-            _apiStatusOptions.value = AppStatus.DONE
-        }
-    }
-
-    fun loadSamplers() {
-        viewModelScope.launch {
-            Log.e(TAG, "Samplers status: \n\t LOADING")
-            _samplersList.value = repository.getSamplers()
-            Log.e(TAG, "Samplers status: \n\t LOADED")
-        }
-    }
-
-    fun setSampler(newSamplerName: String) {
-        Log.e(TAG, "Sampler status: \n\t SETTING")
-        _sampler.value = Sampler(
-            name = newSamplerName
-        )
-        Log.e(TAG, "Sampler status: \n\t SET")
-    }
-
-    fun loadImageInfo() {
+    // Load image info from final image
+    private fun loadImageInfo(from: String) {
+        Log.e(TAG, "loadImageInfo got called from: \n\t$from")
         viewModelScope.launch {
             _imageInfo.value = repository.getImageInfo(
                 ImageBase64(
-                    _finalImageBase64.value!!.images.first()
+                    _finalImageBase64.value!!.images[0]
                 )
             )
+            applyImageMetadata("loadImageInfo")
+            cancel()
         }
     }
 
     /* _______ Methods Local ___________________________________________________________ */
 
-    fun decodeImage(imageBase: String) {
+    // Decode Base64 image and set image value with bitmap image
+    fun decodeImage(imageBase: String, from: String): Bitmap {
+        Log.e(TAG, "decodeImage got called from: \n\t$from")
         val decodedByte = Base64.decode(imageBase, Base64.DEFAULT)
-        _image.value = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
-    fun applyImageMetadata() {
+    // Apply image metadata and update status
+    private fun applyImageMetadata(from: String) {
+        Log.e(TAG, "applyImageMetadata got called from: \n\t$from")
         _appStatusApplyMetaData.value = AppStatus.LOADING
         var lastSeed: Long = -1
         if (_seed.value!! == lastSeed) {
             try {
                 lastSeed = Regex("Seed: (\\d+)")
-                    .find(imageInfo.value!!.info)
+                    .find(_imageInfo.value!!.info)
                     ?.groupValues!![1].toLong()
             } catch (e: Exception) {
                 Log.e(TAG, "Error finding seed: \n\t $e")
@@ -411,31 +442,29 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             lastSeed = _seed.value!!
         }
 
-        viewModelScope.launch {
-            try {
-                _imageMetadata.value = ImageMetadata(
-                    seed = lastSeed,
-                    positivePrompt = _prompt.value!!,
-                    negativePrompt = _negativePrompt.value!!,
-                    image = _finalImageBase64.value!!.images.first(),
-                    steps = _steps.value!!,
-                    size = "${_width.value}x${_height.value}",
-                    width = _width.value!!,
-                    height = _height.value!!,
-                    sampler = _sampler.value!!.name,
-                    CFGScale = _cfgScale.value!!,
-                    model = _options.value!!.sd_model_checkpoint,
-                    info = imageInfo.value!!.info
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Error applying image metadata: \n\t $e")
-                _appStatusApplyMetaData.value = AppStatus.ERROR
-            }
-            cancel()
+        try {
+            _imageMetadata.value = ImageMetadata(
+                seed = lastSeed,
+                positivePrompt = _prompt.value!!,
+                negativePrompt = _negativePrompt.value!!,
+                image = _finalImageBase64.value!!.images[0],
+                steps = _steps.value!!,
+                size = "${_width.value}x${_height.value}",
+                width = _width.value!!,
+                height = _height.value!!,
+                sampler = _sampler.value!!.name,
+                CFGScale = _cfgScale.value!!,
+                model = _options.value!!.sd_model_checkpoint,
+                info = _imageInfo.value!!.info
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error applying image metadata: \n\t $e")
+            _appStatusApplyMetaData.value = AppStatus.ERROR
         }
         _appStatusApplyMetaData.value = AppStatus.DONE
     }
 
+    // Save image metadata into database
     fun saveImage() {
         viewModelScope.launch {
             try {

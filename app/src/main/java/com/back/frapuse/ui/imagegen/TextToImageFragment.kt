@@ -58,11 +58,10 @@ class TextToImageFragment : Fragment() {
         // When the prompt value is not empty set the text of prompt field
         if (!viewModel.prompt.value.isNullOrEmpty()) {
             binding.etPrompt.setText(viewModel.prompt.value)
-        } else {
-            // Prompt value gets updated when input text changes
-            binding.etPrompt.addTextChangedListener { prompt ->
-                viewModel.setPrompt(prompt.toString())
-            }
+        }
+        // Prompt value gets updated when input text changes
+        binding.etPrompt.addTextChangedListener { prompt ->
+            viewModel.setPrompt(prompt.toString())
         }
 
         // When the negative prompt is not empty set the text of prompt field
@@ -153,75 +152,50 @@ class TextToImageFragment : Fragment() {
         }
 
         // Load image info when finalImageBase64 gets updated
-        viewModel.finalImageBase64.observe(viewLifecycleOwner) {
-            viewModel.loadImageInfo()
+        viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) {
+            if (it == AppStatus.DONE) {
+                val image = viewModel.decodeImage(
+                    viewModel.finalImageBase64.value!!.images[0],
+                    "viewModel.apiStatusTextToImg.observe"
+                )
+                binding.ivTextToImage.setImageBitmap(image)
+            }
         }
 
         // Place imageInfo string into debug TextView
-        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
-            binding.tvDebugImageInfo.text = imageInfo.info
-
-            // Apply image metadata
-            viewModel.applyImageMetadata()
+        viewModel.imageInfo.observe(viewLifecycleOwner) {
+            binding.tvDebugImageInfo.text = viewModel.imageInfo.value!!.info
         }
-
-        // Save image as soon image metadata is applied
-        /*viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
-            if (imageMetadata == ) {
-                viewModel.saveImage()
-            }
-        }*/
 
         // Save image when button is clicked
         binding.btnSave.setOnClickListener {
             viewModel.saveImage()
         }
 
-        // Observe the text to image request api status and set the visibility of ProgressBar
-        viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) { status ->
-            Log.e(TAG, "txt2img status: \n\t $status")
-            if (status == AppStatus.LOADING) {
-                binding.progressBar.visibility = View.VISIBLE
-                Log.e(TAG, "Progress bar visibility: \n\t VISIBLE")
+        // Set maximum progressBar percentage
+        binding.progressBar.max = 100
 
-                // Set maximum progressBar percentage
-                binding.progressBar.max = 100
-                Log.e(TAG, "Progress bar max value: \n\t 100")
-
-                // Start load progress
-                viewModel.loadProgress()
-
-                // Update progressBar whenever the progress LiveData changes
-                viewModel.progress.observe(viewLifecycleOwner) { progress ->
-                    binding.progressBar.progress = (progress.progress.times(100)).toInt()
-                }
-            } else {
-                binding.progressBar.visibility = View.GONE
-                Log.e(TAG, "Progress bar visibility: \n\t GONE")
-            }
+        // Update progressBar whenever the progress LiveData changes
+        viewModel.progress.observe(viewLifecycleOwner) {
+            // Update progressbar according the current progress
+            binding.progressBar.progress = (viewModel.progress.value!!.progress.times(100)).toInt()
         }
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
-            viewModel.setTextToImageRequest()
-            if (viewModel.appStatusTextToImageRequest.value == AppStatus.DONE) {
-                viewModel.loadTextToImage()
+            viewModel.setTextToImageRequest("binding.btnGenerate.setOnClickListener")
+            if (viewModel.appStatusSetTextToImageRequest.value == AppStatus.DONE) {
+                viewModel.startTextToImageRequest("binding.btnGenerate.setOnClickListener")
+                if (viewModel.apiStatusTextToImg.value ==AppStatus.LOADING) {
+                    // Start load progress
+                    viewModel.loadProgress()
+                }
             }
-        }
-
-        // Observer which initiates decoding of image in Base64 when api delivers response
-        viewModel.finalImageBase64.observe(viewLifecycleOwner) { finalImageBase64 ->
-            viewModel.decodeImage(finalImageBase64.images.first())
         }
 
         // Observer which initiates decoding of progress image in Base64 when api delivers response
         viewModel.progressImageBase64.observe(viewLifecycleOwner) { progressImageBase64 ->
-            viewModel.decodeImage(progressImageBase64)
-        }
-
-        // Observer which loads image in ImageView when decoder sets decoded image
-        viewModel.image.observe(viewLifecycleOwner) { image ->
-            binding.ivTextToImage.setImageBitmap(image)
+            viewModel.decodeImage(progressImageBase64, "viewModel.progressImageBase64.observe")
         }
 
         // Place models into the model dropdown menu

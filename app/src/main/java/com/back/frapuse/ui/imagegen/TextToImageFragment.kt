@@ -58,10 +58,11 @@ class TextToImageFragment : Fragment() {
         // When the prompt value is not empty set the text of prompt field
         if (!viewModel.prompt.value.isNullOrEmpty()) {
             binding.etPrompt.setText(viewModel.prompt.value)
-        }
-        // Prompt value gets updated when input text changes
-        binding.etPrompt.addTextChangedListener { prompt ->
-            viewModel.setPrompt(prompt.toString())
+        } else {
+            // Prompt value gets updated when input text changes
+            binding.etPrompt.addTextChangedListener { prompt ->
+                viewModel.setPrompt(prompt.toString())
+            }
         }
 
         // When the negative prompt is not empty set the text of prompt field
@@ -147,26 +148,32 @@ class TextToImageFragment : Fragment() {
 
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.appStatusTextToImageRequest.observe(viewLifecycleOwner) { status ->
+        viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
             setButtonsState(status)
         }
 
         // Load image info when finalImageBase64 gets updated
         viewModel.finalImageBase64.observe(viewLifecycleOwner) {
             viewModel.loadImageInfo()
+        }
 
-            // Place imageInfo string into debug TextView
-            viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
-                binding.tvDebugImageInfo.text = imageInfo.info
+        // Place imageInfo string into debug TextView
+        viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
+            binding.tvDebugImageInfo.text = imageInfo.info
 
-                // Apply image metadata
-                viewModel.applyImageMetadata()
+            // Apply image metadata
+            viewModel.applyImageMetadata()
+        }
 
-                // Save image as soon image metadata is applied
-                viewModel.imageMetadata.observe(viewLifecycleOwner) {
-                    viewModel.saveImage()
-                }
+        // Save image as soon image metadata is applied
+        /*viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
+            if (imageMetadata == ) {
+                viewModel.saveImage()
             }
+        }*/
+
+        binding.btnSave.setOnClickListener {
+            viewModel.saveImage()
         }
 
         // Observe the text to image request api status and set the visibility of ProgressBar
@@ -195,12 +202,15 @@ class TextToImageFragment : Fragment() {
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
-            viewModel.loadTextToImage()
+            viewModel.setTextToImageRequest()
+            if (viewModel.appStatusTextToImageRequest.value == AppStatus.DONE) {
+                viewModel.loadTextToImage()
+            }
         }
 
         // Observer which initiates decoding of image in Base64 when api delivers response
-        viewModel.finalImageBase64.observe(viewLifecycleOwner) { imageBase64 ->
-            viewModel.decodeImage(imageBase64.images.first())
+        viewModel.finalImageBase64.observe(viewLifecycleOwner) { finalImageBase64 ->
+            viewModel.decodeImage(finalImageBase64.images.first())
         }
 
         // Observer which initiates decoding of progress image in Base64 when api delivers response
@@ -272,6 +282,7 @@ class TextToImageFragment : Fragment() {
     private fun setButtonsState(passedStatus: AppStatus) {
         viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
             if (status == AppStatus.DONE && passedStatus == AppStatus.DONE) {
+                // Apply appearance for generate button
                 binding.btnGenerate.isClickable = true
                 binding.btnGenerate.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(
@@ -279,7 +290,16 @@ class TextToImageFragment : Fragment() {
                         R.color.purple_200)
                     )
                 binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
+
+                // Apply appearance for save button
+                binding.btnSave.isClickable = true
+                binding.btnSave.backgroundTintList =
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.purple_200)
+                    )
             } else {
+                // Apply appearance for generate button
                 binding.btnGenerate.isClickable = false
                 binding.btnGenerate.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(
@@ -287,6 +307,14 @@ class TextToImageFragment : Fragment() {
                         androidx.cardview.R.color.cardview_dark_background)
                     )
                 binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
+
+                // Apply appearance for save button
+                binding.btnSave.isClickable = false
+                binding.btnSave.backgroundTintList =
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                        requireContext(),
+                        androidx.cardview.R.color.cardview_dark_background)
+                    )
             }
         }
     }

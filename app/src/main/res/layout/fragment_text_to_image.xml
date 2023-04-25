@@ -248,6 +248,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_save"
+                android:src="@drawable/square_and_arrow_down"
+                android:contentDescription="@string/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="64dp"
+                app:backgroundTint="@color/cardview_dark_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
         <Button
                 android:id="@+id/btn_reset"
                 android:text="@string/reset"

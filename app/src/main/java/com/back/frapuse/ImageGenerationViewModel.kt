@@ -159,9 +159,15 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     /* _______ Local Status ____________________________________________________________ */
 
+    // Current app status for text to image request data
     private val _appStatusTextToImageRequest = MutableLiveData<AppStatus>()
     val appStatusTextToImageRequest: LiveData<AppStatus>
         get() = _appStatusTextToImageRequest
+
+    // Current status of apply image metadata
+    private val _appStatusApplyMetaData = MutableLiveData<AppStatus>()
+    val appStatusApplyMetaData: LiveData<AppStatus>
+        get() = _appStatusApplyMetaData
 
     init {
         viewModelScope.launch {
@@ -176,27 +182,40 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* _______ Methods Generation Parameters ___________________________________________ */
 
     fun setPrompt(newPrompt: String) {
-        Log.e(TAG, "Prompt status: \n\t SETTING \n\t new: $newPrompt \n\t current: ${_prompt.value}")
-        _prompt.value = newPrompt
-        Log.e(TAG, "Prompt status: \n\t SET \n\t new: $newPrompt \n\t current: ${_prompt.value}")
-        setTextToImageRequest()
+        if (newPrompt != _prompt.value) {
+            Log.e(
+                TAG,
+                "Prompt status: \n\t SETTING \n\t new: $newPrompt \n\t current: ${_prompt.value}"
+            )
+            _prompt.value = newPrompt
+            Log.e(
+                TAG,
+                "Prompt status: \n\t SET \n\t new: $newPrompt \n\t current: ${_prompt.value}"
+            )
+        }
     }
 
     fun setNegativePrompt(newNegativePrompt: String) {
-        Log.e(TAG, "Negative prompt status: \n\t SETTING \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}")
-        _negativePrompt.value = newNegativePrompt
-        Log.e(TAG, "Negative prompt status: \n\t SET \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}")
-        setTextToImageRequest()
+        if (newNegativePrompt != _negativePrompt.value) {
+            Log.e(
+                TAG,
+                "Negative prompt status: \n\t SETTING \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}"
+            )
+            _negativePrompt.value = newNegativePrompt
+            Log.e(
+                TAG,
+                "Negative prompt status: \n\t SET \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}"
+            )
+        }
     }
 
     fun setSteps(newSteps: Int) {
         Log.e(TAG, "Steps status: \n\t CHECK \n\t new: $newSteps")
-        if (newSteps > 0) {
+        if (newSteps > 0 && newSteps != _steps.value) {
             Log.e(TAG, "Steps status: \n\t VALID \n\t new: $newSteps")
             Log.e(TAG, "Steps status: \n\t SETTING \n\t new: $newSteps \n\t current: ${_steps.value}")
             _steps.value = newSteps
             Log.e(TAG, "Steps status: \n\t SET \n\t new: $newSteps \n\t current: ${_steps.value}")
-            setTextToImageRequest()
         } else {
             Log.e(TAG, "Steps status: \n\t INVALID \n\t current: ${_steps.value}")
         }
@@ -204,12 +223,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setCfgScale(newCfgScale: Double) {
         Log.e(TAG, "CFG scale status: \n\t CHECK \n\t new: $newCfgScale")
-        if (newCfgScale > 0.0) {
+        if (newCfgScale > 0.0 && newCfgScale != _cfgScale.value) {
             Log.e(TAG, "CFG scale status: \n\t VALID \n\t new: $newCfgScale")
             Log.e(TAG, "CFG scale status: \n\t SETTING \n\t new: $newCfgScale \n\t current: ${_cfgScale.value}")
             _cfgScale.value = newCfgScale
             Log.e(TAG, "CFG scale status: \n\t SET \n\t new: $newCfgScale \n\t current: ${_cfgScale.value}")
-            setTextToImageRequest()
         } else {
             Log.e(TAG, "CFG scale status: \n\t INVALID \n\t current: ${_cfgScale.value}")
         }
@@ -217,12 +235,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setWidth(newWidth: Int) {
         Log.e(TAG, "Width status: \n\t CHECK \n\t new: $newWidth")
-        if (newWidth > 0) {
+        if (newWidth > 0 && newWidth != _width.value) {
             Log.e(TAG, "Width status: \n\t VALID \n\t new: $newWidth")
             Log.e(TAG, "Width status: \n\t SETTING \n\t new: $newWidth \n\t current: ${_width.value}")
             _width.value = newWidth
             Log.e(TAG, "Width status: \n\t SET \n\t new: $newWidth \n\t current: ${_width.value}")
-            setTextToImageRequest()
         } else {
             Log.e(TAG, "Width status: \n\t INVALID \n\t current: ${_width.value}")
         }
@@ -230,12 +247,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setHeight(newHeight: Int) {
         Log.e(TAG, "Height status: \n\t CHECK \n\t new: $newHeight")
-        if (newHeight > 0) {
+        if (newHeight > 0 && newHeight != _height.value) {
             Log.e(TAG, "Height status: \n\t VALID \n\t new: $newHeight")
             Log.e(TAG, "Height status: \n\t SETTING \n\t new: $newHeight \n\t current: ${_height.value}")
             _height.value = newHeight
             Log.e(TAG, "Height status: \n\t SET \n\t new: $newHeight \n\t current: ${_height.value}")
-            setTextToImageRequest()
         } else {
             Log.e(TAG, "Height status: \n\t INVALID \n\t current: ${_height.value}")
         }
@@ -243,12 +259,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     fun setSeed(newSeed: Long) {
         Log.e(TAG, "Seed status: \n\t CHECK \n\t new: $newSeed")
-        if (newSeed >= (-1)) {
+        if (newSeed >= (-1) && newSeed != seed.value) {
             Log.e(TAG, "Seed status: \n\t VALID \n\t new: $newSeed")
             Log.e(TAG, "Seed status: \n\t SETTING \n\t new: $newSeed \n\t current: ${_seed.value}")
             _seed.value = newSeed
             Log.e(TAG, "Seed status: \n\t SET \n\t new: $newSeed \n\t current: ${_seed.value}")
-            setTextToImageRequest()
         } else {
             Log.e(TAG, "Seed status: \n\t INVALID \n\t current: ${_seed.value}")
         }
@@ -357,7 +372,6 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             name = newSamplerName
         )
         Log.e(TAG, "Sampler status: \n\t SET")
-        setTextToImageRequest()
     }
 
     fun loadImageInfo() {
@@ -378,7 +392,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun applyImageMetadata() {
-
+        _appStatusApplyMetaData.value = AppStatus.LOADING
         var lastSeed: Long = -1
         if (_seed.value!! == lastSeed) {
             try {
@@ -410,9 +424,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Error applying image metadata: \n\t $e")
+                _appStatusApplyMetaData.value = AppStatus.ERROR
             }
             cancel()
         }
+        _appStatusApplyMetaData.value = AppStatus.DONE
     }
 
     fun saveImage() {

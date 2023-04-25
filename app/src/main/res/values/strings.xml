@@ -20,4 +20,5 @@
     <string name="seed">SEED</string>
     <string name="random_seed">-1</string>
     <string name="reset">reset</string>
+    <string name="save_button">save button</string>
 </resources>

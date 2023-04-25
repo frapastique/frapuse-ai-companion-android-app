@@ -20,73 +20,48 @@ private const val TAG = "ImageGenerationRepository"
 
 class ImageGenerationRepository(private val api: TextToImageAPI, private val database: ImageGenDatabase) {
 
-    private var _models = MutableLiveData<List<SDModel>>()
-    val models: LiveData<List<SDModel>>
-        get() = _models
-
-    private var _options = MutableLiveData<Options>()
-    val options: LiveData<Options>
-        get() = _options
-
-    private var _image = MutableLiveData<TextToImage>()
-    val image: LiveData<TextToImage>
-        get() = _image
-
-    private var _currentImage = MutableLiveData<String>()
-    val currentImage: LiveData<String>
-        get() = _currentImage
-
-    private var _progress = MutableLiveData<Progress>()
-    val progress: LiveData<Progress>
-        get() = _progress
-
-    private var _imageInfo = MutableLiveData<ImageInfo>()
-    val imageInfo: LiveData<ImageInfo>
-        get() = _imageInfo
-
-    private var _samplers = MutableLiveData<List<Sampler>>()
-    val samplers: LiveData<List<Sampler>>
-        get() = _samplers
-
     /* ____________________________________ Methods Remote _____________________________ */
 
-    suspend fun getModels() {
-        try {
-            _models.value = api.retrofitService.getModels()
+    suspend fun getModels(): List<SDModel> {
+        return try {
+            api.retrofitService.getModels()
         } catch (e: Exception) {
             Log.e(TAG, "Error loading models from API: \n\t $e")
+            listOf()
         }
     }
 
-    suspend fun getOptions() {
-        try {
-            _options.value = api.retrofitService.getOptions()
+    suspend fun getOptions(): Options {
+        return try {
+            api.retrofitService.getOptions()
         } catch (e: Exception) {
             Log.e(TAG, "Error loading options from API: \n\t $e")
+            Options(
+                sd_model_checkpoint = ""
+            )
         }
     }
 
-    suspend fun startTextToImage(textToImageRequest: TextToImageRequest) {
-        try {
-            _image.value = api.retrofitService.startTextToImage(textToImageRequest)
+    suspend fun startTextToImage(textToImageRequest: TextToImageRequest): TextToImage {
+        return try {
+            api.retrofitService.startTextToImage(textToImageRequest)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading Data from API: \n\t $e")
+            TextToImage(
+                listOf()
+            )
         }
     }
 
-    suspend fun getProgress() {
-        try {
-            _progress.value = api.retrofitService.getProgress()
-            try {
-                val currentImage = _progress.value!!.current_image
-                if (!currentImage.isNullOrEmpty()) {
-                    _currentImage.value = currentImage.toString()
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading progress image from API: \n\t $e")
-            }
+    suspend fun getProgress(): Progress {
+        return try {
+            api.retrofitService.getProgress()
         } catch (e: Exception) {
             Log.e(TAG, "Error loading progress from API: \n\t $e")
+            Progress(
+                progress = 0.0,
+                current_image = null
+            )
         }
     }
 
@@ -98,19 +73,23 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
         }
     }
 
-    /*suspend fun getImageInfo(imageBase64: ImageBase64) {
-        try {
-            _imageInfo.value = api.retrofitService.getImageMetaData(imageBase64)
+    suspend fun getImageInfo(imageBase64: ImageBase64): ImageInfo {
+        return try {
+            api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading image info from API: \n\t $e")
+            ImageInfo(
+                info = ""
+            )
         }
-    }*/
+    }
 
-    suspend fun getSamplers() {
-        try {
-            _samplers.value = api.retrofitService.getSamplers()
+    suspend fun getSamplers(): List<Sampler> {
+        return try {
+            api.retrofitService.getSamplers()
         } catch (e: Exception) {
             Log.e(TAG, "Error loading samplers from API: \n\t $e")
+            listOf()
         }
     }
 

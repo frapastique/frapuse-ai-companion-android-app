@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.back.frapuse.ApiOptionsStatus
-import com.back.frapuse.ApiTxt2ImgStatus
+import com.back.frapuse.ApiStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
@@ -68,6 +67,8 @@ class TextToImageFragment : Fragment() {
         // When the negative prompt is not empty set the text of prompt field
         if (!viewModel.negativePrompt.value.isNullOrEmpty()) {
             binding.etNegativePrompt.setText(viewModel.negativePrompt.value)
+        } else {
+            viewModel.setNegativePrompt("")
         }
         // Negative prompt gets updated when input text changes
         binding.etNegativePrompt.addTextChangedListener { negativePrompt ->
@@ -155,23 +156,47 @@ class TextToImageFragment : Fragment() {
             }
         }
 
-        // Observe the text to image request api status and set the visibility of ProgressBar
-        viewModel.txt2imgStatus.observe(viewLifecycleOwner) { status ->
-            Log.e(TAG, "txt2img status: \n\t $status")
-            if (status == ApiTxt2ImgStatus.LOADING) {
-                binding.progressBar.visibility = View.VISIBLE
-                // Set maximum progressBar percentage
-                binding.progressBar.max = 100
-                // Update progressBar whenever the progress LiveData changes
-                viewModel.progress.observe(viewLifecycleOwner) { progress ->
-                    binding.progressBar.progress = (progress.times(100)).toInt()
+        // Load image info when finalImageBase64 gets updated
+        viewModel.finalImageBase64.observe(viewLifecycleOwner) {
+            viewModel.loadImageInfo()
+
+            // Place imageInfo string into debug TextView
+            viewModel.imageInfo.observe(viewLifecycleOwner) { imageInfo ->
+                binding.tvDebugImageInfo.text = imageInfo.info
+
+                // Apply image metadata
+                viewModel.applyImageMetadata()
+
+                // Save image as soon image metadata is applied
+                viewModel.imageMetadata.observe(viewLifecycleOwner) {
+                    viewModel.saveImage()
                 }
-            } else {
-                binding.progressBar.visibility = View.GONE
             }
         }
 
+        // Observe the text to image request api status and set the visibility of ProgressBar
+        viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) { status ->
+            Log.e(TAG, "txt2img status: \n\t $status")
+            if (status == ApiStatus.LOADING) {
+                binding.progressBar.visibility = View.VISIBLE
+                Log.e(TAG, "Progress bar visibility: \n\t VISIBLE")
 
+                // Set maximum progressBar percentage
+                binding.progressBar.max = 100
+                Log.e(TAG, "Progress bar max value: \n\t 100")
+
+                // Start load progress
+                viewModel.loadProgress()
+
+                // Update progressBar whenever the progress LiveData changes
+                viewModel.progress.observe(viewLifecycleOwner) { progress ->
+                    binding.progressBar.progress = (progress.progress.times(100)).toInt()
+                }
+            } else {
+                binding.progressBar.visibility = View.GONE
+                Log.e(TAG, "Progress bar visibility: \n\t GONE")
+            }
+        }
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
@@ -214,7 +239,7 @@ class TextToImageFragment : Fragment() {
         }
 
         // Place samplers into the sampler dropdown menu
-        viewModel.samplers.observe(viewLifecycleOwner) { samplers ->
+        viewModel.samplersList.observe(viewLifecycleOwner) { samplers ->
             val samplerNameList: MutableList<String> = mutableListOf()
             for (sampler in samplers) {
                 samplerNameList.add(sampler.name)
@@ -229,10 +254,10 @@ class TextToImageFragment : Fragment() {
 
         // If statement to update sampler with hardcoded value only when no value is saved
         // else place sampler from viewModel
-        if (viewModel.currentSampler.isEmpty()) {
+        if (viewModel.sampler.value?.name.isNullOrEmpty()) {
             viewModel.setSampler(samplerInit)
         } else {
-            binding.actvSamplerIndex.setText(viewModel.currentSampler)
+            binding.actvSamplerIndex.setText(viewModel.sampler.value!!.name)
         }
         // Set sampler according the selection from dropdown menu
         binding.actvSamplerIndex.setOnItemClickListener { parent, _, position, _ ->
@@ -247,17 +272,12 @@ class TextToImageFragment : Fragment() {
 
             true
         }
-
-        /*// Observer for image metadata safe in database on change
-        viewModel.imageMetadata.observe(viewLifecycleOwner) {
-            viewModel.saveImage()
-        }*/
     }
 
     private fun setButtonsState() {
-        viewModel.optionsStatus.observe(viewLifecycleOwner) { status ->
+        viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
             when(status) {
-                ApiOptionsStatus.DONE -> {
+                ApiStatus.DONE -> {
                     binding.btnGenerate.isClickable = true
                     binding.btnGenerate.backgroundTintList =
                         ColorStateList.valueOf(ContextCompat.getColor(

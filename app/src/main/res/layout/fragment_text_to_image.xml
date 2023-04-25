@@ -261,5 +261,15 @@
                 app:layout_constraintBottom_toBottomOf="@+id/dropdown_menu_sampler_index"
                 app:layout_constraintStart_toStartOf="@+id/ti_seed" />
 
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_debug_image_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="300dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

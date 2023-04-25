@@ -49,6 +49,11 @@ class TextToImageFragment : Fragment() {
         val seedInit: Long = binding.etSeed.text.toString().toLong()
         val samplerInit: String = binding.actvSamplerIndex.text.toString()
 
+        if (viewModel.finalImageBase64.value != null) {
+            val image = viewModel.decodeImage(viewModel.finalImageBase64.value!!.images.first())
+            binding.ivTextToImage.setImageBitmap(image)
+        }
+
         // Observe the config and set the currently loaded sd_model_checkpoint
         viewModel.options.observe(viewLifecycleOwner) { options ->
             binding.actvModel.setText(Regex("^[^.]*")
@@ -152,14 +157,9 @@ class TextToImageFragment : Fragment() {
         }
 
         // Load image info when finalImageBase64 gets updated
-        viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) {
-            if (it == AppStatus.DONE) {
-                val image = viewModel.decodeImage(
-                    viewModel.finalImageBase64.value!!.images[0],
-                    "viewModel.apiStatusTextToImg.observe"
-                )
+        viewModel.finalImageBase64.observe(viewLifecycleOwner) { genData ->
+                val image = viewModel.decodeImage(genData.images.first())
                 binding.ivTextToImage.setImageBitmap(image)
-            }
         }
 
         // Place imageInfo string into debug TextView
@@ -183,9 +183,9 @@ class TextToImageFragment : Fragment() {
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
-            viewModel.setTextToImageRequest("binding.btnGenerate.setOnClickListener")
+            viewModel.setTextToImageRequest()
             if (viewModel.appStatusSetTextToImageRequest.value == AppStatus.DONE) {
-                viewModel.startTextToImageRequest("binding.btnGenerate.setOnClickListener")
+                viewModel.startTextToImageRequest()
                 if (viewModel.apiStatusTextToImg.value ==AppStatus.LOADING) {
                     // Start load progress
                     viewModel.loadProgress()
@@ -195,7 +195,8 @@ class TextToImageFragment : Fragment() {
 
         // Observer which initiates decoding of progress image in Base64 when api delivers response
         viewModel.progressImageBase64.observe(viewLifecycleOwner) { progressImageBase64 ->
-            viewModel.decodeImage(progressImageBase64, "viewModel.progressImageBase64.observe")
+            val image = viewModel.decodeImage(progressImageBase64)
+            binding.ivTextToImage.setImageBitmap(image)
         }
 
         // Place models into the model dropdown menu
@@ -290,5 +291,10 @@ class TextToImageFragment : Fragment() {
                     androidx.cardview.R.color.cardview_dark_background)
                 )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 }

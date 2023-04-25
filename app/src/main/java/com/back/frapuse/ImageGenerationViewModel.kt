@@ -184,105 +184,57 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     // Set current prompt
     fun setPrompt(newPrompt: String) {
         if (newPrompt != _prompt.value) {
-            Log.e(
-                TAG,
-                "Prompt status: \n\t SETTING \n\t new: $newPrompt \n\t current: ${_prompt.value}"
-            )
             _prompt.value = newPrompt
-            Log.e(
-                TAG,
-                "Prompt status: \n\t SET \n\t new: $newPrompt \n\t current: ${_prompt.value}"
-            )
         }
     }
 
     // Set current negative prompt
     fun setNegativePrompt(newNegativePrompt: String) {
         if (newNegativePrompt != _negativePrompt.value) {
-            Log.e(
-                TAG,
-                "Negative prompt status: \n\t SETTING \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}"
-            )
             _negativePrompt.value = newNegativePrompt
-            Log.e(
-                TAG,
-                "Negative prompt status: \n\t SET \n\t new: $newNegativePrompt \n\t current: ${_negativePrompt.value}"
-            )
         }
     }
 
     // Set current steps
     fun setSteps(newSteps: Int) {
-        Log.e(TAG, "Steps status: \n\t CHECK \n\t new: $newSteps")
         if (newSteps > 0 && newSteps != _steps.value) {
-            Log.e(TAG, "Steps status: \n\t VALID \n\t new: $newSteps")
-            Log.e(TAG, "Steps status: \n\t SETTING \n\t new: $newSteps \n\t current: ${_steps.value}")
             _steps.value = newSteps
-            Log.e(TAG, "Steps status: \n\t SET \n\t new: $newSteps \n\t current: ${_steps.value}")
-        } else {
-            Log.e(TAG, "Steps status: \n\t INVALID \n\t current: ${_steps.value}")
         }
     }
 
     // Set current CFG scale
     fun setCfgScale(newCfgScale: Double) {
-        Log.e(TAG, "CFG scale status: \n\t CHECK \n\t new: $newCfgScale")
         if (newCfgScale > 0.0 && newCfgScale != _cfgScale.value) {
-            Log.e(TAG, "CFG scale status: \n\t VALID \n\t new: $newCfgScale")
-            Log.e(TAG, "CFG scale status: \n\t SETTING \n\t new: $newCfgScale \n\t current: ${_cfgScale.value}")
             _cfgScale.value = newCfgScale
-            Log.e(TAG, "CFG scale status: \n\t SET \n\t new: $newCfgScale \n\t current: ${_cfgScale.value}")
-        } else {
-            Log.e(TAG, "CFG scale status: \n\t INVALID \n\t current: ${_cfgScale.value}")
         }
     }
 
     // Set current width
     fun setWidth(newWidth: Int) {
-        Log.e(TAG, "Width status: \n\t CHECK \n\t new: $newWidth")
         if (newWidth > 0 && newWidth != _width.value) {
-            Log.e(TAG, "Width status: \n\t VALID \n\t new: $newWidth")
-            Log.e(TAG, "Width status: \n\t SETTING \n\t new: $newWidth \n\t current: ${_width.value}")
             _width.value = newWidth
-            Log.e(TAG, "Width status: \n\t SET \n\t new: $newWidth \n\t current: ${_width.value}")
-        } else {
-            Log.e(TAG, "Width status: \n\t INVALID \n\t current: ${_width.value}")
         }
     }
 
     // Set current height
     fun setHeight(newHeight: Int) {
-        Log.e(TAG, "Height status: \n\t CHECK \n\t new: $newHeight")
         if (newHeight > 0 && newHeight != _height.value) {
-            Log.e(TAG, "Height status: \n\t VALID \n\t new: $newHeight")
-            Log.e(TAG, "Height status: \n\t SETTING \n\t new: $newHeight \n\t current: ${_height.value}")
             _height.value = newHeight
-            Log.e(TAG, "Height status: \n\t SET \n\t new: $newHeight \n\t current: ${_height.value}")
-        } else {
-            Log.e(TAG, "Height status: \n\t INVALID \n\t current: ${_height.value}")
         }
     }
 
     // Set current seed
     fun setSeed(newSeed: Long) {
-        Log.e(TAG, "Seed status: \n\t CHECK \n\t new: $newSeed")
         if (newSeed >= (-1) && newSeed != seed.value) {
-            Log.e(TAG, "Seed status: \n\t VALID \n\t new: $newSeed")
-            Log.e(TAG, "Seed status: \n\t SETTING \n\t new: $newSeed \n\t current: ${_seed.value}")
             _seed.value = newSeed
-            Log.e(TAG, "Seed status: \n\t SET \n\t new: $newSeed \n\t current: ${_seed.value}")
-        } else {
-            Log.e(TAG, "Seed status: \n\t INVALID \n\t current: ${_seed.value}")
         }
     }
 
     // Set current Sampler
     fun setSampler(newSamplerName: String) {
-        Log.e(TAG, "Sampler status: \n\t SETTING")
         _sampler.value = Sampler(
             name = newSamplerName
         )
-        Log.e(TAG, "Sampler status: \n\t SET")
     }
 
     // Set current model, set options and update options value
@@ -300,7 +252,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     // Set and fill text to image request and update status
-    fun setTextToImageRequest(from: String) {
+    fun setTextToImageRequest() {
         _appStatusSetTextToImageRequest.value = AppStatus.LOADING
         Log.e(TAG, "TextToImageRequest status: \n\t CHECK")
         if (!_prompt.value.isNullOrEmpty()) {
@@ -364,15 +316,14 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     // Start text to image request
-    fun startTextToImageRequest(from: String) {
-        Log.e(TAG, "startTextToImageRequest calles from: \n\t$from")
+    fun startTextToImageRequest() {
         _apiStatusTextToImg.value = AppStatus.LOADING
         viewModelScope.launch {
             _finalImageBase64.value = repository.startTextToImage(_textToImageRequest.value!!)
             _appStatusSetTextToImageRequest.value = AppStatus.WAITING
             _apiStatusTextToImg.value = AppStatus.DONE
             cancel()
-            loadImageInfo("startTextToImageRequest")
+            loadImageInfo()
         }
     }
 
@@ -398,20 +349,24 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading progress loop: \n\t $e")
             }
+            _progress.value = Progress(
+                progress = 0.0,
+                current_image = null
+            )
+            _progressImageBase64.value = _finalImageBase64.value!!.images.first()
             cancel()
         }
     }
 
     // Load image info from final image
-    private fun loadImageInfo(from: String) {
-        Log.e(TAG, "loadImageInfo got called from: \n\t$from")
+    private fun loadImageInfo() {
         viewModelScope.launch {
             _imageInfo.value = repository.getImageInfo(
                 ImageBase64(
                     _finalImageBase64.value!!.images[0]
                 )
             )
-            applyImageMetadata("loadImageInfo")
+            applyImageMetadata()
             cancel()
         }
     }
@@ -419,15 +374,13 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* _______ Methods Local ___________________________________________________________ */
 
     // Decode Base64 image and set image value with bitmap image
-    fun decodeImage(imageBase: String, from: String): Bitmap {
-        Log.e(TAG, "decodeImage got called from: \n\t$from")
+    fun decodeImage(imageBase: String): Bitmap {
         val decodedByte = Base64.decode(imageBase, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
     // Apply image metadata and update status
-    private fun applyImageMetadata(from: String) {
-        Log.e(TAG, "applyImageMetadata got called from: \n\t$from")
+    private fun applyImageMetadata() {
         _appStatusApplyMetaData.value = AppStatus.LOADING
         var lastSeed: Long = -1
         if (_seed.value!! == lastSeed) {

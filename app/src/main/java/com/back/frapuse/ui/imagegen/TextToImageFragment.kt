@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.back.frapuse.ApiStatus
+import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentTextToImageBinding
@@ -147,13 +147,8 @@ class TextToImageFragment : Fragment() {
 
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.genDataStatus.observe(viewLifecycleOwner) { state ->
-            if (state) {
-                setButtonsState()
-                viewModel.setTextToImageRequest()
-            } else {
-                setButtonsState()
-            }
+        viewModel.appStatusTextToImageRequest.observe(viewLifecycleOwner) { status ->
+            setButtonsState(status)
         }
 
         // Load image info when finalImageBase64 gets updated
@@ -177,7 +172,7 @@ class TextToImageFragment : Fragment() {
         // Observe the text to image request api status and set the visibility of ProgressBar
         viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) { status ->
             Log.e(TAG, "txt2img status: \n\t $status")
-            if (status == ApiStatus.LOADING) {
+            if (status == AppStatus.LOADING) {
                 binding.progressBar.visibility = View.VISIBLE
                 Log.e(TAG, "Progress bar visibility: \n\t VISIBLE")
 
@@ -274,27 +269,24 @@ class TextToImageFragment : Fragment() {
         }
     }
 
-    private fun setButtonsState() {
+    private fun setButtonsState(passedStatus: AppStatus) {
         viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
-            when(status) {
-                ApiStatus.DONE -> {
-                    binding.btnGenerate.isClickable = true
-                    binding.btnGenerate.backgroundTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(
-                            requireContext(),
-                            R.color.purple_200)
-                        )
-                    binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
-                }
-                else -> {
-                    binding.btnGenerate.isClickable = false
-                    binding.btnGenerate.backgroundTintList =
-                        ColorStateList.valueOf(ContextCompat.getColor(
-                            requireContext(),
-                            androidx.cardview.R.color.cardview_dark_background)
-                        )
-                    binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
-                }
+            if (status == AppStatus.DONE && passedStatus == AppStatus.DONE) {
+                binding.btnGenerate.isClickable = true
+                binding.btnGenerate.backgroundTintList =
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                        requireContext(),
+                        R.color.purple_200)
+                    )
+                binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
+            } else {
+                binding.btnGenerate.isClickable = false
+                binding.btnGenerate.backgroundTintList =
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                        requireContext(),
+                        androidx.cardview.R.color.cardview_dark_background)
+                    )
+                binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
             }
         }
     }

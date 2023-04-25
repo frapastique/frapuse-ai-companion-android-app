@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ImageGenerationViewModel"
 
-enum class ApiStatus { LOADING, ERROR, DONE }
+enum class AppStatus { LOADING, ERROR, DONE }
 
 class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -68,13 +68,13 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     /* _______ Api Status ______________________________________________________________ */
 
     // Concurrent API status of options
-    private val _apiStatusOptions = MutableLiveData<ApiStatus>()
-    val apiStatusOptions: LiveData<ApiStatus>
+    private val _apiStatusOptions = MutableLiveData<AppStatus>()
+    val apiStatusOptions: LiveData<AppStatus>
         get() = _apiStatusOptions
 
     // Concurrent API status of text to image request
-    private val _apiStatusTextToImg = MutableLiveData<ApiStatus>()
-    val apiStatusTextToImg: LiveData<ApiStatus>
+    private val _apiStatusTextToImg = MutableLiveData<AppStatus>()
+    val apiStatusTextToImg: LiveData<AppStatus>
         get() = _apiStatusTextToImg
 
 
@@ -159,21 +159,18 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     /* _______ Local Status ____________________________________________________________ */
 
-    // Holds the status of image generation parameters
-    private val _genDataStatus = MutableLiveData<Boolean>()
-    val genDataStatus: LiveData<Boolean>
-        get() = _genDataStatus
-
+    private val _appStatusTextToImageRequest = MutableLiveData<AppStatus>()
+    val appStatusTextToImageRequest: LiveData<AppStatus>
+        get() = _appStatusTextToImageRequest
 
     init {
         viewModelScope.launch {
             _imageLibrary.value = repository.getAllImages()
             loadOptions()
             loadSamplers()
-            Log.e(TAG, "Sampler status: \n\t LOADED")
             loadModels()
-            Log.e(TAG, "Model status: \n\t LOADED")
         }
+        _appStatusTextToImageRequest.value = AppStatus.ERROR
     }
 
     /* _______ Methods Generation Parameters ___________________________________________ */
@@ -257,15 +254,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private fun checkGenData() {
-        _genDataStatus.value = _prompt.value!!.isNotBlank()
-                && _cfgScale.value!! > 0
-                && _steps.value!! > 0
-                && _width.value!! > 0
-                && _height.value!! > 0
-    }
-
     fun setTextToImageRequest() {
+        _appStatusTextToImageRequest.value = AppStatus.LOADING
         Log.e(TAG, "TextToImageRequest status: \n\t CHECK")
         if (!_prompt.value.isNullOrEmpty()) {
             Log.e(TAG, "TextToImageRequest status: \n\t VALID")
@@ -281,16 +271,18 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                 negative_prompt = _negativePrompt.value!!
             )
             Log.e(TAG, "TextToImageRequest status: \n\t SET")
+            _appStatusTextToImageRequest.value = AppStatus.DONE
         } else {
             Log.e(TAG, "TextToImageRequest status: \n\t INVALID")
+            _appStatusTextToImageRequest.value = AppStatus.ERROR
         }
     }
 
     fun loadTextToImage() {
         viewModelScope.launch {
-            _apiStatusTextToImg.value = ApiStatus.LOADING
+            _apiStatusTextToImg.value = AppStatus.LOADING
             _finalImageBase64.value = repository.startTextToImage(_textToImageRequest.value!!)
-            _apiStatusTextToImg.value = ApiStatus.DONE
+            _apiStatusTextToImg.value = AppStatus.DONE
             cancel()
         }
     }
@@ -298,7 +290,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     fun loadProgress() {
         viewModelScope.launch {
             try {
-                while (_apiStatusTextToImg.value == ApiStatus.LOADING) {
+                while (_apiStatusTextToImg.value == AppStatus.LOADING) {
                     delay(100)
                     repository.getProgress()
                     try {
@@ -315,12 +307,12 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun loadOptions() {
-        _apiStatusOptions.value = ApiStatus.LOADING
+        _apiStatusOptions.value = AppStatus.LOADING
         viewModelScope.launch {
             Log.e(TAG, "Option status: \n\t LOADING")
             _options.value = repository.getOptions()
             Log.e(TAG, "Option status: \n\t LOADED")
-            _apiStatusOptions.value = ApiStatus.DONE
+            _apiStatusOptions.value = AppStatus.DONE
             cancel()
         }
     }
@@ -340,14 +332,14 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun setModel(modelName: String) {
-        _apiStatusOptions.value = ApiStatus.LOADING
+        _apiStatusOptions.value = AppStatus.LOADING
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
             sd_model_checkpoint = newModel!!.title
         )
         viewModelScope.launch {
             repository.setOptions(newOptions)
-            _apiStatusOptions.value = ApiStatus.DONE
+            _apiStatusOptions.value = AppStatus.DONE
         }
     }
 
@@ -388,12 +380,16 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     fun applyImageMetadata() {
 
         var lastSeed: Long = -1
-        try {
-            lastSeed = Regex("Seed: (\\d+)")
-                .find(imageInfo.value!!.info)
-                ?.groupValues!![1].toLong()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error finding seed: \n\t $e")
+        if (_seed.value!! == lastSeed) {
+            try {
+                lastSeed = Regex("Seed: (\\d+)")
+                    .find(imageInfo.value!!.info)
+                    ?.groupValues!![1].toLong()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error finding seed: \n\t $e")
+            }
+        } else {
+            lastSeed = _seed.value!!
         }
 
         viewModelScope.launch {

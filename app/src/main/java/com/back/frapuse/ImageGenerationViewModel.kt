@@ -247,6 +247,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         viewModelScope.launch {
             repository.setOptions(newOptions)
             _options.value = repository.getOptions()
+            _models.value = repository.getModels()
             _apiStatusOptions.value = AppStatus.DONE
         }
     }

@@ -2,7 +2,6 @@ package com.back.frapuse.ui.imagegen
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -66,7 +65,13 @@ class TextToImageFragment : Fragment() {
         }
         // Prompt value gets updated when input text changes
         binding.etPrompt.addTextChangedListener { prompt ->
-            viewModel.setPrompt(prompt.toString())
+            if (prompt.isNullOrEmpty()) {
+                viewModel.setPrompt("")
+                setGenButtonsState(false)
+            } else {
+                viewModel.setPrompt(prompt.toString())
+                setGenButtonsState(true)
+            }
         }
 
         // When the negative prompt is not empty set the text of prompt field
@@ -153,7 +158,6 @@ class TextToImageFragment : Fragment() {
         // Update the color and clickable state of generate button when min values of
         // prompt, steps, width, height meet the minimum requirements else set to not clickable
         viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
-            setButtonsState(status)
         }
 
         // Load image info when finalImageBase64 gets updated
@@ -255,46 +259,53 @@ class TextToImageFragment : Fragment() {
         }
     }
 
-    private fun setButtonsState(status: AppStatus) {
-        if (status == AppStatus.DONE) {
+    private fun setGenButtonsState(state: Boolean) {
+        if (state) {
             // Apply appearance for generate button
             binding.btnGenerate.isClickable = true
             binding.btnGenerate.backgroundTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(
-                    requireContext(),
-                    R.color.purple_200)
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.purple_200
+                    )
                 )
             binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
-
-            // Apply appearance for save button
-            binding.btnSave.isClickable = true
-            binding.btnSave.backgroundTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(
-                    requireContext(),
-                    R.color.purple_200)
-                )
         } else {
             // Apply appearance for generate button
             binding.btnGenerate.isClickable = false
             binding.btnGenerate.backgroundTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(
-                    requireContext(),
-                    androidx.cardview.R.color.cardview_dark_background)
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        androidx.cardview.R.color.cardview_dark_background
+                    )
                 )
             binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
-
-            // Apply appearance for save button
-            binding.btnSave.isClickable = false
-            binding.btnSave.backgroundTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(
-                    requireContext(),
-                    androidx.cardview.R.color.cardview_dark_background)
-                )
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
+    private fun setSaveButtonState(state: Boolean) {
+        if (state) {
+            // Apply appearance for save button
+            binding.btnSave.isClickable = true
+            binding.btnSave.backgroundTintList =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.purple_200
+                    )
+                )
+        } else {
+            // Apply appearance for save button
+            binding.btnSave.isClickable = false
+            binding.btnSave.backgroundTintList =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        androidx.cardview.R.color.cardview_dark_background
+                    )
+                )
+        }
     }
 }

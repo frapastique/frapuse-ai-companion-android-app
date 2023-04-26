@@ -50,4 +50,12 @@ interface ImageGenerationDao {
      * */
     @Query("DELETE FROM imageGenMetadata_table")
     suspend fun deleteAllImages()
+
+    /**
+     * Method to get specified element from the 'imageGenMetadata_table' database
+     * @param imageID ID of the wanted image
+     * @return ImageMetadata
+     * */
+    @Query("SELECT * FROM imageGenMetadata_table WHERE id = :imageID")
+    suspend fun getImageMetadata(imageID: Long): ImageMetadata
 }

@@ -207,6 +207,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_get_to_rv_fragment"
+                android:text="@string/nav_to_rv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="300dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
         <ImageView
                 android:id="@+id/iv_text_to_image"
                 android:layout_width="0dp"
@@ -278,6 +289,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="300dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
                 app:layout_constraintEnd_toEndOf="parent"

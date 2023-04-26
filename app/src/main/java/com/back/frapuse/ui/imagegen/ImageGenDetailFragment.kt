@@ -40,7 +40,18 @@ class ImageGenDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //viewModel.getImageMetaData(imageID)
-        binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(viewModel.finalImageBase64.value!!.images.first()))
+        viewModel.setImageMetadata(imageID)
+        viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
+            binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
+            binding.etPrompt.setText(imageMetadata.positivePrompt)
+            binding.etNegativePrompt.setText(imageMetadata.negativePrompt)
+            binding.etSeed.setText(imageMetadata.seed.toString())
+            binding.etModel.setText(imageMetadata.model)
+            binding.etSteps.setText(imageMetadata.steps.toString())
+            binding.etCfgScale.setText(imageMetadata.CFGScale.toString())
+            binding.etHeight.setText(imageMetadata.height.toString())
+            binding.etWidth.setText(imageMetadata.width.toString())
+            binding.etSampler.setText(imageMetadata.sampler)
+        }
     }
 }

@@ -17,8 +17,8 @@
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/mcv_text_to_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
@@ -96,9 +96,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/steps"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_model"
+                app:layout_constraintStart_toStartOf="@+id/ti_prompt"
+                app:layout_constraintTop_toBottomOf="@+id/ti_model"
                 app:layout_constraintEnd_toStartOf="@+id/ti_cfg_scale"
                 android:layout_marginEnd="4dp"
                 android:layout_marginTop="4dp">
@@ -114,7 +113,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dropdown_menu_model"
+                android:id="@+id/ti_model"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="53dp"
@@ -127,7 +126,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/ti_steps">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/actv_model"
+                    android:id="@+id/et_model"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="none"
@@ -192,7 +191,7 @@
                 android:layout_marginStart="4dp"
                 app:layout_constraintStart_toEndOf="@+id/ti_height"
                 app:layout_constraintTop_toTopOf="@+id/ti_steps"
-                app:layout_constraintEnd_toEndOf="@+id/dropdown_menu_model"
+                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
                 app:layout_constraintBottom_toBottomOf="@+id/ti_steps">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -211,11 +210,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/seed"
-                app:layout_constraintEnd_toEndOf="@+id/dropdown_menu_model"
+                app:layout_constraintEnd_toEndOf="@+id/ti_model"
                 app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
                 app:layout_constraintStart_toStartOf="@+id/ti_negative_prompt"
                 android:layout_marginTop="4dp"
-                app:layout_constraintBottom_toTopOf="@+id/dropdown_menu_model">
+                app:layout_constraintBottom_toTopOf="@+id/ti_model">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_seed"
@@ -228,18 +227,20 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dropdown_menu_sampler_index"
+                android:id="@+id/ti_sampler"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="53dp"
                 android:hint="@string/sampler"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="@+id/ti_prompt"
                 app:layout_constraintTop_toBottomOf="@+id/ti_steps"
                 app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
-                android:layout_marginTop="4dp">
+                app:layout_constraintBottom_toBottomOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/actv_sampler_index"
+                    android:id="@+id/et_sampler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="none"

@@ -438,4 +438,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             cancel()
         }
     }
+
+    // Set image metadata for current image
+    fun setImageMetadata(imageID: Long) {
+        viewModelScope.launch {
+            _imageMetadata.value = repository.getImageMetadata(imageID)
+        }
+    }
 }

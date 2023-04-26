@@ -380,6 +380,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
     }
 
+    // Set image value to current image
+    fun setImage(image: Bitmap) {
+        _image.value = image
+    }
+
     // Apply image metadata and update status
     private fun applyImageMetadata() {
         _appStatusApplyMetaData.value = AppStatus.LOADING

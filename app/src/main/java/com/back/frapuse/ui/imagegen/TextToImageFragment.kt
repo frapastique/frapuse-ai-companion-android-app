@@ -63,7 +63,7 @@ class TextToImageFragment : Fragment() {
         if (!viewModel.prompt.value.isNullOrEmpty()) {
             binding.etPrompt.setText(viewModel.prompt.value)
         }
-        // Prompt value gets updated when input text changes
+        // Prompt value gets updated when input text changes & set button state accordingly
         binding.etPrompt.addTextChangedListener { prompt ->
             if (prompt.isNullOrEmpty()) {
                 viewModel.setPrompt("")
@@ -155,15 +155,20 @@ class TextToImageFragment : Fragment() {
             }
         }
 
-        // Update the color and clickable state of generate button when min values of
-        // prompt, steps, width, height meet the minimum requirements else set to not clickable
-        viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
-        }
-
         // Load image info when finalImageBase64 gets updated
         viewModel.finalImageBase64.observe(viewLifecycleOwner) { genData ->
-                val image = viewModel.decodeImage(genData.images.first())
-                binding.ivTextToImage.setImageBitmap(image)
+            val image = viewModel.decodeImage(genData.images.first())
+            binding.ivTextToImage.setImageBitmap(image)
+            viewModel.setImage(image)
+        }
+
+        // Set save image button according to value of image (not null or empty)
+        viewModel.image.observe(viewLifecycleOwner) { image ->
+            if (image != null) {
+                setSaveButtonState(true)
+            } else {
+                setSaveButtonState(false)
+            }
         }
 
         // Place imageInfo string into debug TextView
@@ -261,7 +266,7 @@ class TextToImageFragment : Fragment() {
 
     private fun setGenButtonsState(state: Boolean) {
         if (state) {
-            // Apply appearance for generate button
+            // Apply positive appearance for generate button
             binding.btnGenerate.isClickable = true
             binding.btnGenerate.backgroundTintList =
                 ColorStateList.valueOf(
@@ -272,7 +277,7 @@ class TextToImageFragment : Fragment() {
                 )
             binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
         } else {
-            // Apply appearance for generate button
+            // Apply negative appearance for generate button
             binding.btnGenerate.isClickable = false
             binding.btnGenerate.backgroundTintList =
                 ColorStateList.valueOf(
@@ -287,7 +292,7 @@ class TextToImageFragment : Fragment() {
 
     private fun setSaveButtonState(state: Boolean) {
         if (state) {
-            // Apply appearance for save button
+            // Apply positive appearance for save button
             binding.btnSave.isClickable = true
             binding.btnSave.backgroundTintList =
                 ColorStateList.valueOf(
@@ -297,7 +302,7 @@ class TextToImageFragment : Fragment() {
                     )
                 )
         } else {
-            // Apply appearance for save button
+            // Apply negative appearance for save button
             binding.btnSave.isClickable = false
             binding.btnSave.backgroundTintList =
                 ColorStateList.valueOf(

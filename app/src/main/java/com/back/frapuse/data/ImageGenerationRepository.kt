@@ -163,4 +163,31 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
             Log.e(TAG, "Error deleting all images from 'imageGenMetadata_table': \n\t $e")
         }
     }
+
+    /**
+     * Get selected image from database
+     * @param imageID ID of the wanted image
+     * @return ImageMetadata
+     * */
+    suspend fun getImageMetadata(imageID: Long): ImageMetadata {
+        return try {
+            database.imageGenerationDao.getImageMetadata(imageID)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching image from 'imageGenMetadata_table': \n\t $e")
+            ImageMetadata(
+                seed = 0,
+                positivePrompt = "",
+                negativePrompt = "",
+                image = "",
+                steps = 0,
+                size = "",
+                width = 0,
+                height = 0,
+                sampler = "",
+                CFGScale = 0.0,
+                model = "",
+                info = ""
+            )
+        }
+    }
 }

@@ -19,15 +19,15 @@ import com.back.frapuse.databinding.FragmentTextToImageBinding
 private const val TAG = "TextToImageFragment"
 
 class TextToImageFragment : Fragment() {
-    // Hier wird das ViewModel, in dem die Logik stattfindet, geholt
+    // Get the viewModel into the logic
     private val viewModel: ImageGenerationViewModel by activityViewModels()
 
-    // Das binding für das QuizFragment wird deklariert
+    // Declaration of binding
     private lateinit var binding: FragmentTextToImageBinding
 
     /**
      * Lifecycle Funktion onCreateView
-     * Hier wird das binding initialisiert und das Layout gebaut
+     * Here gets the binding initialized and the layout built
      */
     override fun onCreateView(
         inflater: LayoutInflater,

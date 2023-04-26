@@ -1,13 +1,13 @@
 package com.back.frapuse.util
 
-import android.graphics.BitmapFactory
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.databinding.ImageGenItemBinding
+import com.back.frapuse.ui.imagegen.ImageGenRecyclerViewFragmentDirections
 
 class ImageGenAdapter(
     // ViewModel to interact with shared methods
@@ -33,9 +33,14 @@ class ImageGenAdapter(
     override fun onBindViewHolder(holder: ImageGenViewHolder, position: Int) {
         val imageData = dataset[position]
 
-        val decodedByte = Base64.decode(imageData.image, Base64.DEFAULT)
-        val image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.size)
+        holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
 
-        holder.binding.ivGenImage.setImageBitmap(image)
+        holder.binding.ivGenImage.setOnClickListener { ivGenImage ->
+            ivGenImage.findNavController().navigate(ImageGenRecyclerViewFragmentDirections
+                .actionImageGenRecyclerViewFragmentToImageGenDetailFragment(
+                    imageID = imageData.id
+                )
+            )
+        }
     }
 }

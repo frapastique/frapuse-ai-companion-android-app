@@ -35,5 +35,23 @@
         <action
                 android:id="@+id/action_imageGenRecyclerViewFragment_to_textToImageFragment"
                 app:destination="@id/textToImageFragment" />
+        <action
+                android:id="@+id/action_imageGenRecyclerViewFragment_to_imageGenDetailFragment"
+                app:destination="@id/imageGenDetailFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/imageGenDetailFragment"
+            android:name="com.back.frapuse.ui.imagegen.ImageGenDetailFragment"
+            android:label="ImageGenDetailFragment"
+            tools:layout="@layout/fragment_image_gen_detail">
+        <action
+                android:id="@+id/action_imageGenDetailFragment_to_imageGenRecyclerViewFragment"
+                app:destination="@id/imageGenRecyclerViewFragment" />
+        <action
+                android:id="@+id/action_imageGenDetailFragment_to_textToImageFragment"
+                app:destination="@id/textToImageFragment" />
+        <argument
+                android:name="imageID"
+                app:argType="long" />
     </fragment>
 </navigation>

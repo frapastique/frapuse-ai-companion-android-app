@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
@@ -24,229 +23,215 @@
                 android:layout_marginBottom="8dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/ti_prompt"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:shapeAppearanceOverlay="@style/roundedCorners"
                 tools:src="@tools:sample/avatars" />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_prompt"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
+        <TextView
+                android:id="@+id/tv_info"
+                android:text="@string/info"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_text_to_image"
+                app:layout_constraintBottom_toTopOf="@+id/cl_info_plate"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="4dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_info_plate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/ti_negative_prompt"
-                tools:text="@string/prompt">
+                android:layout_marginBottom="8dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_prompt"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/tv_prompt"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:hint="@string/prompt"
-                    tools:text="@string/prompt" />
+                    app:layout_constraintTop_toTopOf="@id/cl_info_plate"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/prompt" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_negative_prompt"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@+id/ti_prompt"
-                app:layout_constraintTop_toBottomOf="@id/ti_prompt"
-                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
-                tools:text="@string/negative_prompt"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/ti_seed">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_negative_prompt"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/tv_prompt_value"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:hint="@string/negative_prompt"
-                    tools:text="@string/negative_prompt" />
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintTop_toTopOf="@id/cl_info_plate"
+                    app:layout_constraintEnd_toEndOf="@id/cl_info_plate"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_negative_prompt_value"
+                    tools:text="@string/prompt"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_prompt" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_steps"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/steps"
-                app:layout_constraintStart_toStartOf="@+id/ti_prompt"
-                app:layout_constraintTop_toBottomOf="@+id/ti_model"
-                app:layout_constraintEnd_toStartOf="@+id/ti_cfg_scale"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="0dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_steps"
-                    android:inputType="none"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/tv_negative_prompt"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
-                    tools:text="@string/steps_20"
-                    android:textAlignment="center" />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toStartOf="@id/cl_info_plate"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_prompt_value"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_negative_prompt_value"
+                    android:text="@string/negative_prompt" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_model"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="53dp"
-                android:hint="@string/model"
-                app:layout_constraintEnd_toEndOf="@+id/ti_negative_prompt"
-                app:layout_constraintStart_toEndOf="@+id/ti_steps"
-                app:layout_constraintTop_toBottomOf="@+id/ti_seed"
-                app:layout_constraintStart_toStartOf="@+id/ti_negative_prompt"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/ti_steps">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_model"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="none"
+            <TextView
+                    android:id="@+id/tv_negative_prompt_value"
+                    android:layout_width="0dp"
+                    android:layout_height="19dp"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    tools:text="@string/model" />
+                    tools:text="@string/negative_prompt"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_model_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_prompt_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_prompt_value"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_cfg_scale"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/cfg"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintEnd_toStartOf="@+id/ti_height"
-                app:layout_constraintTop_toTopOf="@+id/ti_steps"
-                app:layout_constraintStart_toEndOf="@+id/ti_steps"
-                app:layout_constraintBottom_toBottomOf="@+id/ti_steps">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_cfg_scale"
-                    android:inputType="none"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/tv_model"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="@string/cfg_scale_7"
-                    android:textAlignment="center" />
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/model"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_negative_prompt_value" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_height"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/height"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintEnd_toStartOf="@+id/ti_width"
-                app:layout_constraintStart_toEndOf="@id/ti_cfg_scale"
-                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale"
-                app:layout_constraintBottom_toBottomOf="@+id/ti_steps">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_height"
-                    android:inputType="none"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    tools:text="@string/height_width_512" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_width"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/width"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintStart_toEndOf="@+id/ti_height"
-                app:layout_constraintTop_toTopOf="@+id/ti_steps"
-                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
-                app:layout_constraintBottom_toBottomOf="@+id/ti_steps">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_width"
-                    android:inputType="none"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    tools:text="@string/height_width_512" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_seed"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/seed"
-                app:layout_constraintEnd_toEndOf="@+id/ti_model"
-                app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
-                app:layout_constraintStart_toStartOf="@+id/ti_negative_prompt"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/ti_model">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_seed"
-                    tools:text="@string/random_seed"
-                    android:inputType="none"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_sampler"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/sampler"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintStart_toStartOf="@+id/ti_prompt"
-                app:layout_constraintTop_toBottomOf="@+id/ti_steps"
-                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_sampler"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="none"
+            <TextView
+                    android:id="@+id/tv_model_value"
+                    android:layout_width="0dp"
+                    android:layout_height="19dp"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    tools:text="@string/euler_a" />
+                    tools:text="@string/model"
+                    app:layout_constraintStart_toStartOf="@+id/tv_prompt_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_seed_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_negative_prompt_value" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                    android:id="@+id/tv_seed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/seed"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_model_value" />
+
+            <TextView
+                    android:id="@+id/tv_seed_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/seed_value"
+                    app:layout_constraintStart_toStartOf="@+id/tv_prompt_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_model_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_height_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_model_value" />
+
+            <TextView
+                    android:id="@+id/tv_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/height"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_seed_value" />
+
+            <TextView
+                    android:id="@+id/tv_height_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt"
+                    tools:text="@string/height_width_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_width_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_seed_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_seed_value" />
+
+            <TextView
+                    android:id="@+id/tv_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/width"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_height_value" />
+
+            <TextView
+                    android:id="@+id/tv_width_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt"
+                    tools:text="@string/height_width_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_height_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_sampler_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_height_value" />
+
+            <TextView
+                    android:id="@+id/tv_sampler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/sampler"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_width_value" />
+
+            <TextView
+                    android:id="@+id/tv_sampler_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt"
+                    tools:text="@string/sampler_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_width_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_steps_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_width_value"
+                    app:layout_constraintHorizontal_bias="0.0" />
+
+            <TextView
+                    android:id="@+id/tv_steps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    android:text="@string/steps"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_sampler_value" />
+
+            <TextView
+                    android:id="@+id/tv_steps_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt"
+                    tools:text="@string/steps_value"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_cfg_value"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_sampler_value"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_sampler_value" />
+
+            <TextView
+                    android:id="@+id/tv_cfg"
+                    android:text="@string/cfg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_negative_prompt"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_info_plate"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_steps" />
+
+            <TextView
+                    android:id="@+id/tv_cfg_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_negative_prompt"
+                    tools:text="@string/cfg_value"
+                    app:layout_constraintTop_toTopOf="@+id/tv_cfg"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_steps_value"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_info_plate" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

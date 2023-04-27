@@ -72,7 +72,7 @@
                     android:inputType="number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/steps_20"
+                    android:text="@string/steps_value"
                     android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -117,7 +117,7 @@
                     android:inputType="numberDecimal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/cfg_scale_7"
+                    android:text="@string/cfg_value"
                     android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -139,7 +139,7 @@
                     android:inputType="number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/height_width_512"
+                    android:text="@string/height_width_value"
                     android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -156,7 +156,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_width"
-                    android:text="@string/height_width_512"
+                    android:text="@string/height_width_value"
                     android:inputType="number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_seed"
-                    android:text="@string/random_seed"
+                    android:text="@string/seed_value"
                     android:inputType="numberSigned"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                     android:inputType="none"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="@string/euler_a" />
+                    android:text="@string/sampler_value" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

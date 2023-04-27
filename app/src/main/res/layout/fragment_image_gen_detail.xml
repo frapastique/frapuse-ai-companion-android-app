@@ -14,36 +14,22 @@
             android:scrollbarAlwaysDrawVerticalTrack="true"
             tools:context=".ui.imagegen.ImageGenDetailFragment">
 
-
-        <com.google.android.material.card.MaterialCardView
-                android:id="@+id/mcv_text_to_image"
+        <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_text_to_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="4dp"
-                android:elevation="6dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/ti_prompt">
-
-            <ImageView
-                    android:id="@+id/iv_text_to_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:src="@tools:sample/avatars" />
-
-        </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/ti_prompt"
+                app:shapeAppearanceOverlay="@style/roundedCorners"
+                tools:src="@tools:sample/avatars" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_prompt"
@@ -52,8 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mcv_text_to_image"
+                app:layout_constraintTop_toBottomOf="@id/iv_text_to_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/ti_negative_prompt"
                 tools:text="@string/prompt">
@@ -78,6 +66,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
                 tools:text="@string/negative_prompt"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/ti_seed">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -100,7 +89,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/ti_model"
                 app:layout_constraintEnd_toStartOf="@+id/ti_cfg_scale"
                 android:layout_marginEnd="4dp"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_steps"
@@ -123,6 +113,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/ti_seed"
                 app:layout_constraintStart_toStartOf="@+id/ti_negative_prompt"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/ti_steps">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -144,6 +135,8 @@
                 android:hint="@string/cfg"
                 android:layout_marginEnd="4dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/ti_height"
                 app:layout_constraintTop_toTopOf="@+id/ti_steps"
                 app:layout_constraintStart_toEndOf="@+id/ti_steps"
@@ -167,6 +160,8 @@
                 android:hint="@string/height"
                 android:layout_marginEnd="4dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/ti_width"
                 app:layout_constraintStart_toEndOf="@id/ti_cfg_scale"
                 app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale"
@@ -189,6 +184,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/width"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintStart_toEndOf="@+id/ti_height"
                 app:layout_constraintTop_toTopOf="@+id/ti_steps"
                 app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
@@ -214,6 +211,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
                 app:layout_constraintStart_toStartOf="@+id/ti_negative_prompt"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/ti_model">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -230,7 +228,7 @@
                 android:id="@+id/ti_sampler"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
-                android:layout_height="53dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/sampler"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="16dp"

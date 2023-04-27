@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -208,7 +209,7 @@ class ImageGenTextToImageFragment : Fragment() {
                 }
                 AppStatus.DONE -> {
                     // Set ImageView width and height
-                    setImageViewParams(viewModel.width.value!!, viewModel.height.value!!)
+                    viewModel.setImageViewParams(binding.ivTextToImage)
                     // Reactivate generate button on generating done
                     setGenButtonsState(true)
                     // Remove ProgressBar when generation is done
@@ -220,10 +221,9 @@ class ImageGenTextToImageFragment : Fragment() {
 
         // Observer which initiates decoding of progress image in Base64 when api delivers response
         viewModel.progressImageBase64.observe(viewLifecycleOwner) { progressImageBase64 ->
-            setImageViewParams(viewModel.width.value!!, viewModel.height.value!!)
+            viewModel.setImageViewParams(binding.ivTextToImage)
             val image = viewModel.decodeImage(progressImageBase64)
             binding.ivTextToImage.setImageBitmap(image)
-
         }
 
         // Place models into the model dropdown menu
@@ -331,16 +331,6 @@ class ImageGenTextToImageFragment : Fragment() {
                         androidx.cardview.R.color.cardview_dark_background
                     )
                 )
-        }
-    }
-
-    private fun setImageViewParams(width: Int, height: Int) {
-        if (height > width) {
-            binding.ivTextToImage.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-            binding.ivTextToImage.layoutParams.height = 0
-        } else {
-            binding.ivTextToImage.layoutParams.width = 0
-            binding.ivTextToImage.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
     }
 }

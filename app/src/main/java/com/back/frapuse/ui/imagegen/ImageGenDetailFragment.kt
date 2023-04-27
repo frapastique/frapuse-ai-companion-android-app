@@ -42,7 +42,7 @@ class ImageGenDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getImageMetadata(imageID)
         viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
-            binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
+            viewModel.setImageViewParams(binding.ivTextToImage)
             binding.etPrompt.setText(imageMetadata.positivePrompt)
             binding.etNegativePrompt.setText(imageMetadata.negativePrompt)
             binding.etSeed.setText(imageMetadata.seed.toString())
@@ -52,6 +52,7 @@ class ImageGenDetailFragment : Fragment() {
             binding.etHeight.setText(imageMetadata.height.toString())
             binding.etWidth.setText(imageMetadata.width.toString())
             binding.etSampler.setText(imageMetadata.sampler)
+            binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
         }
     }
 }

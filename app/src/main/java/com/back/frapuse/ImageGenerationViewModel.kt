@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -462,5 +464,16 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     // Check if image is already saved and set status accordingly
     private fun setImageSaved(state: Boolean) {
         _imageSavedState.value = state
+    }
+
+    // Set the size of ImageView dynamically
+    fun setImageViewParams(imageView: ImageView) {
+        if (_height.value!! > _width.value!!) {
+            imageView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            imageView.layoutParams.height = 0
+        } else {
+            imageView.layoutParams.width = 0
+            imageView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        }
     }
 }

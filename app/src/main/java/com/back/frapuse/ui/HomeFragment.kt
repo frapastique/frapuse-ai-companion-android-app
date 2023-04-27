@@ -5,16 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
-    // Das binding für das QuizFragment wird deklariert
+    // Get the viewModel into the logic
+    private val viewModel: ImageGenerationViewModel by activityViewModels()
+
+    // Declaration of binding
     private lateinit var binding: FragmentHomeBinding
 
     /**
      * Lifecycle Funktion onCreateView
-     * Hier wird das binding initialisiert und das Layout gebaut
+     * binding gets initialized and the layout built
      */
     override fun onCreateView(
         inflater: LayoutInflater,

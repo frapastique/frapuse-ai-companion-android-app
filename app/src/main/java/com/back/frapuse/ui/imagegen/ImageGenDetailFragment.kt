@@ -28,7 +28,7 @@ class ImageGenDetailFragment : Fragment() {
 
     /**
      * Lifecycle Funktion onCreateView
-     * Here gets the binding initialized and the layout built
+     * binding gets initialized and the layout built
      */
     override fun onCreateView(
         inflater: LayoutInflater,

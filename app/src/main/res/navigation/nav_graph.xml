@@ -24,8 +24,8 @@
                 android:id="@+id/action_imageGenTextToImageFragment_to_homeFragment"
                 app:destination="@id/homeFragment" />
         <action
-                android:id="@+id/action_imageGenTextToImageFragment_to_imageGenRVDetailFragment"
-                app:destination="@id/imageGenRVDetailFragment" />
+                android:id="@+id/action_imageGenTextToImageFragment_to_imageGenRVSmallFragment"
+                app:destination="@id/imageGenRVSmallFragment" />
     </fragment>
     <fragment
             android:id="@+id/imageGenRVSmallFragment"
@@ -35,6 +35,9 @@
         <action
                 android:id="@+id/action_imageGenRVSmallFragment_to_imageGenRVDetailFragment"
                 app:destination="@id/imageGenRVDetailFragment" />
+        <action
+                android:id="@+id/action_imageGenRVSmallFragment_to_imageGenTextToImageFragment"
+                app:destination="@id/imageGenTextToImageFragment" />
     </fragment>
     <fragment
             android:id="@+id/imageGenRVDetailFragment"

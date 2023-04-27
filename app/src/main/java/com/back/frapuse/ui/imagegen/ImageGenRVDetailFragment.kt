@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentImageGenRvDetailBinding
 import com.back.frapuse.util.ImageGenRVDetailAdapter
@@ -44,8 +46,15 @@ class ImageGenRVDetailFragment : Fragment() {
         viewModel.getImageMetadata(imageID)
 
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
-            binding.rvImageLibrary.adapter = ImageGenRVDetailAdapter(viewModel, imageLibrary)
+            binding.rvImageLibrary.adapter = ImageGenRVDetailAdapter(
+                imageID = imageID,
+                viewModel = viewModel,
+                dataset = imageLibrary
+            )
             binding.rvImageLibrary.setHasFixedSize(true)
+
+            val helper: SnapHelper = PagerSnapHelper()
+            helper.attachToRecyclerView(binding.rvImageLibrary)
         }
     }
 }

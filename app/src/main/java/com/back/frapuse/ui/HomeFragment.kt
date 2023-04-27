@@ -38,7 +38,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.btnTextToImage.setOnClickListener { btnTextToImage ->
             btnTextToImage.findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToTextToImageFragment()
+                HomeFragmentDirections.actionHomeFragmentToImageGenTextToImageFragment()
             )
         }
 

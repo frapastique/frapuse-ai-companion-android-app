@@ -9,6 +9,8 @@ import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
 
 class ImageGenRVDetailAdapter(
+    // Prepare an imageID
+    private var imageID: Long,
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenerationViewModel,
     // Dataset which provides the wanted data

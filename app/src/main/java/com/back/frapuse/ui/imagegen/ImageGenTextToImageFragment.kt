@@ -274,7 +274,9 @@ class ImageGenTextToImageFragment : Fragment() {
         // When the image is clicked long navigate to the RecyclerView Fragment
         binding.ivTextToImage.setOnLongClickListener { ivTextToImage ->
             ivTextToImage.findNavController()
-                .navigate(ImageGenTextToImageFragmentDirections.actionTextToImageFragmentToImageGenRecyclerViewFragment())
+                .navigate(ImageGenTextToImageFragmentDirections
+                    .actionImageGenTextToImageFragmentToImageGenRVSmallFragment()
+                )
 
             true
         }

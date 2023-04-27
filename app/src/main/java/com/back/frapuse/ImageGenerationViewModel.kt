@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,6 +31,9 @@ private const val TAG = "ImageGenerationViewModel"
 enum class AppStatus { LOADING, ERROR, DONE, WAITING }
 
 class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
+
+    // Application context
+    private val app = getApplication<Application>()
 
     // Database value
     private val database = getDatabase(application)
@@ -156,6 +160,11 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     val imageMetadata: LiveData<ImageMetadata>
         get() = _imageMetadata
 
+    // Image saved state
+    private val _imageSavedState = MutableLiveData<Boolean>()
+    val imageSavedState: LiveData<Boolean>
+        get() = _imageSavedState
+
 
     /* _______ Local Status ____________________________________________________________ */
 
@@ -175,6 +184,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             loadOptions()
             loadSamplers()
             loadModels()
+            _imageSavedState.value = false
         }
     }
 
@@ -324,6 +334,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
             _appStatusSetTextToImageRequest.value = AppStatus.WAITING
             _apiStatusTextToImg.value = AppStatus.DONE
             cancel()
+            setImageSaved(true)
             loadImageInfo()
         }
     }
@@ -425,24 +436,31 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
 
     // Save image metadata into database
     fun saveImage() {
+        val saveMessage = "Image successfully added to the library!"
         viewModelScope.launch {
             try {
                 Log.e(TAG, "Save image status: \n\t SAVING")
                 repository.insertImage(_imageMetadata.value!!)
                 Log.e(TAG, "Save image status: \n\t SAVED")
+                setImageSaved(false)
+                Toast.makeText(app.applicationContext, saveMessage, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving image in database: \n\t $e")
             }
-
             _imageLibrary.value = repository.getAllImages()
             cancel()
         }
     }
 
     // Set image metadata for current image
-    fun setImageMetadata(imageID: Long) {
+    fun getImageMetadata(imageID: Long) {
         viewModelScope.launch {
             _imageMetadata.value = repository.getImageMetadata(imageID)
         }
+    }
+
+    // Check if image is already saved and set status accordingly
+    private fun setImageSaved(state: Boolean) {
+        _imageSavedState.value = state
     }
 }

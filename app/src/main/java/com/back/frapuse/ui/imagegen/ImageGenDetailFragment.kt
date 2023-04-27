@@ -40,7 +40,7 @@ class ImageGenDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.setImageMetadata(imageID)
+        viewModel.getImageMetadata(imageID)
         viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
             binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
             binding.etPrompt.setText(imageMetadata.positivePrompt)

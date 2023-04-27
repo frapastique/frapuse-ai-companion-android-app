@@ -62,6 +62,7 @@ class TextToImageFragment : Fragment() {
         // When the prompt value is not empty set the text of prompt field
         if (!viewModel.prompt.value.isNullOrEmpty()) {
             binding.etPrompt.setText(viewModel.prompt.value)
+            setGenButtonsState(true)
         }
         // Prompt value gets updated when input text changes & set button state accordingly
         binding.etPrompt.addTextChangedListener { prompt ->
@@ -163,12 +164,8 @@ class TextToImageFragment : Fragment() {
         }
 
         // Set save image button according to value of image (not null or empty)
-        viewModel.image.observe(viewLifecycleOwner) { image ->
-            if (image != null) {
-                setSaveButtonState(true)
-            } else {
-                setSaveButtonState(false)
-            }
+        viewModel.imageSavedState.observe(viewLifecycleOwner) { imageSavedState ->
+            setSaveButtonState(imageSavedState)
         }
 
         // Place imageInfo string into debug TextView

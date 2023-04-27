@@ -1,14 +1,20 @@
 package com.back.frapuse.ui
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentHomeBinding
+import com.back.frapuse.util.HomeBackgroundAdapter
+import com.back.frapuse.util.ImageGenAdapter
 
 class HomeFragment : Fragment() {
     // Get the viewModel into the logic
@@ -30,11 +36,21 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.btnTextToImage.setOnClickListener { btnTextToImage ->
             btnTextToImage.findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToTextToImageFragment()
             )
+        }
+
+        // Load a blurred RecyclerView into the background
+        viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
+            binding.rvImageLibrary.setRenderEffect(
+                RenderEffect.createBlurEffect(33f, 33f, Shader.TileMode.DECAL)
+            )
+            binding.rvImageLibrary.adapter = HomeBackgroundAdapter(viewModel, imageLibrary)
+            binding.rvImageLibrary.setHasFixedSize(true)
         }
     }
 }

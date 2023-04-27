@@ -22,7 +22,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
-                    android:id="@+id/game_library"
+                    android:id="@+id/tv_app_name"
                     android:text="@string/app_name"
                     android:textAlignment="center"
                     android:textSize="25sp"

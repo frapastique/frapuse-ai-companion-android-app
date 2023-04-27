@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
+import com.back.frapuse.ui.imagegen.ImageGenRVSmallFragmentDirections
 import com.back.frapuse.ui.imagegen.ImageGenRecyclerViewFragmentDirections
 
 class ImageGenRVSmallAdapter(
@@ -38,8 +39,8 @@ class ImageGenRVSmallAdapter(
         holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
 
         holder.binding.ivGenImage.setOnClickListener { ivGenImage ->
-            ivGenImage.findNavController().navigate(ImageGenRecyclerViewFragmentDirections
-                .actionImageGenRecyclerViewFragmentToImageGenDetailFragment(
+            ivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
+                .actionImageGenRVSmallFragmentToImageGenRVDetailFragment(
                     imageID = imageData.id
                 )
             )

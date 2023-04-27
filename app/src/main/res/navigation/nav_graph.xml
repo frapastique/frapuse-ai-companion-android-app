@@ -12,44 +12,41 @@
             android:label="HomeFragment"
             tools:layout="@layout/fragment_home">
         <action
-                android:id="@+id/action_homeFragment_to_textToImageFragment"
-                app:destination="@id/textToImageFragment" />
+                android:id="@+id/action_homeFragment_to_imageGenTextToImageFragment"
+                app:destination="@id/imageGenTextToImageFragment" />
     </fragment>
     <fragment
-            android:id="@+id/textToImageFragment"
+            android:id="@+id/imageGenTextToImageFragment"
             android:name="com.back.frapuse.ui.imagegen.ImageGenTextToImageFragment"
             android:label="TextToImageFragment"
             tools:layout="@layout/fragment_image_gen_text_to_image" >
         <action
-                android:id="@+id/action_textToImageFragment_to_homeFragment"
+                android:id="@+id/action_imageGenTextToImageFragment_to_homeFragment"
                 app:destination="@id/homeFragment" />
         <action
-                android:id="@+id/action_textToImageFragment_to_imageGenRecyclerViewFragment"
-                app:destination="@id/imageGenRecyclerViewFragment" />
+                android:id="@+id/action_imageGenTextToImageFragment_to_imageGenRVDetailFragment"
+                app:destination="@id/imageGenRVDetailFragment" />
     </fragment>
     <fragment
-            android:id="@+id/imageGenRecyclerViewFragment"
+            android:id="@+id/imageGenRVSmallFragment"
             android:name="com.back.frapuse.ui.imagegen.ImageGenRVSmallFragment"
             android:label="ImageGenRecyclerViewFragment"
             tools:layout="@layout/fragment_image_gen_rv_small" >
         <action
-                android:id="@+id/action_imageGenRecyclerViewFragment_to_textToImageFragment"
-                app:destination="@id/textToImageFragment" />
-        <action
-                android:id="@+id/action_imageGenRecyclerViewFragment_to_imageGenDetailFragment"
-                app:destination="@id/imageGenDetailFragment" />
+                android:id="@+id/action_imageGenRVSmallFragment_to_imageGenRVDetailFragment"
+                app:destination="@id/imageGenRVDetailFragment" />
     </fragment>
     <fragment
-            android:id="@+id/imageGenDetailFragment"
+            android:id="@+id/imageGenRVDetailFragment"
             android:name="com.back.frapuse.ui.imagegen.ImageGenRVDetailFragment"
             android:label="ImageGenDetailFragment"
             tools:layout="@layout/fragment_image_gen_rv_detail">
         <action
-                android:id="@+id/action_imageGenDetailFragment_to_imageGenRecyclerViewFragment"
-                app:destination="@id/imageGenRecyclerViewFragment" />
+                android:id="@+id/action_imageGenRVDetailFragment_to_imageGenTextToImageFragment"
+                app:destination="@id/imageGenTextToImageFragment" />
         <action
-                android:id="@+id/action_imageGenDetailFragment_to_textToImageFragment"
-                app:destination="@id/textToImageFragment" />
+                android:id="@+id/action_imageGenRVDetailFragment_to_imageGenRVSmallFragment"
+                app:destination="@id/imageGenRVSmallFragment" />
         <argument
                 android:name="imageID"
                 app:argType="long" />

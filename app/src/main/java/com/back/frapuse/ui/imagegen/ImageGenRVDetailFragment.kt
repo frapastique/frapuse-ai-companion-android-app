@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.databinding.FragmentImageGenRvDetailBinding
+import com.back.frapuse.util.ImageGenRVDetailAdapter
 
 class ImageGenRVDetailFragment : Fragment() {
     // Get the viewModel into the logic
@@ -42,6 +43,9 @@ class ImageGenRVDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getImageMetadata(imageID)
 
-
+        viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
+            binding.rvImageLibrary.adapter = ImageGenRVDetailAdapter(viewModel, imageLibrary)
+            binding.rvImageLibrary.setHasFixedSize(true)
+        }
     }
 }

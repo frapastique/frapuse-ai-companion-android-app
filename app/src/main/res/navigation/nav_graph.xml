@@ -17,9 +17,9 @@
     </fragment>
     <fragment
             android:id="@+id/textToImageFragment"
-            android:name="com.back.frapuse.ui.imagegen.TextToImageFragment"
+            android:name="com.back.frapuse.ui.imagegen.ImageGenTextToImageFragment"
             android:label="TextToImageFragment"
-            tools:layout="@layout/fragment_text_to_image" >
+            tools:layout="@layout/fragment_image_gen_text_to_image" >
         <action
                 android:id="@+id/action_textToImageFragment_to_homeFragment"
                 app:destination="@id/homeFragment" />

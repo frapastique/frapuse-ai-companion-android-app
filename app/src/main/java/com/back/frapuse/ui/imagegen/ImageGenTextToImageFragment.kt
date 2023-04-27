@@ -14,16 +14,16 @@ import androidx.navigation.findNavController
 import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.ImageGenerationViewModel
-import com.back.frapuse.databinding.FragmentTextToImageBinding
+import com.back.frapuse.databinding.FragmentImageGenTextToImageBinding
 
-private const val TAG = "TextToImageFragment"
+private const val TAG = "ImageGenTextToImageFragment"
 
-class TextToImageFragment : Fragment() {
+class ImageGenTextToImageFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: ImageGenerationViewModel by activityViewModels()
 
     // Declaration of binding
-    private lateinit var binding: FragmentTextToImageBinding
+    private lateinit var binding: FragmentImageGenTextToImageBinding
 
     /**
      * Lifecycle Funktion onCreateView
@@ -34,7 +34,7 @@ class TextToImageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTextToImageBinding.inflate(inflater, container, false)
+        binding = FragmentImageGenTextToImageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -238,7 +238,7 @@ class TextToImageFragment : Fragment() {
             }
             val arrayAdapter = ArrayAdapter(
                 requireContext(),
-                R.layout.sd_models_item,
+                R.layout.image_gen_sd_models_item,
                 modelNameList.toTypedArray()
             )
             binding.actvModel.setAdapter(arrayAdapter)
@@ -258,7 +258,7 @@ class TextToImageFragment : Fragment() {
             }
             val arrayAdapter = ArrayAdapter(
                 requireContext(),
-                R.layout.sd_samplers_item,
+                R.layout.image_gen_sd_samplers_item,
                 samplerNameList.toTypedArray()
             )
             binding.actvSamplerIndex.setAdapter(arrayAdapter)
@@ -280,7 +280,7 @@ class TextToImageFragment : Fragment() {
         // When the image is clicked long navigate to the RecyclerView Fragment
         binding.ivTextToImage.setOnLongClickListener { ivTextToImage ->
             ivTextToImage.findNavController()
-                .navigate(TextToImageFragmentDirections.actionTextToImageFragmentToImageGenRecyclerViewFragment())
+                .navigate(ImageGenTextToImageFragmentDirections.actionTextToImageFragmentToImageGenRecyclerViewFragment())
 
             true
         }

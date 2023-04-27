@@ -15,4 +15,5 @@
             android:padding="8dp"
             android:layout_height="wrap_content"
             tools:text="@string/app_name" />
+
 </layout>

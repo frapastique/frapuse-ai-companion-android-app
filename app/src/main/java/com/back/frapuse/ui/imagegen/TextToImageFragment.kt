@@ -178,24 +178,49 @@ class TextToImageFragment : Fragment() {
             viewModel.saveImage()
         }
 
-        // Set maximum progressBar percentage
+        /*// Set maximum progressBar percentage
         binding.progressBar.max = 100
 
         // Update progressBar whenever the progress LiveData changes
         viewModel.progress.observe(viewLifecycleOwner) {
             // Update progressbar according the current progress
             binding.progressBar.progress = (viewModel.progress.value!!.progress.times(100)).toInt()
-        }
+        }*/
 
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
             viewModel.setTextToImageRequest()
             if (viewModel.appStatusSetTextToImageRequest.value == AppStatus.DONE) {
                 viewModel.startTextToImageRequest()
-                if (viewModel.apiStatusTextToImg.value ==AppStatus.LOADING) {
+            }
+        }
+
+        // Observer of api generation status
+        viewModel.apiStatusTextToImg.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                AppStatus.LOADING ->  {
                     // Start load progress
                     viewModel.loadProgress()
+                    // Set maximum progressBar percentage
+                    binding.progressBar.max = 100
+                    // Set visibility of ProgressBar
+                    binding.progressBar.visibility = View.VISIBLE
+                    // Deactivate generate button while generating image
+                    setGenButtonsState(false)
+                    // Update progressBar whenever the progress LiveData changes
+                    viewModel.progress.observe(viewLifecycleOwner) {
+                        // Update progressbar according the current progress
+                        binding.progressBar.progress =
+                            (viewModel.progress.value!!.progress.times(100)).toInt()
+                    }
                 }
+                AppStatus.DONE -> {
+                    // Reactivate generate button on generating done
+                    setGenButtonsState(true)
+                    // Remove ProgressBar when generation is done
+                    binding.progressBar.visibility = View.GONE
+                }
+                else -> {}
             }
         }
 
@@ -262,28 +287,30 @@ class TextToImageFragment : Fragment() {
     }
 
     private fun setGenButtonsState(state: Boolean) {
-        if (state) {
-            // Apply positive appearance for generate button
-            binding.btnGenerate.isClickable = true
-            binding.btnGenerate.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200
+        viewModel.apiStatusOptions.observe(viewLifecycleOwner) { status ->
+            if (state && status == AppStatus.DONE) {
+                // Apply positive appearance for generate button
+                binding.btnGenerate.isClickable = true
+                binding.btnGenerate.backgroundTintList =
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.purple_200
+                        )
                     )
-                )
-            binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
-        } else {
-            // Apply negative appearance for generate button
-            binding.btnGenerate.isClickable = false
-            binding.btnGenerate.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        androidx.cardview.R.color.cardview_dark_background
+                binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
+            } else {
+                // Apply negative appearance for generate button
+                binding.btnGenerate.isClickable = false
+                binding.btnGenerate.backgroundTintList =
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            androidx.cardview.R.color.cardview_dark_background
+                        )
                     )
-                )
-            binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
+                binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
+            }
         }
     }
 

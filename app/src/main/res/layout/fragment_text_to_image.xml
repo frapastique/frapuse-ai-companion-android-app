@@ -225,7 +225,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -241,6 +241,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/iv_text_to_image"
                 app:layout_constraintEnd_toEndOf="@+id/iv_text_to_image"
                 app:layout_constraintBottom_toBottomOf="parent" />

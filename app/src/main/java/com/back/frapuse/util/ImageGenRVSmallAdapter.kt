@@ -14,23 +14,25 @@ class ImageGenRVSmallAdapter(
     private val viewModel: ImageGenerationViewModel,
     // Dataset which provides the wanted data
     private val dataset: List<ImageMetadata>
-) : RecyclerView.Adapter<ImageGenRVSmallAdapter.ImageGenViewHolder>() {
-    inner class ImageGenViewHolder(internal val binding: ImageGenRvSmallItemBinding) : RecyclerView.ViewHolder(binding.root)
+) : RecyclerView.Adapter<ImageGenRVSmallAdapter.ImageGenRVSmallViewHolder>() {
+    inner class ImageGenRVSmallViewHolder(
+        internal val binding: ImageGenRvSmallItemBinding
+        ) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageGenViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageGenRVSmallViewHolder {
         val binding = ImageGenRvSmallItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return ImageGenViewHolder(binding)
+        return ImageGenRVSmallViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
         return dataset.size
     }
 
-    override fun onBindViewHolder(holder: ImageGenViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ImageGenRVSmallViewHolder, position: Int) {
         val imageData = dataset[position]
 
         holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))

@@ -42,30 +42,6 @@ class ImageGenRVDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getImageMetadata(imageID)
 
-        var infoVisible = false
 
-        binding.ivTextToImage.setOnClickListener {
-            infoVisible = !infoVisible
-
-            if (infoVisible) {
-                binding.clInfoPlate.visibility = View.VISIBLE
-            } else {
-                binding.clInfoPlate.visibility = View.GONE
-            }
-        }
-
-        viewModel.imageMetadata.observe(viewLifecycleOwner) { imageMetadata ->
-            viewModel.setImageViewParams(binding.ivTextToImage)
-            binding.tvPromptValue.text = imageMetadata.positivePrompt
-            binding.tvNegativePromptValue.text = imageMetadata.negativePrompt
-            binding.tvModelValue.text = imageMetadata.model
-            binding.tvSeedValue.text = imageMetadata.seed.toString()
-            binding.tvHeightValue.text = imageMetadata.height.toString()
-            binding.tvWidthValue.text = imageMetadata.width.toString()
-            binding.tvSamplerValue.text = imageMetadata.sampler
-            binding.tvStepsValue.text = imageMetadata.steps.toString()
-            binding.tvCfgValue.text = imageMetadata.CFGScale.toString()
-            binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
-        }
     }
 }

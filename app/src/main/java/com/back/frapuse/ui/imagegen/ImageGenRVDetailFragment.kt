@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.ImageGenerationViewModel
-import com.back.frapuse.databinding.FragmentImageGenDetailBinding
+import com.back.frapuse.databinding.FragmentImageGenRvDetailBinding
 
-class ImageGenDetailFragment : Fragment() {
+class ImageGenRVDetailFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: ImageGenerationViewModel by activityViewModels()
 
     // Declaration of binding
-    private lateinit var binding: FragmentImageGenDetailBinding
+    private lateinit var binding: FragmentImageGenRvDetailBinding
 
     // Prepare an imageID
     private var imageID: Long = 0
@@ -35,7 +35,7 @@ class ImageGenDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentImageGenDetailBinding.inflate(inflater, container, false)
+        binding = FragmentImageGenRvDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 

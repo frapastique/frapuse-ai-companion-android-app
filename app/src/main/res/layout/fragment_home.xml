@@ -25,7 +25,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:spanCount="2"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/image_gen_item" />
+                tools:listitem="@layout/image_gen_rv_small_item" />
 
         <TextView
                 android:id="@+id/tv_introduction"

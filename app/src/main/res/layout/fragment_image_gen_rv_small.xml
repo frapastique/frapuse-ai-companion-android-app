@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.imagegen.ImageGenRecyclerViewFragment">
+            tools:context=".ui.imagegen.ImageGenRVSmallFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/toolbar"
@@ -68,7 +68,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
-                tools:listitem="@layout/image_gen_item" />
+                tools:listitem="@layout/image_gen_rv_small_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

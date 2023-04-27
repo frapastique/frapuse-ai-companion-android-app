@@ -9,9 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            tools:context=".ui.imagegen.ImageGenDetailFragment">
+            android:layout_height="match_parent">
 
         <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_text_to_image"
@@ -34,6 +32,7 @@
         <TextView
                 android:id="@+id/tv_info"
                 android:text="@string/info"
+                android:textColor="@color/cardview_dark_background"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,7 +46,7 @@
                 android:id="@+id/cl_info_plate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

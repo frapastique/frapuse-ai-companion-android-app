@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.data.datamodels.ImageMetadata
-import com.back.frapuse.databinding.ImageGenItemBinding
+import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
 
 class HomeBackgroundAdapter(
     // ViewModel to interact with shared methods
@@ -14,10 +14,10 @@ class HomeBackgroundAdapter(
     private val dataset: List<ImageMetadata>
 ) : RecyclerView.Adapter<HomeBackgroundAdapter.HomeBackgroundViewHolder>() {
 
-    inner class HomeBackgroundViewHolder(internal val binding: ImageGenItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class HomeBackgroundViewHolder(internal val binding: ImageGenRvSmallItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeBackgroundViewHolder {
-        val binding = ImageGenItemBinding.inflate(
+        val binding = ImageGenRvSmallItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

@@ -29,9 +29,9 @@
     </fragment>
     <fragment
             android:id="@+id/imageGenRecyclerViewFragment"
-            android:name="com.back.frapuse.ui.imagegen.ImageGenRecyclerViewFragment"
+            android:name="com.back.frapuse.ui.imagegen.ImageGenRVSmallFragment"
             android:label="ImageGenRecyclerViewFragment"
-            tools:layout="@layout/fragment_image_gen_recycler_view" >
+            tools:layout="@layout/fragment_image_gen_rv_small" >
         <action
                 android:id="@+id/action_imageGenRecyclerViewFragment_to_textToImageFragment"
                 app:destination="@id/textToImageFragment" />
@@ -41,9 +41,9 @@
     </fragment>
     <fragment
             android:id="@+id/imageGenDetailFragment"
-            android:name="com.back.frapuse.ui.imagegen.ImageGenDetailFragment"
+            android:name="com.back.frapuse.ui.imagegen.ImageGenRVDetailFragment"
             android:label="ImageGenDetailFragment"
-            tools:layout="@layout/fragment_image_gen_detail">
+            tools:layout="@layout/fragment_image_gen_rv_detail">
         <action
                 android:id="@+id/action_imageGenDetailFragment_to_imageGenRecyclerViewFragment"
                 app:destination="@id/imageGenRecyclerViewFragment" />

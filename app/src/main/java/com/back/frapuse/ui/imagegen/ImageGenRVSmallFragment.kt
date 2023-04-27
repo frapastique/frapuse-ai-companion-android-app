@@ -9,15 +9,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.ImageGenerationViewModel
 import com.back.frapuse.R
-import com.back.frapuse.databinding.FragmentImageGenRecyclerViewBinding
-import com.back.frapuse.util.ImageGenAdapter
+import com.back.frapuse.databinding.FragmentImageGenRvSmallBinding
+import com.back.frapuse.util.ImageGenRVSmallAdapter
 
-class ImageGenRecyclerViewFragment : Fragment() {
+class ImageGenRVSmallFragment : Fragment() {
     // Load viewModel
     private val viewModel: ImageGenerationViewModel by activityViewModels()
 
     // Set binding
-    private lateinit var binding: FragmentImageGenRecyclerViewBinding
+    private lateinit var binding: FragmentImageGenRvSmallBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,7 +27,7 @@ class ImageGenRecyclerViewFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_image_gen_recycler_view,
+            R.layout.fragment_image_gen_rv_small,
             container,
             false
         )
@@ -37,7 +37,7 @@ class ImageGenRecyclerViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
-            binding.rvImageLibrary.adapter = ImageGenAdapter(viewModel, imageLibrary)
+            binding.rvImageLibrary.adapter = ImageGenRVSmallAdapter(viewModel, imageLibrary)
             binding.rvImageLibrary.setHasFixedSize(true)
         }
     }

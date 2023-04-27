@@ -1,6 +1,7 @@
 package com.back.frapuse.ui.imagegen
 
 import android.content.res.ColorStateList
+import android.graphics.Matrix
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -178,15 +179,6 @@ class ImageGenTextToImageFragment : Fragment() {
             viewModel.saveImage()
         }
 
-        /*// Set maximum progressBar percentage
-        binding.progressBar.max = 100
-
-        // Update progressBar whenever the progress LiveData changes
-        viewModel.progress.observe(viewLifecycleOwner) {
-            // Update progressbar according the current progress
-            binding.progressBar.progress = (viewModel.progress.value!!.progress.times(100)).toInt()
-        }*/
-
         // Listener for generate Button which initiates api call
         binding.btnGenerate.setOnClickListener {
             viewModel.setTextToImageRequest()
@@ -215,6 +207,8 @@ class ImageGenTextToImageFragment : Fragment() {
                     }
                 }
                 AppStatus.DONE -> {
+                    // Set ImageView width and height
+                    setImageViewParams(viewModel.width.value!!, viewModel.height.value!!)
                     // Reactivate generate button on generating done
                     setGenButtonsState(true)
                     // Remove ProgressBar when generation is done
@@ -226,8 +220,10 @@ class ImageGenTextToImageFragment : Fragment() {
 
         // Observer which initiates decoding of progress image in Base64 when api delivers response
         viewModel.progressImageBase64.observe(viewLifecycleOwner) { progressImageBase64 ->
+            setImageViewParams(viewModel.width.value!!, viewModel.height.value!!)
             val image = viewModel.decodeImage(progressImageBase64)
             binding.ivTextToImage.setImageBitmap(image)
+
         }
 
         // Place models into the model dropdown menu
@@ -335,6 +331,16 @@ class ImageGenTextToImageFragment : Fragment() {
                         androidx.cardview.R.color.cardview_dark_background
                     )
                 )
+        }
+    }
+
+    private fun setImageViewParams(width: Int, height: Int) {
+        if (height > width) {
+            binding.ivTextToImage.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            binding.ivTextToImage.layoutParams.height = 0
+        } else {
+            binding.ivTextToImage.layoutParams.width = 0
+            binding.ivTextToImage.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
     }
 }

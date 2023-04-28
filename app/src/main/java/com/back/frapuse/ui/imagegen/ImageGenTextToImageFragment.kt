@@ -313,6 +313,19 @@ class ImageGenTextToImageFragment : Fragment() {
                 )
             }
         }
+
+        // Hide buttons when image gets clicked
+        var buttonVisibility = true
+        binding.ivTextToImage.setOnClickListener {
+            buttonVisibility = !buttonVisibility
+            if (buttonVisibility) {
+                binding.btnSave.visibility = View.VISIBLE
+                binding.btnGenerate.visibility = View.VISIBLE
+            } else {
+                binding.btnSave.visibility = View.GONE
+                binding.btnGenerate.visibility = View.GONE
+            }
+        }
     }
 
     private fun setSaveButtonState(state: Boolean) {

@@ -445,7 +445,8 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
                 repository.insertImage(_imageMetadata.value!!)
                 Log.e(TAG, "Save image status: \n\t SAVED")
                 setImageSaved(false)
-                Toast.makeText(app.applicationContext, saveMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(app.applicationContext, saveMessage, Toast.LENGTH_SHORT)
+                    .show()
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving image in database: \n\t $e")
             }
@@ -454,10 +455,33 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    // Delete selected image metadata from database
+    fun deleteImage(imageID: Long) {
+        val deleteMessage = "Image successfully deleted!"
+        viewModelScope.launch {
+            try {
+                val imageToDelete = repository.getImageMetadata(imageID)
+                try {
+                    repository.deleteImage(imageToDelete)
+                    Toast.makeText(app.applicationContext, deleteMessage, Toast.LENGTH_SHORT)
+                        .show()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error deleting image from database: \n\t $e")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting image from database: \n\t $e")
+            }
+        }
+    }
+
     // Set image metadata for current image
     fun getImageMetadata(imageID: Long) {
         viewModelScope.launch {
-            _imageMetadata.value = repository.getImageMetadata(imageID)
+            try {
+                _imageMetadata.value = repository.getImageMetadata(imageID)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting image from database: \n\t $e")
+            }
         }
     }
 

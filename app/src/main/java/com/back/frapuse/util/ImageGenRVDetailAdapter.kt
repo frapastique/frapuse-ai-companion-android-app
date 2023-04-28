@@ -1,10 +1,12 @@
 package com.back.frapuse.util
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGenerationViewModel
+import com.back.frapuse.R
 import com.back.frapuse.data.datamodels.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
 
@@ -37,14 +39,18 @@ class ImageGenRVDetailAdapter(
         val imageMetadata = dataset[position]
 
         var infoVisible = false
+        var favorite = false
+        var delete = 0
 
         holder.binding.ivTextToImage.setOnClickListener {
             infoVisible = !infoVisible
 
             if (infoVisible) {
                 holder.binding.clInfoPlate.visibility = View.VISIBLE
+                holder.binding.clActionButtons.visibility = View.VISIBLE
             } else {
                 holder.binding.clInfoPlate.visibility = View.GONE
+                holder.binding.clActionButtons.visibility = View.GONE
             }
         }
 
@@ -59,5 +65,23 @@ class ImageGenRVDetailAdapter(
         holder.binding.tvStepsValue.text = imageMetadata.steps.toString()
         holder.binding.tvCfgValue.text = imageMetadata.CFGScale.toString()
         holder.binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
+
+        holder.binding.ivFavoriteBtn.setOnClickListener {
+            favorite = !favorite
+            if (favorite) {
+                holder.binding.ivFavoriteBtn.setImageResource(R.drawable.star_fill_purple)
+            } else {
+                holder.binding.ivFavoriteBtn.setImageResource(R.drawable.star_purple)
+            }
+        }
+
+        // Testing purposes
+        holder.binding.ivDeleteBtn.setOnClickListener {
+            delete++
+            if (delete == 2) {
+                viewModel.deleteImage(imageMetadata.id)
+                delete = 0
+            }
+        }
     }
 }

@@ -248,7 +248,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_generate"
-                android:src="@drawable/xmark_seal"
+                android:src="@drawable/xmark_seal_white"
                 android:contentDescription="@string/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -261,7 +261,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_save"
-                android:src="@drawable/square_and_arrow_down"
+                android:src="@drawable/square_and_arrow_down_white"
                 android:contentDescription="@string/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

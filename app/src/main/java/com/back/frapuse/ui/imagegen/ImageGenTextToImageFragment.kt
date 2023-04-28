@@ -294,7 +294,7 @@ class ImageGenTextToImageFragment : Fragment() {
                             R.color.purple_200
                         )
                     )
-                binding.btnGenerate.setImageResource(R.drawable.checkmark_seal)
+                binding.btnGenerate.setImageResource(R.drawable.checkmark_seal_white)
             } else {
                 // Apply negative appearance for generate button
                 binding.btnGenerate.isClickable = false
@@ -305,7 +305,7 @@ class ImageGenTextToImageFragment : Fragment() {
                             androidx.cardview.R.color.cardview_dark_background
                         )
                     )
-                binding.btnGenerate.setImageResource(R.drawable.xmark_seal)
+                binding.btnGenerate.setImageResource(R.drawable.xmark_seal_white)
             }
         }
     }

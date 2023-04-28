@@ -233,7 +233,7 @@ class ImageGenTextToImageFragment : Fragment() {
             val arrayAdapter = ArrayAdapter(
                 requireContext(),
                 R.layout.image_gen_ddm_models_item,
-                modelNameList.toTypedArray()
+                modelNameList.toTypedArray().sorted()
             )
             binding.actvModel.setAdapter(arrayAdapter)
         }

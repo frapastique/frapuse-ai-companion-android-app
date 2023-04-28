@@ -23,7 +23,7 @@ import com.back.frapuse.data.datamodels.imagegen.Sampler
 import com.back.frapuse.data.datamodels.imagegen.TextToImage
 import com.back.frapuse.data.datamodels.imagegen.TextToImageRequest
 import com.back.frapuse.data.local.getDatabase
-import com.back.frapuse.data.remote.TextToImageAPI
+import com.back.frapuse.data.remote.ImageGenAPI
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,7 +41,7 @@ class ImageGeneViewModel(application: Application) : AndroidViewModel(applicatio
     private val database = getDatabase(application)
 
     // Repository value
-    private val repository = ImageGenRepository(TextToImageAPI, database)
+    private val repository = ImageGenRepository(ImageGenAPI, database)
 
     /* _______ Values Remote ___________________________________________________________ */
 

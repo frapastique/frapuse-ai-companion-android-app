@@ -67,6 +67,6 @@ interface ImageGenAPIService {
     suspend fun getSamplers(): List<Sampler>
 }
 
-object TextToImageAPI {
+object ImageGenAPI {
     val retrofitService: ImageGenAPIService by lazy { retrofit.create(ImageGenAPIService::class.java) }
 }

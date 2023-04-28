@@ -11,11 +11,11 @@ import com.back.frapuse.data.datamodels.imagegen.Sampler
 import com.back.frapuse.data.datamodels.imagegen.TextToImage
 import com.back.frapuse.data.datamodels.imagegen.TextToImageRequest
 import com.back.frapuse.data.local.ImageGenDatabase
-import com.back.frapuse.data.remote.TextToImageAPI
+import com.back.frapuse.data.remote.ImageGenAPI
 
 private const val TAG = "ImageGenRepository"
 
-class ImageGenRepository(private val api: TextToImageAPI, private val database: ImageGenDatabase) {
+class ImageGenRepository(private val api: ImageGenAPI, private val database: ImageGenDatabase) {
 
     /* ____________________________________ Methods Remote _____________________________ */
 

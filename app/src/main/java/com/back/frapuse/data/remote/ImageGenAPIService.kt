@@ -1,6 +1,14 @@
 package com.back.frapuse.data.remote
 
 import com.back.frapuse.data.datamodels.*
+import com.back.frapuse.data.datamodels.imagegen.ImageBase64
+import com.back.frapuse.data.datamodels.imagegen.ImageInfo
+import com.back.frapuse.data.datamodels.imagegen.Options
+import com.back.frapuse.data.datamodels.imagegen.Progress
+import com.back.frapuse.data.datamodels.imagegen.SDModel
+import com.back.frapuse.data.datamodels.imagegen.Sampler
+import com.back.frapuse.data.datamodels.imagegen.TextToImage
+import com.back.frapuse.data.datamodels.imagegen.TextToImageRequest
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -9,7 +17,6 @@ import retrofit2.Retrofit.*
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
@@ -31,7 +38,7 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-interface TextToImageAPIService {
+interface ImageGenAPIService {
     @GET("sd-models")
     suspend fun getModels(): List<SDModel>
 
@@ -61,5 +68,5 @@ interface TextToImageAPIService {
 }
 
 object TextToImageAPI {
-    val retrofitService: TextToImageAPIService by lazy { retrofit.create(TextToImageAPIService::class.java) }
+    val retrofitService: ImageGenAPIService by lazy { retrofit.create(ImageGenAPIService::class.java) }
 }

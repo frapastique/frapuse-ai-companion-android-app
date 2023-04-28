@@ -1,21 +1,21 @@
 package com.back.frapuse.data
 
 import android.util.Log
-import com.back.frapuse.data.datamodels.ImageBase64
-import com.back.frapuse.data.datamodels.ImageInfo
-import com.back.frapuse.data.datamodels.ImageMetadata
-import com.back.frapuse.data.datamodels.Options
-import com.back.frapuse.data.datamodels.Progress
-import com.back.frapuse.data.datamodels.SDModel
-import com.back.frapuse.data.datamodels.Sampler
-import com.back.frapuse.data.datamodels.TextToImage
-import com.back.frapuse.data.datamodels.TextToImageRequest
+import com.back.frapuse.data.datamodels.imagegen.ImageBase64
+import com.back.frapuse.data.datamodels.imagegen.ImageInfo
+import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
+import com.back.frapuse.data.datamodels.imagegen.Options
+import com.back.frapuse.data.datamodels.imagegen.Progress
+import com.back.frapuse.data.datamodels.imagegen.SDModel
+import com.back.frapuse.data.datamodels.imagegen.Sampler
+import com.back.frapuse.data.datamodels.imagegen.TextToImage
+import com.back.frapuse.data.datamodels.imagegen.TextToImageRequest
 import com.back.frapuse.data.local.ImageGenDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
 
-private const val TAG = "ImageGenerationRepository"
+private const val TAG = "ImageGenRepository"
 
-class ImageGenerationRepository(private val api: TextToImageAPI, private val database: ImageGenDatabase) {
+class ImageGenRepository(private val api: TextToImageAPI, private val database: ImageGenDatabase) {
 
     /* ____________________________________ Methods Remote _____________________________ */
 
@@ -98,7 +98,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun insertImage(ImageMetadata: ImageMetadata) {
         try {
-            database.imageGenerationDao.insertImage(ImageMetadata)
+            database.imageGenDao.insertImage(ImageMetadata)
         } catch (e: Exception) {
             Log.e(TAG, "Error inserting image in 'imageGenMetadata_table': \n\t $e")
         }
@@ -110,7 +110,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun getAllImages(): List<ImageMetadata> {
         return try {
-            database.imageGenerationDao.getAllImages()
+            database.imageGenDao.getAllImages()
         } catch (e: Exception) {
             Log.e(TAG, "Error getting all images from 'imageGenMetadata_table': \n\t $e")
             listOf()
@@ -123,7 +123,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun updateImage(ImageMetadata: ImageMetadata) {
         try {
-            database.imageGenerationDao.updateImage(ImageMetadata)
+            database.imageGenDao.updateImage(ImageMetadata)
         } catch (e: Exception) {
             Log.e(TAG, "Error updating image in 'imageGenMetadata_table': \n\t $e")
         }
@@ -135,7 +135,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun getImageCount(): Int {
         return try {
-            database.imageGenerationDao.getImageCount()
+            database.imageGenDao.getImageCount()
         } catch (e: Exception) {
             Log.e(TAG, "Error getting the size from 'imageGenMetadata_table': \n\t $e")
         }
@@ -147,7 +147,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun deleteImage(ImageMetadata: ImageMetadata) {
         try {
-            database.imageGenerationDao.deleteImage(ImageMetadata)
+            database.imageGenDao.deleteImage(ImageMetadata)
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting image from 'imageGenMetadata_table': \n\t $e")
         }
@@ -158,7 +158,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun deleteAllImages() {
         try {
-            database.imageGenerationDao.deleteAllImages()
+            database.imageGenDao.deleteAllImages()
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting all images from 'imageGenMetadata_table': \n\t $e")
         }
@@ -171,7 +171,7 @@ class ImageGenerationRepository(private val api: TextToImageAPI, private val dat
      * */
     suspend fun getImageMetadata(imageID: Long): ImageMetadata {
         return try {
-            database.imageGenerationDao.getImageMetadata(imageID)
+            database.imageGenDao.getImageMetadata(imageID)
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching image from 'imageGenMetadata_table': \n\t $e")
             ImageMetadata(

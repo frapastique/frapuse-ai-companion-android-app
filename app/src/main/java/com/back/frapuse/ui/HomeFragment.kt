@@ -10,14 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.back.frapuse.ImageGenerationViewModel
+import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.databinding.FragmentHomeBinding
 import com.back.frapuse.util.HomeBackgroundAdapter
 import com.back.frapuse.util.NoScrollLayoutManager
 
 class HomeFragment : Fragment() {
     // Get the viewModel into the logic
-    private val viewModel: ImageGenerationViewModel by activityViewModels()
+    private val viewModel: ImageGeneViewModel by activityViewModels()
 
     // Declaration of binding
     private lateinit var binding: FragmentHomeBinding

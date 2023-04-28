@@ -1,4 +1,4 @@
-package com.back.frapuse.data.datamodels
+package com.back.frapuse.data.datamodels.imagegen
 
 data class Options(
     val sd_model_checkpoint: String,

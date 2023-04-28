@@ -1,20 +1,19 @@
 package com.back.frapuse.util
 
-import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.ImageGenerationViewModel
+import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.R
-import com.back.frapuse.data.datamodels.ImageMetadata
+import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
 
 class ImageGenRVDetailAdapter(
     // Prepare an imageID
     private var imageID: Long,
     // ViewModel to interact with shared methods
-    private val viewModel: ImageGenerationViewModel,
+    private val viewModel: ImageGeneViewModel,
     // Dataset which provides the wanted data
     private val dataset: List<ImageMetadata>
 ) : RecyclerView.Adapter<ImageGenRVDetailAdapter.ImageGenRVDetailViewHolder>() {

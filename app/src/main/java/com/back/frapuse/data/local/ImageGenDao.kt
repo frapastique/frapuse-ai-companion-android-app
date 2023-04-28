@@ -6,10 +6,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.back.frapuse.data.datamodels.ImageMetadata
+import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
 
 @Dao
-interface ImageGenerationDao {
+interface ImageGenDao {
     /**
      * Method to insert an element into the 'imageGenMetadata_table' database
      * @param ImageMetadata Image metadata which gets inserted

@@ -1,4 +1,4 @@
-package com.back.frapuse.data.datamodels
+package com.back.frapuse.data.datamodels.imagegen
 
 data class SDModel(
     val title: String,

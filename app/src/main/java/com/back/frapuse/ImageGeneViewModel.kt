@@ -12,27 +12,27 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.back.frapuse.data.ImageGenerationRepository
-import com.back.frapuse.data.datamodels.ImageBase64
-import com.back.frapuse.data.datamodels.ImageInfo
-import com.back.frapuse.data.datamodels.ImageMetadata
-import com.back.frapuse.data.datamodels.Options
-import com.back.frapuse.data.datamodels.Progress
-import com.back.frapuse.data.datamodels.SDModel
-import com.back.frapuse.data.datamodels.Sampler
-import com.back.frapuse.data.datamodels.TextToImage
-import com.back.frapuse.data.datamodels.TextToImageRequest
+import com.back.frapuse.data.ImageGenRepository
+import com.back.frapuse.data.datamodels.imagegen.ImageBase64
+import com.back.frapuse.data.datamodels.imagegen.ImageInfo
+import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
+import com.back.frapuse.data.datamodels.imagegen.Options
+import com.back.frapuse.data.datamodels.imagegen.Progress
+import com.back.frapuse.data.datamodels.imagegen.SDModel
+import com.back.frapuse.data.datamodels.imagegen.Sampler
+import com.back.frapuse.data.datamodels.imagegen.TextToImage
+import com.back.frapuse.data.datamodels.imagegen.TextToImageRequest
 import com.back.frapuse.data.local.getDatabase
 import com.back.frapuse.data.remote.TextToImageAPI
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val TAG = "ImageGenerationViewModel"
+private const val TAG = "ImageGeneViewModel"
 
 enum class AppStatus { LOADING, ERROR, DONE, WAITING }
 
-class ImageGenerationViewModel(application: Application) : AndroidViewModel(application) {
+class ImageGeneViewModel(application: Application) : AndroidViewModel(application) {
 
     // Application context
     private val app = getApplication<Application>()
@@ -41,7 +41,7 @@ class ImageGenerationViewModel(application: Application) : AndroidViewModel(appl
     private val database = getDatabase(application)
 
     // Repository value
-    private val repository = ImageGenerationRepository(TextToImageAPI, database)
+    private val repository = ImageGenRepository(TextToImageAPI, database)
 
     /* _______ Values Remote ___________________________________________________________ */
 

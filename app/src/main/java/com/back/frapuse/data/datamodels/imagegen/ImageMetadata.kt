@@ -1,4 +1,4 @@
-package com.back.frapuse.data.datamodels
+package com.back.frapuse.data.datamodels.imagegen
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

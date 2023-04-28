@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.back.frapuse.data.datamodels.ImageMetadata
+import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
 
 /**
  * ImageGenDatabase as RoomDatabase for storing contacts
@@ -13,9 +13,9 @@ import com.back.frapuse.data.datamodels.ImageMetadata
 abstract class ImageGenDatabase : RoomDatabase() {
 
     /**
-     * Abstract value which stores the interface from ImageGenerationDao
+     * Abstract value which stores the interface from ImageGenDao
      * */
-    abstract val imageGenerationDao: ImageGenerationDao
+    abstract val imageGenDao: ImageGenDao
 }
 
 /**

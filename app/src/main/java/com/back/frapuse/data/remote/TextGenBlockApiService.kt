@@ -33,7 +33,7 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-interface TextGenApiService {
+interface TextGenBlockApiService {
     @GET("model")
     suspend fun getModel(): TextGenModelResponse
 
@@ -48,6 +48,6 @@ interface TextGenApiService {
     ): TextGenGenerateResponse
 }
 
-object TextGenAPI {
-    val retrofitService: TextGenApiService by lazy { retrofit.create(TextGenApiService::class.java) }
+object TextGenBlockAPI {
+    val retrofitService: TextGenBlockApiService by lazy { retrofit.create(TextGenBlockApiService::class.java) }
 }

@@ -14,6 +14,9 @@
         <action
                 android:id="@+id/action_homeFragment_to_imageGenTextToImageFragment"
                 app:destination="@id/imageGenTextToImageFragment" />
+        <action
+                android:id="@+id/action_homeFragment_to_textGenFragment"
+                app:destination="@id/textGenFragment" />
     </fragment>
     <fragment
             android:id="@+id/imageGenTextToImageFragment"
@@ -53,5 +56,14 @@
         <argument
                 android:name="imageID"
                 app:argType="long" />
+    </fragment>
+    <fragment
+            android:id="@+id/textGenFragment"
+            android:name="com.back.frapuse.ui.textgen.TextGenFragment"
+            android:label="TextGenFragment"
+            tools:layout="@layout/fragment_text_gen" >
+        <action
+                android:id="@+id/action_textGenFragment_to_homeFragment"
+                app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

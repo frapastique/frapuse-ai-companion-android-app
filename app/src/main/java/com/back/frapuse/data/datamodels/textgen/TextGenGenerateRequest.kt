@@ -16,7 +16,7 @@ data class TextGenGenerateRequest(
     val length_penalty: Double,
     val early_stopping: Boolean,
     val seed: Int,
-    val add_bos_token: Int,
+    val add_bos_token: Boolean,
     val truncation_length: Int,
     val ban_eos_token: Boolean,
     val skip_special_tokens: Boolean,

@@ -7,6 +7,6 @@ data class TextGenModelResponse(
 
 /*
 {
-    "result": "llama-13b-hf"
+    "result": " "
 }
 */

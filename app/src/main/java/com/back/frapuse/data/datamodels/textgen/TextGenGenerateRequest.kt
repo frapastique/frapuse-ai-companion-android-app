@@ -25,7 +25,7 @@ data class TextGenGenerateRequest(
 
 /*
 {
-    "prompt": "In order to make homemade bread, follow these steps:\n1)",
+    "prompt": " ",
     "max_new_tokens": 250,
     "do_sample": true,
     "temperature": 1.3,

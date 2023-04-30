@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">frapuse</string>
-    <string name="app_description">In this application you can choose between text to image and chat with an AI</string>
+    <string name="app_description">In this application you can choose to interact with a text to image and a text to text AI</string>
 
     <string name="text_to_image">Text To Image</string>
+    <string name="text_to_text">Text To Text</string>
     <string name="chat">chat</string>
 
     <string name="generate">generate</string>
@@ -10,6 +11,8 @@
 
     <string name="save_button">save button</string>
     <string name="back_button">back button</string>
+    <string name="send_button">send button</string>
+    <string name="generate_button">generate button</string>
 
     <string name="info">Info…</string>
 
@@ -36,5 +39,6 @@
     <string name="seed_value">-1</string>
 
     <string name="nav_to_rv">Tap and hold to navigate to the image library!</string>
+
 
 </resources>

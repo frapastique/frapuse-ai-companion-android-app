@@ -39,10 +39,10 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/ti_prompt"
+                android:layout_marginTop="16dp" />
 
         <ProgressBar
                 android:id="@+id/progressBar"
@@ -61,15 +61,16 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_send"
-                android:src="@drawable/wand_and_stars_white"
-                android:contentDescription="@string/save_button"
+                android:src="@drawable/bolt_trianglebadge_exclamationmark_white"
+                android:contentDescription="@string/send_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:layout_marginStart="24dp"
+                app:backgroundTint="@color/cardview_dark_background"
                 android:layout_marginBottom="64dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

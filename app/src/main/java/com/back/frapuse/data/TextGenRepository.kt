@@ -137,4 +137,19 @@ class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val datab
             )
         }
     }
+
+    suspend fun prePopulateDB() {
+        insertChat(TextGenChatLibrary(
+            name = "Human",
+            profilePicture = "",
+            message = "Hello, who are you?",
+            sentImage = ""
+        ))
+        insertChat(TextGenChatLibrary(
+            name = "AI",
+            profilePicture = "",
+            message = "Greetings! I am an AI research assistant. How can I help you today?",
+            sentImage = ""
+        ))
+    }
 }

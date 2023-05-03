@@ -37,6 +37,8 @@ class TextGenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        binding.etInstructionsPrompt.setText(viewModel.instructionsPrompt.value)
+
         var prompt = ""
         if (viewModel.prompt.value != null) {
             binding.etPrompt.setText(viewModel.prompt.value!!.prompt)
@@ -54,7 +56,6 @@ class TextGenFragment : Fragment() {
         binding.etPrompt.addTextChangedListener { newPrompt ->
             if (!newPrompt.isNullOrEmpty()) {
                 prompt = newPrompt.toString()
-                viewModel.setPrompt(newPrompt.toString())
             }
 
             if (prompt.isEmpty()) {
@@ -83,20 +84,29 @@ class TextGenFragment : Fragment() {
         }
 
         binding.btnSend.setOnClickListener {
-            viewModel.testBlock(prompt)
+            viewModel.setNextPrompt(prompt)
+            binding.etPrompt.setText("")
         }
+
+        binding.btnSend.setOnLongClickListener {
+            viewModel.deleteChatLibrary()
+
+            true
+        }
+
+        val chatAdapter = TextGenRVChatAdapter(
+            dataset = emptyList(),
+            viewModelTextGen = viewModel
+        )
+
+        binding.rvChatLibrary.adapter = chatAdapter
 
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
-            binding.rvChatLibrary.adapter = TextGenRVChatAdapter(
-                dataset = chatLibrary,
-                viewModelTextGen = viewModel
-            )
-            binding.rvChatLibrary.setHasFixedSize(true)
+            chatAdapter.submitList(chatLibrary)
         }
 
-        /*viewModel.genResponseText.observe(viewLifecycleOwner) { response ->
-            binding.tvResponse.text = response.text
-        }*/
+        binding.rvChatLibrary.setHasFixedSize(true)
+
 
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {

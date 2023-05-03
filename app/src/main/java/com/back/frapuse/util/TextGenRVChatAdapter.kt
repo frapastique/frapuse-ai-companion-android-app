@@ -1,5 +1,6 @@
 package com.back.frapuse.util
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,13 @@ class TextGenRVChatAdapter(
     private val viewModelTextGen: TextGenViewModel,
    // private val viewModelImageGen: ImageGeneViewModel
 ) : RecyclerView.Adapter<TextGenRVChatAdapter.TextGenRVChatViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(list: List<TextGenChatLibrary>) {
+        dataset = list
+        notifyDataSetChanged()
+    }
+
     inner class TextGenRVChatViewHolder(
         internal val binding: TextGenRvChatItemBinding
     ) : RecyclerView.ViewHolder(binding.root)

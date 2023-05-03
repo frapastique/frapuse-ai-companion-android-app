@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
 
 /**
- * ImageGenDatabase as RoomDatabase for storing contacts
+ * ImageGenDatabase as RoomDatabase for storing image metadata
  * */
 @Database(entities = [ImageMetadata::class], version = 1)
 abstract class ImageGenDatabase : RoomDatabase() {
@@ -19,7 +19,7 @@ abstract class ImageGenDatabase : RoomDatabase() {
 }
 
 /**
- * dbInstance stores the instance of ImageGenDatabase in order to be able to work with it
+ * INSTANCE stores the instance of ImageGenDatabase in order to be able to work with it
  * */
 private lateinit var INSTANCE: ImageGenDatabase
 
@@ -28,7 +28,7 @@ private lateinit var INSTANCE: ImageGenDatabase
  * @param context Context of application
  * @return INSTANCE as ImageGenDatabase
  * */
-fun getDatabase(context: Context): ImageGenDatabase {
+fun getImageGenDatabase(context: Context): ImageGenDatabase {
     synchronized(ImageGenDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
             INSTANCE = Room.databaseBuilder(

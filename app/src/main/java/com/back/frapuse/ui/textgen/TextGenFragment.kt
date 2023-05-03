@@ -13,6 +13,7 @@ import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenBinding
+import com.back.frapuse.util.TextGenRVChatAdapter
 
 class TextGenFragment : Fragment() {
     // Get the viewModel into the logic
@@ -85,7 +86,13 @@ class TextGenFragment : Fragment() {
             viewModel.testBlock(prompt)
         }
 
-
+        viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
+            binding.rvChatLibrary.adapter = TextGenRVChatAdapter(
+                dataset = chatLibrary,
+                viewModelTextGen = viewModel
+            )
+            binding.rvChatLibrary.setHasFixedSize(true)
+        }
 
         /*viewModel.genResponseText.observe(viewLifecycleOwner) { response ->
             binding.tvResponse.text = response.text

@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.TextGenRepository
+import com.back.frapuse.data.datamodels.textgen.TextGenChatLibrary
 import com.back.frapuse.data.datamodels.textgen.TextGenGenerateRequest
 import com.back.frapuse.data.datamodels.textgen.TextGenGenerateResponse
 import com.back.frapuse.data.datamodels.textgen.TextGenGenerateResponseText
@@ -69,7 +70,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val apiStatus: LiveData<AppStatus>
         get() = _apiStatus
 
+    /* _______ Values Local ____________________________________________________________ */
 
+    // Chat library
+    private val _chatLibrary = MutableLiveData<List<TextGenChatLibrary>>()
+    val chatLibrary: LiveData<List<TextGenChatLibrary>>
+        get() = _chatLibrary
 
     /* _______ Generation Parameters ___________________________________________________ */
 

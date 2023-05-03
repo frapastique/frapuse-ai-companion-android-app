@@ -44,7 +44,7 @@ interface TextGenChatDao {
      * @param TextGenChatLibrary Chat entry which gets deleted
      * */
     @Delete
-    suspend fun deleteImage(TextGenChatLibrary: TextGenChatLibrary)
+    suspend fun deleteChat(TextGenChatLibrary: TextGenChatLibrary)
 
     /**
      * Method to delete all elements from the 'textGenChatLibrary_table' database

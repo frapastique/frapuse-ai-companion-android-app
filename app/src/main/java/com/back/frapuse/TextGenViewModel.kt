@@ -15,7 +15,6 @@ import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountResponse
 import com.back.frapuse.data.remote.TextGenBlockAPI
-import com.back.frapuse.data.remote.TextGenStreamAPI
 import kotlinx.coroutines.launch
 
 private const val TAG = "TextGenViewModel"
@@ -26,7 +25,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val app = getApplication<Application>()
 
     // Initialize repository
-    private val repository = TextGenRepository(TextGenBlockAPI, TextGenStreamAPI)
+    private val repository = TextGenRepository(TextGenBlockAPI)
 
     /* _______ Values Remote ___________________________________________________________ */
 

@@ -9,11 +9,10 @@ import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountResponse
 import com.back.frapuse.data.remote.TextGenBlockAPI
-import com.back.frapuse.data.remote.TextGenStreamAPI
 
 private const val TAG = "TextGenRepository"
 
-class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val apiStream: TextGenStreamAPI) {
+class TextGenRepository(private val apiBlock: TextGenBlockAPI) {
 
     suspend fun getModel(): TextGenModelResponse {
         return try {
@@ -38,15 +37,6 @@ class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val apiSt
             apiBlock.retrofitService.generateText(parameters)
         } catch (e: Exception) {
             Log.e(TAG, "Error retrieving text response TextGen block API: \n\t $e")
-            TextGenGenerateResponse(listOf(TextGenGenerateResponseText("Error")))
-        }
-    }
-
-    suspend fun generateStreamText(parameters: TextGenGenerateRequest): TextGenGenerateResponse {
-        return try {
-            apiStream.retrofitService.generateStreamText(parameters)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error retrieving text response TextGen stream API: \n\t $e")
             TextGenGenerateResponse(listOf(TextGenGenerateResponseText("Error")))
         }
     }

@@ -11,14 +11,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
-import com.back.frapuse.databinding.FragmentTextGenBinding
+import com.back.frapuse.databinding.FragmentTextGenStreamBinding
 
-class TextGenFragment : Fragment() {
+class TextGenStreamFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: TextGenViewModel by activityViewModels()
 
     // Declaration of binding
-    private lateinit var binding: FragmentTextGenBinding
+    private lateinit var binding: FragmentTextGenStreamBinding
 
     /**
      * Lifecycle Funktion onCreateView
@@ -29,7 +29,7 @@ class TextGenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTextGenBinding.inflate(inflater, container, false)
+        binding = FragmentTextGenStreamBinding.inflate(inflater, container, false)
         return binding.root
     }
 

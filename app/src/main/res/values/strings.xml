@@ -39,6 +39,8 @@
     <string name="seed_value">-1</string>
 
     <string name="nav_to_rv">Tap and hold to navigate to the image library!</string>
+    <string name="text_to_text_block">block</string>
+    <string name="text_to_text_stream">stream</string>
 
 
 </resources>

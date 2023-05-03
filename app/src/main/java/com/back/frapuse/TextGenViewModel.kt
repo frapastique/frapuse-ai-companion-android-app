@@ -15,6 +15,7 @@ import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountResponse
 import com.back.frapuse.data.remote.TextGenBlockAPI
+import com.back.frapuse.data.remote.TextGenStreamAPI
 import kotlinx.coroutines.launch
 
 private const val TAG = "TextGenViewModel"
@@ -25,7 +26,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val app = getApplication<Application>()
 
     // Initialize repository
-    private val repository = TextGenRepository(TextGenBlockAPI)
+    private val repository = TextGenRepository(TextGenBlockAPI, TextGenStreamAPI)
 
     /* _______ Values Remote ___________________________________________________________ */
 
@@ -67,7 +68,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     /* _______ Generation Parameters ___________________________________________________ */
 
-    fun test(prompt: String) {
+    fun testBlock(prompt: String) {
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = prompt,
@@ -92,7 +93,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 stopping_strings = listOf()
             )
             try {
-                _genResponseHolder.value = repository.generateText(_genRequestBody.value!!)
+                _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading response holder: \n\t $e")
             }
@@ -100,6 +101,39 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _genResponseText.value = _genResponseHolder.value!!.results.first()
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading response text from holder: \n\t $e")
+            }
+        }
+    }
+
+    fun testStream(prompt: String) {
+        viewModelScope.launch {
+            _genRequestBody.value = TextGenGenerateRequest(
+                prompt = prompt,
+                max_new_tokes = 250,
+                do_sample = true,
+                temperature = 1.3,
+                top_p = 0.1,
+                typical_p = 1.0,
+                repetition_penalty = 1.18,
+                top_k = 40,
+                min_length = 0,
+                no_repeat_ngram_size = 0,
+                num_beams = 1,
+                penalty_alpha = 0.0,
+                length_penalty = 1.0,
+                early_stopping = false,
+                seed = -1,
+                add_bos_token = true,
+                truncation_length = 2048,
+                ban_eos_token = false,
+                skip_special_tokens = true,
+                stopping_strings = listOf()
+            )
+
+            try {
+
+            } catch (e: Exception) {
+
             }
         }
     }

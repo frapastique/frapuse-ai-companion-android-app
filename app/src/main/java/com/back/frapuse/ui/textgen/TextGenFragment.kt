@@ -85,9 +85,11 @@ class TextGenFragment : Fragment() {
             viewModel.testBlock(prompt)
         }
 
-        viewModel.genResponseText.observe(viewLifecycleOwner) { response ->
+
+
+        /*viewModel.genResponseText.observe(viewLifecycleOwner) { response ->
             binding.tvResponse.text = response.text
-        }
+        }*/
 
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {

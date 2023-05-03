@@ -12,6 +12,20 @@
             android:layout_height="match_parent"
             tools:context=".ui.textgen.TextGenFragment">
 
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_chat_library"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/ti_prompt"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/text_gen_rv_chat_item" />
+
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_prompt"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -19,10 +33,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_chat_library"
+                app:layout_constraintEnd_toStartOf="@id/btn_send"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/prompt">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -32,17 +47,6 @@
                     android:hint="@string/prompt" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-                android:id="@+id/tv_response"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/ti_prompt"
-                android:layout_marginTop="16dp" />
 
         <ProgressBar
                 android:id="@+id/progressBar"
@@ -67,10 +71,9 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 app:backgroundTint="@color/cardview_dark_background"
-                android:layout_marginBottom="64dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="24dp" />
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toTopOf="@+id/ti_prompt" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

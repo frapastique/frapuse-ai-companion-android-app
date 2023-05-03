@@ -69,6 +69,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val apiStatus: LiveData<AppStatus>
         get() = _apiStatus
 
+
+
     /* _______ Generation Parameters ___________________________________________________ */
 
     fun setPrompt(prompt: String) {

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenBinding
@@ -36,9 +37,24 @@ class TextGenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         var prompt = ""
-
+        if (viewModel.prompt.value != null) {
+            binding.etPrompt.setText(viewModel.prompt.value!!.prompt)
+            prompt = viewModel.prompt.value!!.prompt
+            binding.btnSend.isClickable = true
+            binding.btnSend.backgroundTintList =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.purple_200
+                    )
+                )
+            binding.btnSend.setImageResource(R.drawable.wand_and_stars_white)
+        }
         binding.etPrompt.addTextChangedListener { newPrompt ->
-            prompt = newPrompt.toString()
+            if (!newPrompt.isNullOrEmpty()) {
+                prompt = newPrompt.toString()
+                viewModel.setPrompt(newPrompt.toString())
+            }
 
             if (prompt.isEmpty()) {
                 binding.btnSend.isClickable = false
@@ -67,36 +83,43 @@ class TextGenFragment : Fragment() {
 
         binding.btnSend.setOnClickListener {
             viewModel.testBlock(prompt)
-            binding.progressBar.visibility = View.VISIBLE
-
-            binding.btnSend.isClickable = false
-            binding.btnSend.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        androidx.cardview.R.color.cardview_dark_background
-                    )
-                )
-            binding.btnSend.setImageResource(
-                R.drawable.clock_arrow_circlepath_white
-            )
         }
 
         viewModel.genResponseText.observe(viewLifecycleOwner) { response ->
             binding.tvResponse.text = response.text
-            binding.progressBar.visibility = View.GONE
+        }
 
-            binding.btnSend.isClickable = true
-            binding.btnSend.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200
+        viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                AppStatus.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.btnSend.isClickable = false
+                    binding.btnSend.backgroundTintList =
+                        ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                androidx.cardview.R.color.cardview_dark_background
+                            )
+                        )
+                    binding.btnSend.setImageResource(
+                        R.drawable.clock_arrow_circlepath_white
                     )
-                )
-            binding.btnSend.setImageResource(
-                R.drawable.arrow_trianglepath_white
-            )
+                }
+                else -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSend.isClickable = true
+                    binding.btnSend.backgroundTintList =
+                        ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.purple_200
+                            )
+                        )
+                    binding.btnSend.setImageResource(
+                        R.drawable.arrow_trianglepath_white
+                    )
+                }
+            }
         }
     }
 }

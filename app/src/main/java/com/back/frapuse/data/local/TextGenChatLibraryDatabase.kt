@@ -19,7 +19,7 @@ abstract class TextGenChatLibraryDatabase : RoomDatabase() {
 }
 
 /**
- * INSTANCE stores the instance of TextGenDatabase in order to be able to work with it
+ * INSTANCE stores the instance of TextGenChatLibraryDatabase in order to be able to work with it
  * */
 private lateinit var INSTANCE: TextGenChatLibraryDatabase
 

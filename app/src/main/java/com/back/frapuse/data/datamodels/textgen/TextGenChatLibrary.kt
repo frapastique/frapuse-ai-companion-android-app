@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "textGenChatLibrary_table")
 data class TextGenChatLibrary(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val chatID: Long = 0,
     val name: String,
     val profilePicture: String,
     val message: String,

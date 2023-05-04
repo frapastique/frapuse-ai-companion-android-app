@@ -43,8 +43,7 @@
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:fabSize="mini"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="8dp" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_chat_library"
@@ -55,14 +54,17 @@
 
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_chat_library"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:paddingBottom="8dp"
+                    android:clipToPadding="false"
+                    app:flow_horizontalAlign="center"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/text_gen_rv_chat_item"
                     app:layout_constraintTop_toTopOf="@id/cl_chat_library"
-                    app:layout_constraintBottom_toBottomOf="@id/cl_chat_library" />
+                    app:layout_constraintBottom_toBottomOf="@id/cl_chat_library"
+                    tools:listitem="@layout/text_gen_rv_chat_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -70,10 +72,10 @@
                 android:id="@+id/tv_tokens"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/ti_prompt"
                 app:layout_constraintEnd_toEndOf="@+id/btn_send"
                 app:layout_constraintStart_toStartOf="@+id/btn_send"
-                tools:text="Tokens" />
+                tools:text="Context"
+                app:layout_constraintTop_toBottomOf="@+id/btn_send" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_prompt"
@@ -82,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="14dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cl_chat_library"
                 app:layout_constraintEnd_toStartOf="@id/btn_send"
@@ -122,8 +124,8 @@
                 app:backgroundTint="@color/cardview_dark_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/ti_prompt"
-                android:layout_marginBottom="-4dp" />
+                app:fabSize="mini"
+                app:layout_constraintTop_toBottomOf="@+id/cl_chat_library" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -18,13 +18,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/cl_chat_library"
-                tools:text="@string/instruction">
+                tools:text="@string/instruction"
+                app:layout_constraintEnd_toStartOf="@+id/btn_settings"
+                android:layout_marginEnd="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_instructions_prompt"
@@ -33,6 +33,18 @@
                     android:hint="@string/instruction" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_settings"
+                android:src="@drawable/slider_horizontal_3_white"
+                android:contentDescription="@string/settings_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:fabSize="mini"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_chat_library"
@@ -53,6 +65,15 @@
                     app:layout_constraintBottom_toBottomOf="@id/cl_chat_library" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+                android:id="@+id/tv_tokens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/ti_prompt"
+                app:layout_constraintEnd_toEndOf="@+id/btn_send"
+                app:layout_constraintStart_toStartOf="@+id/btn_send"
+                tools:text="Tokens" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/ti_prompt"

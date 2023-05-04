@@ -3,12 +3,15 @@ package com.back.frapuse.util
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.data.datamodels.textgen.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatItemBinding
+import kotlinx.coroutines.NonDisposableHandle.parent
 
 class TextGenRVChatAdapter(
     private var dataset: List<TextGenChatLibrary>,
@@ -39,7 +42,6 @@ class TextGenRVChatAdapter(
         return dataset.size
     }
 
-    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 
@@ -48,7 +50,17 @@ class TextGenRVChatAdapter(
 
         if (chat.name == "AI") {
             holder.binding.clChatItem.setBackgroundColor(
-                R.color.reddish_700
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.purple_1000
+                )
+            )
+        } else {
+            holder.binding.clChatItem.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.dark_grey
+                )
             )
         }
 

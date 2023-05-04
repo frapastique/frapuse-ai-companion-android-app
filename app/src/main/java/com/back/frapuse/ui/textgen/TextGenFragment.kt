@@ -94,6 +94,10 @@ class TextGenFragment : Fragment() {
 
         binding.rvChatLibrary.setHasFixedSize(true)
 
+        viewModel.tokenCount.observe(viewLifecycleOwner) { count ->
+            binding.tvTokens.text = count.results.first().tokens
+        }
+
 
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {

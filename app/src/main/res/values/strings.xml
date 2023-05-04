@@ -44,5 +44,6 @@
     <string name="chat_ai">AI:</string>
 
     <string name="instruction">INSTRUCTION</string>
+    <string name="settings_button">settings button</string>
 
 </resources>

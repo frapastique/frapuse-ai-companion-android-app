@@ -113,10 +113,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             if (repository.getChatCount() == 0) {
                 repository.prePopulateDB()
-                _chatLibrary.value = repository.getAllChats()
-            } else {
-                _chatLibrary.value = repository.getAllChats()
             }
+            _chatLibrary.value = repository.getAllChats()
+            checkTokensCount()
         }
     }
 
@@ -136,7 +135,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setNextPrompt(prompt: String) {
-        _nextPrompt.value = "Human:$prompt"
+        _nextPrompt.value = "Human: $prompt"
         viewModelScope.launch {
             repository.insertChat(
                 TextGenChatLibrary(
@@ -152,16 +151,36 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun createFinalPrompt() {
+        var prevPrompt = ""
+        for (message in _chatLibrary.value!!) {
+            prevPrompt += message.name + ": " + message.message + "\n"
+        }
+
         _prompt.value = TextGenPrompt(
-            prompt = _instructionsPrompt.value!! + _previousPromptHuman.value + _previousPromptAI.value + _nextPrompt.value + "AI:"
+            prompt = _instructionsPrompt.value!! + "\n" +
+                    prevPrompt + "AI:"
         )
         checkTokensCount()
         generateBlock(_prompt.value!!.prompt)
     }
 
     private fun checkTokensCount() {
-        viewModelScope.launch {
-            _tokenCount.value = repository.getTokenCount(_prompt.value!!)
+        if (_prompt.value == null) {
+            var prevPrompt = ""
+            for (message in _chatLibrary.value!!) {
+                prevPrompt += message.name + ": " + message.message + "\n"
+            }
+            viewModelScope.launch {
+                _tokenCount.value = repository.getTokenCount(
+                    TextGenPrompt(
+                        prevPrompt
+                    )
+                )
+            }
+        } else {
+            viewModelScope.launch {
+                _tokenCount.value = repository.getTokenCount(_prompt.value!!)
+            }
         }
     }
 

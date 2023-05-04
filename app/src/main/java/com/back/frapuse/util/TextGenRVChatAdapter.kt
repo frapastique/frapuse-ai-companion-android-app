@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ImageGeneViewModel
+import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.data.datamodels.textgen.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatItemBinding
@@ -38,11 +39,18 @@ class TextGenRVChatAdapter(
         return dataset.size
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 
         holder.binding.tvSentFrom.text = chat.name
         holder.binding.tvMessageText.text = chat.message
+
+        if (chat.name == "AI") {
+            holder.binding.clChatItem.setBackgroundColor(
+                R.color.reddish_700
+            )
+        }
 
         /*holder.binding.sivProfilePicture.setImageBitmap(
             viewModelImageGen.decodeImage(chat.profilePicture)

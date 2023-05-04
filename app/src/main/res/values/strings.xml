@@ -42,7 +42,7 @@
     <string name="text_to_text_block">block</string>
     <string name="text_to_text_stream">stream</string>
     <string name="chat_ai">AI:</string>
-    <string name="instruction_prompt">INSTRUCTION PROMPT</string>
 
+    <string name="instruction">INSTRUCTION</string>
 
 </resources>

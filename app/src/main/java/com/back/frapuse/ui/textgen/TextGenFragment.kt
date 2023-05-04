@@ -40,19 +40,6 @@ class TextGenFragment : Fragment() {
         binding.etInstructionsPrompt.setText(viewModel.instructionsPrompt.value)
 
         var prompt = ""
-        if (viewModel.prompt.value != null) {
-            binding.etPrompt.setText(viewModel.prompt.value!!.prompt)
-            prompt = viewModel.prompt.value!!.prompt
-            binding.btnSend.isClickable = true
-            binding.btnSend.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.purple_200
-                    )
-                )
-            binding.btnSend.setImageResource(R.drawable.wand_and_stars_white)
-        }
         binding.etPrompt.addTextChangedListener { newPrompt ->
             if (!newPrompt.isNullOrEmpty()) {
                 prompt = newPrompt.toString()

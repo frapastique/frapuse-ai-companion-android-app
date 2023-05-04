@@ -24,13 +24,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/cl_chat_library"
-                tools:text="@string/instruction_prompt">
+                tools:text="@string/instruction">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_instructions_prompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/instruction_prompt" />
+                    android:hint="@string/instruction" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

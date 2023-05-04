@@ -13,14 +13,17 @@
             android:padding="8dp">
 
         <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_chat_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipToPadding="true"
                 app:cardCornerRadius="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_chat_item"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="6dp">

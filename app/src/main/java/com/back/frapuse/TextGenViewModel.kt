@@ -15,7 +15,6 @@ import com.back.frapuse.data.datamodels.textgen.TextGenGenerateResponseText
 import com.back.frapuse.data.datamodels.textgen.TextGenModelResponse
 import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
-import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountResponse
 import com.back.frapuse.data.local.getTextGenDatabase
 import com.back.frapuse.data.remote.TextGenBlockAPI
 import kotlinx.coroutines.launch
@@ -156,9 +155,39 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun createFinalPrompt() {
+        val idTokenMap = mutableMapOf<Long, String>()
+        var tokenCountCurrent = 0
         var prevPrompt = ""
+        val newChatLibrary = mutableListOf<TextGenChatLibrary>()
+
         for (message in _chatLibrary.value!!) {
+            Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
+            tokenCountCurrent += message.tokens.toInt()
+            idTokenMap[message.chatID] = message.tokens
             prevPrompt += message.name + ": " + message.message + "\n"
+        }
+
+        if (tokenCountCurrent > 1798) {
+            Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
+            prevPrompt = ""
+            var workCount = tokenCountCurrent - 1798
+            do {
+                val firstEntry = idTokenMap.entries.first()
+                Log.e(TAG, "Token count:\n\t$workCount")
+                workCount -= firstEntry.value.toInt()
+                idTokenMap.remove(firstEntry.key)
+            } while (workCount >= 0)
+
+            for (entry in idTokenMap) {
+                viewModelScope.launch {
+                    val currentChat = repository.getChat(entry.key)
+                    newChatLibrary.add(currentChat)
+                }
+            }
+
+            for (message in newChatLibrary) {
+                prevPrompt += message.name + ": " + message.message + "\n"
+            }
         }
 
         _prompt.value = TextGenPrompt(

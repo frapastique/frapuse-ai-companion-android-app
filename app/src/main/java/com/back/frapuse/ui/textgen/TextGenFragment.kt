@@ -2,6 +2,8 @@ package com.back.frapuse.ui.textgen
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,8 @@ import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.TextGenRVChatAdapter
+
+private const val TAG = "TextGenFragment"
 
 class TextGenFragment : Fragment() {
     // Get the viewModel into the logic
@@ -37,9 +41,12 @@ class TextGenFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.tvInstructionsText.text = viewModel.instructionsPrompt.value
+        viewModel.getAllChats()
+
+        //binding.tvInstructionsText.text = viewModel.instructionsPrompt.value
 
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
             btnBack.findNavController().navigate(TextGenFragmentDirections
@@ -98,17 +105,15 @@ class TextGenFragment : Fragment() {
             true
         }
 
-        //binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
 
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
             val chatAdapter = TextGenRVChatAdapter(
-                dataset = emptyList(),
+                dataset = chatLibrary,
                 viewModelTextGen = viewModel
             )
             binding.rvChatLibrary.adapter = chatAdapter
-            val lastPosition = chatLibrary.size - 1
             chatAdapter.submitList(chatLibrary)
-            binding.rvChatLibrary.smoothScrollToPosition(lastPosition)
+            binding.rvChatLibrary.smoothScrollToPosition(chatLibrary.size - 1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 
@@ -116,6 +121,9 @@ class TextGenFragment : Fragment() {
             binding.tvTokens.text = count
         }
 
+        binding.tiPrompt.setOnClickListener {
+            binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
+        }
 
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {

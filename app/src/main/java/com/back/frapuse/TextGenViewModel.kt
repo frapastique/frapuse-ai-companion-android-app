@@ -283,6 +283,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun getAllChats() {
+        viewModelScope.launch {
+            _chatLibrary.value = repository.getAllChats()
+        }
+    }
+
     fun calculateTokens(pre: String, add: String): String {
         val preInt = pre.toInt()
         val addInt = add.toInt()

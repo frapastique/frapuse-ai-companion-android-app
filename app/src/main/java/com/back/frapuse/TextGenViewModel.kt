@@ -168,34 +168,40 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
 
         if (tokenCountCurrent > 1798) {
-            Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
+            Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
             prevPrompt = ""
-            var workCount = tokenCountCurrent - 1798
             do {
                 val firstEntry = idTokenMap.entries.first()
-                Log.e(TAG, "Token count:\n\t$workCount")
-                workCount -= firstEntry.value.toInt()
+                Log.e(TAG, "Working count:\n\t$tokenCountCurrent")
+                tokenCountCurrent -= firstEntry.value.toInt()
                 idTokenMap.remove(firstEntry.key)
-            } while (workCount >= 0)
+            } while (tokenCountCurrent > 1798)
 
-            for (entry in idTokenMap) {
-                viewModelScope.launch {
+            Log.e(TAG, "Latest token count:\n\t$tokenCountCurrent")
+
+            viewModelScope.launch {
+                for (entry in idTokenMap) {
                     val currentChat = repository.getChat(entry.key)
                     newChatLibrary.add(currentChat)
                 }
+                for (message in newChatLibrary) {
+                    prevPrompt += message.name + ": " + message.message + "\n"
+                }
+                _prompt.value = TextGenPrompt(
+                    prompt = _instructionsPrompt.value!! + "\n" +
+                            prevPrompt + "AI:"
+                )
+                checkTokensCount()
+                generateBlock(_prompt.value!!.prompt)
             }
-
-            for (message in newChatLibrary) {
-                prevPrompt += message.name + ": " + message.message + "\n"
-            }
+        } else {
+            _prompt.value = TextGenPrompt(
+                prompt = _instructionsPrompt.value!! + "\n" +
+                        prevPrompt + "AI:"
+            )
+            checkTokensCount()
+            generateBlock(_prompt.value!!.prompt)
         }
-
-        _prompt.value = TextGenPrompt(
-            prompt = _instructionsPrompt.value!! + "\n" +
-                    prevPrompt + "AI:"
-        )
-        checkTokensCount()
-        generateBlock(_prompt.value!!.prompt)
     }
 
     private fun checkTokensCount() {

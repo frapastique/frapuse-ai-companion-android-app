@@ -84,14 +84,14 @@
                             tools:text="@string/app_description" />
 
                     <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tv_message_time"
+                            android:id="@+id/tv_message_info"
                             android:textSize="7sp"
                             android:textColor="@color/grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_message_text"
-                            tools:text="04.05.23 - 16:20:42"
+                            tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42"
                             tools:ignore="SmallSp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

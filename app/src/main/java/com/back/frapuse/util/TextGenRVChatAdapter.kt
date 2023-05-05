@@ -56,6 +56,7 @@ class TextGenRVChatAdapter(
                 )
             )
             holder.binding.spacerRight.visibility = View.VISIBLE
+            holder.binding.spacerLeft.visibility = View.GONE
 
             val layoutParams =
                 holder.binding.mcvChatItem.layoutParams as ConstraintLayout.LayoutParams
@@ -68,6 +69,7 @@ class TextGenRVChatAdapter(
                     R.color.dark_grey
                 )
             )
+            holder.binding.spacerRight.visibility = View.GONE
             holder.binding.spacerLeft.visibility = View.VISIBLE
 
             val layoutParams =
@@ -75,6 +77,8 @@ class TextGenRVChatAdapter(
             layoutParams.endToEnd = R.id.cl_for_spacer
             holder.binding.mcvChatItem.layoutParams = layoutParams
         }
+
+        holder.binding.tvMessageInfo.text = chat.tokens + " - " + chat.dateTime
 
         /*holder.binding.sivProfilePicture.setImageBitmap(
             viewModelImageGen.decodeImage(chat.profilePicture)

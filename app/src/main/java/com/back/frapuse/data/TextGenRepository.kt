@@ -130,26 +130,13 @@ class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val datab
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching chat from 'textGenChatLibrary_table': \n\t $e")
             TextGenChatLibrary(
+                dateTime = "",
+                tokens = "",
                 name = "",
                 profilePicture = "",
                 message = "",
                 sentImage = "",
             )
         }
-    }
-
-    suspend fun prePopulateDB() {
-        insertChat(TextGenChatLibrary(
-            name = "Human",
-            profilePicture = "",
-            message = "Hello, who are you?",
-            sentImage = ""
-        ))
-        insertChat(TextGenChatLibrary(
-            name = "AI",
-            profilePicture = "",
-            message = "Greetings! I am an AI research assistant. How can I help you today?",
-            sentImage = ""
-        ))
     }
 }

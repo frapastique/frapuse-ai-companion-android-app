@@ -1,6 +1,7 @@
 package com.back.frapuse
 
 import android.app.Application
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -18,6 +19,7 @@ import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountResponse
 import com.back.frapuse.data.local.getTextGenDatabase
 import com.back.frapuse.data.remote.TextGenBlockAPI
 import kotlinx.coroutines.launch
+import java.util.Date
 
 private const val TAG = "TextGenViewModel"
 
@@ -112,7 +114,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         setPreviousChatAI("AI:Greetings! I am an AI research assistant. How can I help you today?")
         viewModelScope.launch {
             if (repository.getChatCount() == 0) {
-                repository.prePopulateDB()
+                populateDB()
             }
             _chatLibrary.value = repository.getAllChats()
             checkTokensCount()
@@ -137,8 +139,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun setNextPrompt(prompt: String) {
         _nextPrompt.value = "Human: $prompt"
         viewModelScope.launch {
+            val tokens = repository.getTokenCount(TextGenPrompt(prompt)).results.first().tokens
             repository.insertChat(
                 TextGenChatLibrary(
+                    dateTime = getDateTime(),
+                    tokens = tokens,
                     name = "Human",
                     profilePicture = "",
                     message = prompt,
@@ -166,7 +171,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     private fun checkTokensCount() {
         if (_prompt.value == null) {
-            var prevPrompt = ""
+            var prevPrompt: String = _instructionsPrompt.value!! + "\n"
             for (message in _chatLibrary.value!!) {
                 prevPrompt += message.name + ": " + message.message + "\n"
             }
@@ -216,8 +221,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
             try {
                 _genResponseText.value = _genResponseHolder.value!!.results.first()
+                val tokens = repository.getTokenCount(TextGenPrompt(
+                    _genResponseText.value!!.text.drop(1)
+                )).results.first().tokens
                 repository.insertChat(
                     TextGenChatLibrary(
+                        dateTime = getDateTime(),
+                        tokens = tokens,
                         name = "AI",
                         profilePicture = "",
                         message = _genResponseText.value!!.text.drop(1),
@@ -236,8 +246,42 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             repository.deleteAllChats()
             _chatLibrary.value = repository.getAllChats()
-            repository.prePopulateDB()
+            populateDB()
             _chatLibrary.value = repository.getAllChats()
         }
+    }
+
+    private fun populateDB() {
+        viewModelScope.launch {
+            var tokens = repository.getTokenCount(
+                TextGenPrompt("Human: Hello, who are you?")
+            ).results.first().tokens
+            repository.insertChat(TextGenChatLibrary(
+                dateTime = getDateTime(),
+                tokens = tokens,
+                name = "Human",
+                profilePicture = "",
+                message = "Hello, who are you?",
+                sentImage = ""
+            ))
+            tokens = repository.getTokenCount(
+                TextGenPrompt("AI: Greetings! I am an AI research assistant. How can I help you today?")
+            ).results.first().tokens
+            repository.insertChat(TextGenChatLibrary(
+                dateTime = getDateTime(),
+                tokens = tokens,
+                name = "AI",
+                profilePicture = "",
+                message = "Greetings! I am an AI research assistant. How can I help you today?",
+                sentImage = ""
+            ))
+            _chatLibrary.value = repository.getAllChats()
+            checkTokensCount()
+        }
+    }
+
+    fun getDateTime(): String {
+        val sdf = SimpleDateFormat("dd.MM.yy - hh:mm:ss")
+        return sdf.format(Date())
     }
 }

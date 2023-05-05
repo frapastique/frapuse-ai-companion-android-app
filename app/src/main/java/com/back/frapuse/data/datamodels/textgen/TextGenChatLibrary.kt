@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 data class TextGenChatLibrary(
     @PrimaryKey(autoGenerate = true)
     val chatID: Long = 0,
+    val dateTime: String,
+    val tokens: String,
     val name: String,
     val profilePicture: String,
     val message: String,

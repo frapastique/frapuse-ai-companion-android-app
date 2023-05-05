@@ -62,8 +62,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         get() = _tokenResponseHolder
 
     // Tokens count of given text
-    private val _tokenCount = MutableLiveData<TextGenTokenCountResponse>()
-    val tokenCount: LiveData<TextGenTokenCountResponse>
+    private val _tokenCount = MutableLiveData<String>()
+    val tokenCount: LiveData<String>
         get() = _tokenCount
 
     /* _______ Prompts _________________________________________________________________ */
@@ -180,11 +180,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     TextGenPrompt(
                         prevPrompt
                     )
-                )
+                ).results.first().tokens
             }
         } else {
             viewModelScope.launch {
                 _tokenCount.value = repository.getTokenCount(_prompt.value!!)
+                    .results.first().tokens
             }
         }
     }
@@ -235,11 +236,23 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     )
                 )
                 _chatLibrary.value = repository.getAllChats()
+                _tokenCount.value = calculateTokens(_tokenCount.value!!, repository.getTokenCount(
+                    TextGenPrompt(
+                        "AI:" + _genResponseText.value!!.text
+                    )
+                ).results.first().tokens)
                 _apiStatus.value = AppStatus.DONE
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading response text from holder: \n\t $e")
             }
         }
+    }
+
+    fun calculateTokens(pre: String, add: String): String {
+        val preInt = pre.toInt()
+        val addInt = add.toInt()
+        val new = preInt + addInt
+        return new.toString()
     }
 
     fun deleteChatLibrary() {

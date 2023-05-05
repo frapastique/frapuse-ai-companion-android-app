@@ -49,12 +49,6 @@ class TextGenRVChatAdapter(
         holder.binding.tvMessageText.text = chat.message
 
         if (chat.name == "AI") {
-            holder.binding.clChatItem.setBackgroundColor(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.purple_1000
-                )
-            )
             holder.binding.spacerRight.visibility = View.VISIBLE
             holder.binding.spacerLeft.visibility = View.GONE
 
@@ -62,13 +56,13 @@ class TextGenRVChatAdapter(
                 holder.binding.mcvChatItem.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.startToStart = R.id.cl_for_spacer
             holder.binding.mcvChatItem.layoutParams = layoutParams
-        } else {
             holder.binding.clChatItem.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    R.color.dark_grey
+                    R.color.purple_1000
                 )
             )
+        } else {
             holder.binding.spacerRight.visibility = View.GONE
             holder.binding.spacerLeft.visibility = View.VISIBLE
 
@@ -76,6 +70,12 @@ class TextGenRVChatAdapter(
                 holder.binding.mcvChatItem.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.endToEnd = R.id.cl_for_spacer
             holder.binding.mcvChatItem.layoutParams = layoutParams
+            holder.binding.clChatItem.setBackgroundColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.dark_grey
+                )
+            )
         }
 
         holder.binding.tvMessageInfo.text = chat.tokens + " - " + chat.dateTime

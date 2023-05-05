@@ -45,40 +45,17 @@ class TextGenRVChatAdapter(
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 
-        holder.binding.tvSentFrom.text = chat.name
-        holder.binding.tvMessageText.text = chat.message
-
-        if (chat.name == "AI") {
-            holder.binding.spacerRight.visibility = View.VISIBLE
-            holder.binding.spacerLeft.visibility = View.GONE
-
-            val layoutParams =
-                holder.binding.mcvChatItem.layoutParams as ConstraintLayout.LayoutParams
-            layoutParams.startToStart = R.id.cl_for_spacer
-            holder.binding.mcvChatItem.layoutParams = layoutParams
-            holder.binding.clChatItem.setBackgroundColor(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.purple_1000
-                )
-            )
-        } else {
-            holder.binding.spacerRight.visibility = View.GONE
-            holder.binding.spacerLeft.visibility = View.VISIBLE
-
-            val layoutParams =
-                holder.binding.mcvChatItem.layoutParams as ConstraintLayout.LayoutParams
-            layoutParams.endToEnd = R.id.cl_for_spacer
-            holder.binding.mcvChatItem.layoutParams = layoutParams
-            holder.binding.clChatItem.setBackgroundColor(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.dark_grey
-                )
-            )
+        if (chat.name == "Human") {
+            holder.binding.clChatHuman.visibility = View.VISIBLE
+            holder.binding.clChatAi.visibility = View.GONE
+            holder.binding.tvMessageTextHuman.text = chat.message
+            holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
+        } else if (chat.name == "AI") {
+            holder.binding.clChatHuman.visibility = View.GONE
+            holder.binding.clChatAi.visibility = View.VISIBLE
+            holder.binding.tvMessageTextAi.text = chat.message
+            holder.binding.tvMessageInfoAi.text = chat.tokens + " - " + chat.dateTime
         }
-
-        holder.binding.tvMessageInfo.text = chat.tokens + " - " + chat.dateTime
 
         /*holder.binding.sivProfilePicture.setImageBitmap(
             viewModelImageGen.decodeImage(chat.profilePicture)

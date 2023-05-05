@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
@@ -37,7 +39,22 @@ class TextGenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.etInstructionsPrompt.setText(viewModel.instructionsPrompt.value)
+        binding.tvInstructionsText.text = viewModel.instructionsPrompt.value
+
+        binding.topAppBar.setNavigationOnClickListener { btnBack ->
+            btnBack.findNavController().navigate(TextGenFragmentDirections
+                .actionTextGenFragmentToHomeFragment()
+            )
+        }
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.btn_settings -> {
+                    true
+                }
+                else -> false
+            }
+        }
 
         var prompt = ""
         binding.etPrompt.addTextChangedListener { newPrompt ->
@@ -81,18 +98,19 @@ class TextGenFragment : Fragment() {
             true
         }
 
-        val chatAdapter = TextGenRVChatAdapter(
-            dataset = emptyList(),
-            viewModelTextGen = viewModel
-        )
-
-        binding.rvChatLibrary.adapter = chatAdapter
+        //binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
 
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
+            val chatAdapter = TextGenRVChatAdapter(
+                dataset = emptyList(),
+                viewModelTextGen = viewModel
+            )
+            binding.rvChatLibrary.adapter = chatAdapter
+            val lastPosition = chatLibrary.size - 1
             chatAdapter.submitList(chatLibrary)
+            binding.rvChatLibrary.smoothScrollToPosition(lastPosition)
+            binding.rvChatLibrary.setHasFixedSize(true)
         }
-
-        binding.rvChatLibrary.setHasFixedSize(true)
 
         viewModel.tokenCount.observe(viewLifecycleOwner) { count ->
             binding.tvTokens.text = count

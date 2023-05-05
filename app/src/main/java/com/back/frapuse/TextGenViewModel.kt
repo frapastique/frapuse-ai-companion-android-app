@@ -167,7 +167,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             prevPrompt += message.name + ": " + message.message + "\n"
         }
 
-        if (tokenCountCurrent > 1798) {
+        if (tokenCountCurrent > 1500) {
             Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
             prevPrompt = ""
             do {
@@ -175,7 +175,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 Log.e(TAG, "Working count:\n\t$tokenCountCurrent")
                 tokenCountCurrent -= firstEntry.value.toInt()
                 idTokenMap.remove(firstEntry.key)
-            } while (tokenCountCurrent > 1798)
+            } while (tokenCountCurrent > 1500)
 
             Log.e(TAG, "Latest token count:\n\t$tokenCountCurrent")
 

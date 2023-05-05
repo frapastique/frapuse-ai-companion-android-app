@@ -100,21 +100,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_send"
                 android:src="@drawable/bolt_trianglebadge_exclamationmark_white"
@@ -127,6 +112,17 @@
                 android:layout_marginEnd="8dp"
                 app:fabSize="mini"
                 app:layout_constraintTop_toBottomOf="@+id/cl_chat_library" />
+
+        <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/btn_send"
+                app:layout_constraintTop_toTopOf="@+id/btn_send"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_send"
+                app:layout_constraintStart_toStartOf="@+id/btn_send" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

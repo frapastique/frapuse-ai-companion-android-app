@@ -11,7 +11,7 @@ import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
 
 class ImageGenRVDetailAdapter(
     // Prepare an imageID
-    private var imageID: Long,
+    private var imageID: Int,
     // ViewModel to interact with shared methods
     private val viewModel: ImageGeneViewModel,
     // Dataset which provides the wanted data

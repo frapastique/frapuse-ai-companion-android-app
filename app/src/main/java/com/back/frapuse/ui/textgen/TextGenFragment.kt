@@ -37,14 +37,14 @@ class TextGenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.getAllChats()
+
         binding = FragmentTextGenBinding.inflate(inflater, container, false)
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        viewModel.getAllChats()
 
         //binding.tvInstructionsText.text = viewModel.instructionsPrompt.value
 

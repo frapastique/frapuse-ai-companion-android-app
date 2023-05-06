@@ -55,7 +55,7 @@
                 app:destination="@id/imageGenRVSmallFragment" />
         <argument
                 android:name="imageID"
-                app:argType="long" />
+                app:argType="integer" />
     </fragment>
     <fragment
             android:id="@+id/textGenFragment"

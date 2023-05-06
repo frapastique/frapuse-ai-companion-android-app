@@ -20,12 +20,12 @@ class ImageGenRVDetailFragment : Fragment() {
     private lateinit var binding: FragmentImageGenRvDetailBinding
 
     // Prepare an imageID
-    private var imageID: Long = 0
+    private var imageID: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            imageID = it.getLong("imageID")
+            imageID = it.getInt("imageID")
         }
     }
 
@@ -43,7 +43,7 @@ class ImageGenRVDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.getImageMetadata(imageID)
+        //viewModel.getImageMetadata(imageID)
 
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
             binding.rvImageLibrary.adapter = ImageGenRVDetailAdapter(
@@ -53,8 +53,10 @@ class ImageGenRVDetailFragment : Fragment() {
             )
             binding.rvImageLibrary.setHasFixedSize(true)
 
-            val helper: SnapHelper = PagerSnapHelper()
-            helper.attachToRecyclerView(binding.rvImageLibrary)
+            binding.rvImageLibrary.scrollToPosition(imageID)
+
+            /*val helper: SnapHelper = PagerSnapHelper()
+            helper.attachToRecyclerView(binding.rvImageLibrary)*/
         }
     }
 }

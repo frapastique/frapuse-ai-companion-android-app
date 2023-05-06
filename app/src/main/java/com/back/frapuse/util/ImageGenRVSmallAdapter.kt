@@ -41,7 +41,7 @@ class ImageGenRVSmallAdapter(
 
             ivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
                 .actionImageGenRVSmallFragmentToImageGenRVDetailFragment(
-                    imageID = imageData.id
+                    imageID = position
                 )
             )
         }

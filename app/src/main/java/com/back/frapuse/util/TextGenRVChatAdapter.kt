@@ -45,12 +45,18 @@ class TextGenRVChatAdapter(
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 
+        if (position == 0 && chat.name == "Human") {
+            holder.binding.clChatInstructions.visibility = View.VISIBLE
+            holder.binding.tvInstructionsText.text = viewModelTextGen.instructionsPrompt.value
+        }
+
         if (chat.name == "Human") {
             holder.binding.clChatHuman.visibility = View.VISIBLE
             holder.binding.clChatAi.visibility = View.GONE
             holder.binding.tvMessageTextHuman.text = chat.message
             holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
         } else if (chat.name == "AI") {
+            holder.binding.clChatInstructions.visibility = View.GONE
             holder.binding.clChatHuman.visibility = View.GONE
             holder.binding.clChatAi.visibility = View.VISIBLE
             holder.binding.tvMessageTextAi.text = chat.message

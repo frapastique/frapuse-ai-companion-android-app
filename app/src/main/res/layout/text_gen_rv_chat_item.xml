@@ -19,7 +19,7 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -40,7 +40,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:padding="8dp"
-                            android:background="@color/dark_grey">
+                            android:background="@color/purple_1200">
 
                         <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_instructions"
@@ -48,12 +48,13 @@
                                 android:textStyle="bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:visibility="visible"
+                                android:visibility="gone"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintStart_toStartOf="parent" />
 
                         <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_instructions_text"
+                                android:textColor="@color/grey"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +64,7 @@
 
                         <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tv_info_instructions"
+                                android:visibility="gone"
                                 android:textSize="7sp"
                                 android:textColor="@color/grey"
                                 android:layout_width="wrap_content"
@@ -81,14 +83,14 @@
                 android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cl_chat_instructions"
                 app:layout_constraintEnd_toEndOf="parent">
 
             <Space
                     android:id="@+id/spacer_left"
-                    android:layout_width="34dp"
+                    android:layout_width="56dp"
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -175,14 +177,14 @@
                 android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cl_chat_human"
                 app:layout_constraintEnd_toEndOf="parent">
 
             <Space
                     android:id="@+id/spacer_right"
-                    android:layout_width="34dp"
+                    android:layout_width="56dp"
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"

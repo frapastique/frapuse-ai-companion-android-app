@@ -113,7 +113,7 @@ class TextGenFragment : Fragment() {
             )
             binding.rvChatLibrary.adapter = chatAdapter
             chatAdapter.submitList(chatLibrary)
-            binding.rvChatLibrary.smoothScrollToPosition(chatLibrary.size - 1)
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 

@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.back.frapuse.AppStatus
 import com.back.frapuse.R
@@ -57,6 +58,9 @@ class TextGenFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.btn_settings -> {
+                    /*findNavController().navigate(TextGenFragmentDirections
+                        .actionTextGenFragmentToTextGenSettingsFragment()
+                    )*/
                     true
                 }
                 else -> false

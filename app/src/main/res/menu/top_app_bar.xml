@@ -4,9 +4,10 @@
 
     <item
             android:id="@+id/btn_settings"
-            android:icon="@drawable/slider_horizontal_3_white"
-            android:title="Settings"
-            android:contentDescription="@string/back_button"
-            app:showAsAction="ifRoom" />
+            android:icon="@drawable/settings_icon"
+            android:title="@string/settings"
+            android:contentDescription="@string/settings_button"
+            android:iconTint="@color/white"
+            app:showAsAction="always" />
 
 </menu>

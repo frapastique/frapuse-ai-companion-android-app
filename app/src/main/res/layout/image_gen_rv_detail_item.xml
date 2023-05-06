@@ -15,10 +15,9 @@
                 android:id="@+id/iv_text_to_image"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:visibility="visible"
@@ -33,10 +32,11 @@
                 android:id="@+id/cl_action_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@id/cl_info_plate"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp">
 
             <ImageView
                     android:id="@+id/iv_favorite_btn"
@@ -46,7 +46,7 @@
                     app:layout_constraintEnd_toEndOf="@id/cl_action_buttons"
                     app:layout_constraintTop_toTopOf="@id/cl_action_buttons"
                     app:layout_constraintBottom_toTopOf="@id/iv_load_parameters_btn"
-                    android:layout_marginBottom="16dp" />
+                    android:layout_marginBottom="8dp" />
 
             <ImageView
                     android:id="@+id/iv_load_parameters_btn"
@@ -55,27 +55,27 @@
                     android:layout_height="25dp"
                     app:layout_constraintEnd_toEndOf="@+id/iv_share_btn"
                     app:layout_constraintTop_toBottomOf="@+id/iv_favorite_btn"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintBottom_toTopOf="@id/iv_delete_btn"
-                    android:layout_marginBottom="32dp" />
+                    android:layout_marginBottom="8dp" />
 
             <ImageView
                     android:id="@+id/iv_delete_btn"
                     android:src="@drawable/trash_purple"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="@+id/iv_favorite_btn"
                     app:layout_constraintTop_toBottomOf="@+id/iv_load_parameters_btn"
                     app:layout_constraintBottom_toTopOf="@id/iv_share_btn"
-                    android:layout_marginBottom="32dp" />
+                    android:layout_marginBottom="8dp" />
 
             <ImageView
                     android:id="@+id/iv_share_btn"
                     android:src="@drawable/square_and_arrow_up_purple"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="@+id/iv_favorite_btn"
                     app:layout_constraintTop_toBottomOf="@+id/iv_delete_btn"
                     app:layout_constraintBottom_toBottomOf="@id/cl_action_buttons" />

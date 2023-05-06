@@ -15,6 +15,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/toolbar"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -57,11 +58,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_image_library"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:paddingStart="8dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:clipToPadding="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:layout_constraintEnd_toEndOf="parent"

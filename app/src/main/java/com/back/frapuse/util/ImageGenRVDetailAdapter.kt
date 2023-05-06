@@ -46,10 +46,10 @@ class ImageGenRVDetailAdapter(
 
             if (infoVisible) {
                 holder.binding.clInfoPlate.visibility = View.VISIBLE
-                holder.binding.clActionButtons.visibility = View.VISIBLE
+                holder.binding.clActionButtons.visibility = View.GONE
             } else {
                 holder.binding.clInfoPlate.visibility = View.GONE
-                holder.binding.clActionButtons.visibility = View.GONE
+                holder.binding.clActionButtons.visibility = View.VISIBLE
             }
         }
 

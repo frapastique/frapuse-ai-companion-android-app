@@ -12,7 +12,7 @@
             android:id="@+id/mcv_gen_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="2dp"
             app:cardCornerRadius="16dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,8 +21,8 @@
 
             <ImageView
                     android:id="@+id/iv_gen_image"
-                    android:layout_width="170dp"
-                    android:layout_height="170dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:scaleType="centerCrop"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

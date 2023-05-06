@@ -500,4 +500,10 @@ class ImageGeneViewModel(application: Application) : AndroidViewModel(applicatio
             imageView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
         }
     }
+
+    fun getAllImages() {
+        viewModelScope.launch {
+            _imageLibrary.value = repository.getAllImages()
+        }
+    }
 }

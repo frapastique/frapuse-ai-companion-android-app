@@ -415,4 +415,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun resetFilePath() {
         filePathLiveData.value = ""
     }
+
+    fun deleteAllPdf(context: Context) {
+        val dir = context.filesDir
+        val pdfDir = File(dir, "pdf")
+        val files = pdfDir.listFiles()
+
+        for (file in files) {
+            file.delete()
+        }
+    }
 }

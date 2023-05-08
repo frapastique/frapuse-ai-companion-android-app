@@ -126,6 +126,7 @@ class TextGenFragment : Fragment() {
 
         binding.btnSend.setOnLongClickListener {
             viewModel.deleteChatLibrary()
+            viewModel.deleteAllPdf(requireContext())
 
             true
         }

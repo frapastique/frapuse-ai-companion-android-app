@@ -81,12 +81,33 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/prompt">
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_prompt"
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt" />
+                    android:layout_height="match_parent">
 
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btn_attachment"
+                        android:src="@drawable/paperclip_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        app:fabSize="mini"
+                        app:tint="@color/white"
+                        app:backgroundTint="@color/transparent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

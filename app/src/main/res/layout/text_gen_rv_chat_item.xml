@@ -119,54 +119,76 @@
                         tools:layout_constraintStart_toStartOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/cl_chat_item_human"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:padding="8dp"
-                            android:background="@color/dark_grey">
+                            android:id="@+id/cl_chat_human_sent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
                         <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/siv_profile_picture_human"
-                                android:layout_width="42dp"
-                                android:layout_height="42dp"
-                                android:background="@color/purple_200"
-                                android:visibility="gone"
+                                android:id="@+id/siv_sent_content"
+                                android:visibility="visible"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:scaleType="fitCenter"
+                                android:adjustViewBounds="true"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:shapeAppearanceOverlay="@style/roundedCorners"
-                                tools:src="@tools:sample/avatars" />
+                                app:layout_constraintEnd_toEndOf="parent"
+                                tools:src="@tools:sample/avatars"/>
 
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_sent_from_human"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/cl_chat_item_human"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:visibility="gone"
-                                app:layout_constraintStart_toEndOf="@+id/siv_profile_picture_human"
-                                app:layout_constraintTop_toTopOf="parent"
+                                android:padding="8dp"
+                                android:background="@color/dark_grey"
+                                app:layout_constraintTop_toBottomOf="@+id/siv_sent_content"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                tools:text="@string/chat_ai" />
+                                app:layout_constraintBottom_toBottomOf="parent">
 
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_message_text_human"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintStart_toEndOf="@+id/siv_profile_picture_human"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_sent_from_human"
-                                tools:text="@string/app_description" />
+                            <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/siv_profile_picture_human"
+                                    android:layout_width="42dp"
+                                    android:layout_height="42dp"
+                                    android:background="@color/purple_200"
+                                    android:visibility="gone"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:shapeAppearanceOverlay="@style/roundedCorners"
+                                    tools:src="@tools:sample/avatars" />
 
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_message_info_human"
-                                android:textSize="7sp"
-                                android:textColor="@color/grey"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_message_text_human"
-                                tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42"
-                                tools:ignore="SmallSp" />
+                            <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/tv_sent_from_human"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:visibility="gone"
+                                    app:layout_constraintStart_toEndOf="@+id/siv_profile_picture_human"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    tools:text="@string/chat_ai" />
 
+                            <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/tv_message_text_human"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintStart_toEndOf="@+id/siv_profile_picture_human"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_sent_from_human"
+                                    tools:text="@string/app_description" />
+
+                            <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/tv_message_info_human"
+                                    android:textSize="7sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_message_text_human"
+                                    tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42"
+                                    tools:ignore="SmallSp" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
             </androidx.constraintlayout.widget.ConstraintLayout>

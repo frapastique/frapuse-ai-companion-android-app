@@ -72,6 +72,8 @@ class TextGenFragment : Fragment() {
         binding.etPrompt.addTextChangedListener { newPrompt ->
             if (!newPrompt.isNullOrEmpty()) {
                 prompt = newPrompt.toString()
+            } else {
+                prompt = ""
             }
 
             if (prompt.isEmpty()) {
@@ -169,15 +171,15 @@ class TextGenFragment : Fragment() {
 
         binding.btnAttachment.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Upload Document")
-                .setMessage("This is a dummy message!")
-                .setNeutralButton("Neutral") { dialog, which ->
+                .setTitle("Attachment")
+                .setMessage("Choose to attach a document or an Image!")
+                .setNeutralButton("Cancel") { dialog, which ->
                     // Respond to neutral button press
                 }
-                .setNegativeButton("Negative") { dialog, which ->
-                    // Respond to negative button press
+                .setNegativeButton("Document") { dialog, which ->
+                    // Respond to positive button press
                 }
-                .setPositiveButton("Positive") { dialog, which ->
+                .setPositiveButton("Image") { dialog, which ->
                     // Respond to positive button press
                 }
                 .show()

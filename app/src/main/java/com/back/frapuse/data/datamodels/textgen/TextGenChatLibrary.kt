@@ -13,5 +13,6 @@ data class TextGenChatLibrary(
     val profilePicture: String,
     val message: String,
     val sentImage: String,
+    val sentDocument: String,
     //val textGenGenerateRequest: TextGenGenerateRequest
 )

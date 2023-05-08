@@ -1,10 +1,17 @@
 package com.back.frapuse
 
+import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
+import android.net.Uri
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,6 +27,8 @@ import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.local.getTextGenDatabase
 import com.back.frapuse.data.remote.TextGenBlockAPI
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Date
 
 private const val TAG = "TextGenViewModel"
@@ -108,6 +117,26 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val chatLibrary: LiveData<List<TextGenChatLibrary>>
         get() = _chatLibrary
 
+    // Define a LiveData variable to hold the file path
+    val filePathLiveData = MutableLiveData<String>()
+
+    // create a contract for picking a PDF file
+    val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
+        override fun createIntent(context: Context, input: String): Intent {
+            return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = input
+            }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+            return if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
+        }
+    }
+
+    // create a launcher variable to hold the ActivityResultLauncher
+    var pickPdfLauncher: ActivityResultLauncher<String>? = null
+
 
     init {
         setInstructionsPrompt("The following is a conversation with an AI research assistant. The assistant tone is technical and scientific.")
@@ -137,7 +166,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         _previousPromptAI.value = prompt
     }
 
-    fun setNextPrompt(prompt: String) {
+    fun setNextPrompt(prompt: String, filePath: String) {
         _nextPrompt.value = "Human: $prompt"
         viewModelScope.launch {
             val tokens = repository.getTokenCount(TextGenPrompt(prompt)).results.first().tokens
@@ -148,7 +177,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     name = "Human",
                     profilePicture = "",
                     message = prompt,
-                    sentImage = ""
+                    sentImage = "",
+                    sentDocument = filePath
                 )
             )
             _chatLibrary.value = repository.getAllChats()
@@ -269,7 +299,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         name = "AI",
                         profilePicture = "",
                         message = _genResponseText.value!!.text.drop(1),
-                        sentImage = ""
+                        sentImage = "",
+                        sentDocument = ""
                     )
                 )
                 _chatLibrary.value = repository.getAllChats()
@@ -318,7 +349,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 name = "Human",
                 profilePicture = "",
                 message = "Hello, who are you?",
-                sentImage = ""
+                sentImage = "",
+                sentDocument = ""
             ))
             tokens = repository.getTokenCount(
                 TextGenPrompt("AI: Greetings! I am an AI research assistant. How can I help you today?")
@@ -329,7 +361,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 name = "AI",
                 profilePicture = "",
                 message = "Greetings! I am an AI research assistant. How can I help you today?",
-                sentImage = ""
+                sentImage = "",
+                sentDocument = ""
             ))
             _chatLibrary.value = repository.getAllChats()
             checkTokensCount()
@@ -339,5 +372,47 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun getDateTime(): String {
         val sdf = SimpleDateFormat("dd.MM.yy - hh:mm:ss")
         return sdf.format(Date())
+    }
+
+    // create a function to register the contract and get the launcher
+    fun registerPickPdfContract(registry: ActivityResultRegistry) {
+        pickPdfLauncher = registry.register("pickPdf", pickPdfContract) { uri ->
+            // handle the URI of the selected file
+            if (uri != null) {
+                // call the function to create a local PDF file and pass the URI and context
+                val filePath = createLocalPdfFile(uri, app.applicationContext)
+                // update the LiveData variable with the file path
+                filePathLiveData.value = filePath
+            }
+        }
+    }
+
+    // create a function to launch the file picker
+    fun launchPickPdf() {
+        pickPdfLauncher?.launch("application/pdf")
+    }
+
+    // define a function to create a local PDF file from a URI and return its path
+    fun createLocalPdfFile(uri: Uri, context: Context): String {
+        // get the app-specific internal storage directory
+        val dir = context.filesDir
+        // create a subdirectory for PDF files
+        val pdfDir = File(dir, "pdf")
+        pdfDir.mkdirs()
+        // create a file with a unique name
+        val file = File.createTempFile("pdf_", ".pdf", pdfDir)
+        // copy the content of the URI to the file
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        // close the streams
+        inputStream?.close()
+        outputStream.close()
+        // get and return the file path
+        return file.path
+    }
+
+    fun resetFilePath() {
+        filePathLiveData.value = ""
     }
 }

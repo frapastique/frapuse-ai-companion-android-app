@@ -125,6 +125,7 @@
 
                         <com.google.android.material.imageview.ShapeableImageView
                                 android:id="@+id/siv_sent_content"
+                                android:background="@color/white"
                                 android:visibility="visible"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

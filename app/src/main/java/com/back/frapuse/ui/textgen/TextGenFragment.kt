@@ -113,8 +113,14 @@ class TextGenFragment : Fragment() {
         }
 
         binding.btnSend.setOnClickListener {
-            viewModel.setNextPrompt(prompt)
+            var filePath = ""
+            // observe the LiveData variable from the viewmodel
+            viewModel.filePathLiveData.observe(viewLifecycleOwner) { newFilePath ->
+                filePath = newFilePath
+            }
+            viewModel.setNextPrompt(prompt, filePath)
             binding.etPrompt.setText("")
+            viewModel.resetFilePath()
             binding.btnAttachment.visibility = View.VISIBLE
         }
 
@@ -124,14 +130,13 @@ class TextGenFragment : Fragment() {
             true
         }
 
-        val chatAdapter = TextGenRVChatAdapter(
-            dataset = emptyList(),
-            viewModelTextGen = viewModel
-        )
-
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
+            val chatAdapter = TextGenRVChatAdapter(
+                dataset = chatLibrary,
+                viewModelTextGen = viewModel
+            )
             binding.rvChatLibrary.adapter = chatAdapter
-            chatAdapter.submitList(chatLibrary, null)
+            chatAdapter.submitList(chatLibrary)
             binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
@@ -177,40 +182,7 @@ class TextGenFragment : Fragment() {
             }
         }
 
-        // create a contract for picking a PDF file
-        val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
-            override fun createIntent(context: Context, input: String): Intent {
-                return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = input
-                }
-            }
-
-            override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-                return if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
-            }
-        }
-
-        // register a callback for the contract
-        val pickPdfResult = registerForActivityResult(pickPdfContract) { uri ->
-            // handle the URI of the selected file
-            if (uri != null) {
-                // create a PdfRenderer from the URI
-                val parcelFileDescriptor = requireContext().contentResolver.openFileDescriptor(uri, "r")
-                val pdfRenderer = PdfRenderer(parcelFileDescriptor!!)
-                // get the first page of the PDF file
-                val pdfPage = pdfRenderer.openPage(0)
-                // create a bitmap with the same size and config as the page
-                val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
-                // render the page content to the bitmap
-                pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                // pass the bitmap to the adapter
-                chatAdapter.submitList(viewModel.chatLibrary.value!!, bitmap)
-                // close the page and the renderer
-                pdfPage.close()
-                pdfRenderer.close()
-            }
-        }
+        viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
 
         binding.btnAttachment.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
@@ -221,7 +193,7 @@ class TextGenFragment : Fragment() {
                 }
                 .setNegativeButton("Document") { dialog, which ->
                     // Respond to positive button press
-                    pickPdfResult.launch("application/pdf")
+                    viewModel.launchPickPdf()
                 }
                 .setPositiveButton("Image") { dialog, which ->
                     // Respond to positive button press

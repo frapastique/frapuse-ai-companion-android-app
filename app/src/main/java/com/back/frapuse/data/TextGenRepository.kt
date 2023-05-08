@@ -136,6 +136,7 @@ class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val datab
                 profilePicture = "",
                 message = "",
                 sentImage = "",
+                sentDocument = ""
             )
         }
     }

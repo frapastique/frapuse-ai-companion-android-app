@@ -19,6 +19,7 @@ import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.TextGenRVChatAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "TextGenFragment"
 
@@ -74,6 +75,8 @@ class TextGenFragment : Fragment() {
             }
 
             if (prompt.isEmpty()) {
+                binding.btnAttachment.visibility = View.VISIBLE
+
                 binding.btnSend.isClickable = false
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -86,6 +89,8 @@ class TextGenFragment : Fragment() {
                     R.drawable.bolt_trianglebadge_exclamationmark_white
                 )
             } else {
+                binding.btnAttachment.visibility = View.GONE
+
                 binding.btnSend.isClickable = true
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -101,6 +106,7 @@ class TextGenFragment : Fragment() {
         binding.btnSend.setOnClickListener {
             viewModel.setNextPrompt(prompt)
             binding.etPrompt.setText("")
+            binding.btnAttachment.visibility = View.VISIBLE
         }
 
         binding.btnSend.setOnLongClickListener {
@@ -108,7 +114,6 @@ class TextGenFragment : Fragment() {
 
             true
         }
-
 
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
             val chatAdapter = TextGenRVChatAdapter(
@@ -160,6 +165,22 @@ class TextGenFragment : Fragment() {
                     )
                 }
             }
+        }
+
+        binding.btnAttachment.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Upload Document")
+                .setMessage("This is a dummy message!")
+                .setNeutralButton("Neutral") { dialog, which ->
+                    // Respond to neutral button press
+                }
+                .setNegativeButton("Negative") { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton("Positive") { dialog, which ->
+                    // Respond to positive button press
+                }
+                .show()
         }
     }
 }

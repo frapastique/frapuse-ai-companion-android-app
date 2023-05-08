@@ -1,6 +1,12 @@
 package com.back.frapuse.ui.textgen
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -8,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -117,13 +124,14 @@ class TextGenFragment : Fragment() {
             true
         }
 
+        val chatAdapter = TextGenRVChatAdapter(
+            dataset = emptyList(),
+            viewModelTextGen = viewModel
+        )
+
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
-            val chatAdapter = TextGenRVChatAdapter(
-                dataset = chatLibrary,
-                viewModelTextGen = viewModel
-            )
             binding.rvChatLibrary.adapter = chatAdapter
-            chatAdapter.submitList(chatLibrary)
+            chatAdapter.submitList(chatLibrary, null)
             binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
@@ -169,15 +177,51 @@ class TextGenFragment : Fragment() {
             }
         }
 
+        // create a contract for picking a PDF file
+        val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
+            override fun createIntent(context: Context, input: String): Intent {
+                return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = input
+                }
+            }
+
+            override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+                return if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
+            }
+        }
+
+        // register a callback for the contract
+        val pickPdfResult = registerForActivityResult(pickPdfContract) { uri ->
+            // handle the URI of the selected file
+            if (uri != null) {
+                // create a PdfRenderer from the URI
+                val parcelFileDescriptor = requireContext().contentResolver.openFileDescriptor(uri, "r")
+                val pdfRenderer = PdfRenderer(parcelFileDescriptor!!)
+                // get the first page of the PDF file
+                val pdfPage = pdfRenderer.openPage(0)
+                // create a bitmap with the same size and config as the page
+                val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
+                // render the page content to the bitmap
+                pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                // pass the bitmap to the adapter
+                chatAdapter.submitList(viewModel.chatLibrary.value!!, bitmap)
+                // close the page and the renderer
+                pdfPage.close()
+                pdfRenderer.close()
+            }
+        }
+
         binding.btnAttachment.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Attachment")
-                .setMessage("Choose to attach a document or an Image!")
+                .setMessage("Choose to attach a document or an image.")
                 .setNeutralButton("Cancel") { dialog, which ->
                     // Respond to neutral button press
                 }
                 .setNegativeButton("Document") { dialog, which ->
                     // Respond to positive button press
+                    pickPdfResult.launch("application/pdf")
                 }
                 .setPositiveButton("Image") { dialog, which ->
                     // Respond to positive button press

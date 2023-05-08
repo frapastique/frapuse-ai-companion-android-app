@@ -1,6 +1,7 @@
 package com.back.frapuse.util
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +17,14 @@ import com.back.frapuse.databinding.TextGenRvChatItemBinding
 class TextGenRVChatAdapter(
     private var dataset: List<TextGenChatLibrary>,
     private val viewModelTextGen: TextGenViewModel,
+    var pdfBitmap: Bitmap? = null
    // private val viewModelImageGen: ImageGeneViewModel
 ) : RecyclerView.Adapter<TextGenRVChatAdapter.TextGenRVChatViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<TextGenChatLibrary>) {
+    fun submitList(list: List<TextGenChatLibrary>, bitmap: Bitmap?) {
         dataset = list
+        pdfBitmap = bitmap
         notifyDataSetChanged()
     }
 
@@ -55,6 +58,11 @@ class TextGenRVChatAdapter(
             holder.binding.clChatAi.visibility = View.GONE
             holder.binding.tvMessageTextHuman.text = chat.message
             holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
+
+            if (pdfBitmap != null) {
+                holder.binding.sivSentContent.setImageBitmap(pdfBitmap)
+            }
+
         } else if (chat.name == "AI") {
             holder.binding.clChatInstructions.visibility = View.GONE
             holder.binding.clChatHuman.visibility = View.GONE

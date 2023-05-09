@@ -82,4 +82,8 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.1"
 
     annotationProcessor("androidx.room:room-compiler:2.5.1")
+
+    // Text Recognition Dependencies
+    // To recognize Latin script
+    implementation 'com.google.mlkit:text-recognition:16.0.0'
 }

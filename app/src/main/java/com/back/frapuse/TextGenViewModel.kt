@@ -195,6 +195,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun createFinalPrompt() {
+        _apiStatus.value = AppStatus.LOADING
         val idTokenMap = mutableMapOf<Long, String>()
         var tokenCountCurrent = 0
         var prevPrompt = ""
@@ -274,6 +275,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun generateBlock(prompt: String) {
+        _apiStatus.value = AppStatus.LOADING
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = prompt,
@@ -466,6 +468,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
         }
         textOut.value = stringBuilder.toString()
+        _apiStatus.value = AppStatus.DONE
     }
 
     var count = MutableLiveData<String>()

@@ -106,10 +106,6 @@ class TextGenFragment : Fragment() {
 
         var filePath = ""
         binding.btnSend.setOnClickListener {
-            // observe the LiveData variable from the viewmodel
-            viewModel.filePathLiveData.observe(viewLifecycleOwner) { newFilePath ->
-                filePath = newFilePath
-            }
             binding.rvAttachmentPreview.visibility = View.GONE
             viewModel.setNextPrompt(prompt, filePath)
             binding.etPrompt.setText("")

@@ -1,7 +1,11 @@
 package com.back.frapuse.ui.textgen
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,6 +23,7 @@ import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
 
 private const val TAG = "TextGenFragment"
 
@@ -107,10 +112,41 @@ class TextGenFragment : Fragment() {
         var filePath = ""
         binding.btnSend.setOnClickListener {
             binding.rvAttachmentPreview.visibility = View.GONE
-            viewModel.setNextPrompt(prompt, filePath)
-            binding.etPrompt.setText("")
-            viewModel.resetFilePath()
-            binding.btnAttachment.visibility = View.VISIBLE
+            if (filePath.isNotEmpty()) {
+                binding.etPrompt.setTextColor (ContextCompat.getColor (requireContext(), R.color.black))
+                val file = File(filePath)
+                // create a PdfRenderer from the file
+                val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+                val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+                // get the first page of the PDF file
+                val pdfPage = pdfRenderer.openPage(0)
+                // create a bitmap with the same size and config as the page
+                val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
+                bitmap.eraseColor(Color.WHITE)
+                // render the page content to the bitmap
+                pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+
+                viewModel.extractText(bitmap)
+
+                pdfPage.close()
+                pdfRenderer.close()
+
+                viewModel.textOut.observe(viewLifecycleOwner) { textOut ->
+                    if (textOut.isNotEmpty()) {
+                        viewModel.setNextPrompt(prompt, filePath)
+                        binding.etPrompt.setText("")
+                        binding.etPrompt.setTextColor (ContextCompat.getColor (requireContext(), R.color.white))
+                        binding.btnAttachment.visibility = View.VISIBLE
+                        viewModel.resetFilePath()
+                        filePath = ""
+                    }
+                }
+            } else {
+                viewModel.setNextPrompt(prompt, filePath)
+                binding.etPrompt.setText("")
+                binding.btnAttachment.visibility = View.VISIBLE
+                filePath = ""
+            }
         }
 
         binding.btnSend.setOnLongClickListener {

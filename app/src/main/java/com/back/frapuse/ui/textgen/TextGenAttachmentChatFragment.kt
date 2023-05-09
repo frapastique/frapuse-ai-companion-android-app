@@ -1,5 +1,6 @@
 package com.back.frapuse.ui.textgen
 
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
@@ -9,13 +10,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
+import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenAttachmentChatBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import okio.blackholeSink
 import java.io.File
 
 class TextGenAttachmentChatFragment : Fragment() {
@@ -52,8 +57,6 @@ class TextGenAttachmentChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-
         val file = File(pdf)
         // create a PdfRenderer from the file
         val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
@@ -66,37 +69,19 @@ class TextGenAttachmentChatFragment : Fragment() {
         // render the page content to the bitmap
         pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
-        val image = InputImage.fromBitmap(bitmap, 0)
+        viewModel.extractText(bitmap)
 
-        recognizer.process(image)
-            .addOnSuccessListener { visionText ->
-                binding.tvExtractedText.text = processTextBlock(visionText)
-            }
-            .addOnFailureListener { e ->
-                binding.tvExtractedText.text = e.toString()
-            }
+        binding.sivAttachmentPreview.setImageBitmap(bitmap)
+
+        viewModel.textOut.observe(viewLifecycleOwner) { textOut ->
+            binding.tvExtractedText.text = textOut
+        }
+
+        viewModel.count.observe(viewLifecycleOwner) { count ->
+            binding.tvExtractedTextTokenCount.text = "Tokens: $count"
+        }
 
         pdfPage.close()
         pdfRenderer.close()
-    }
-
-    private fun processTextBlock(result: Text): String {
-        val textBlocks = result.textBlocks
-        if (textBlocks.size == 0) {
-            return "No text found"
-        }
-        val stringBuilder = StringBuilder()
-        for (block in textBlocks) {
-            stringBuilder.append("\n\n")
-            val lines = block.lines
-            for (line in lines) {
-                val elements = line.elements
-                for (element in elements) {
-                    val elementText = element.text
-                    stringBuilder.append("$elementText ")
-                }
-            }
-        }
-        return stringBuilder.toString()
     }
 }

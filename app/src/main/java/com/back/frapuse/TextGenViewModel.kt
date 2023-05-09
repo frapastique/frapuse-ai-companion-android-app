@@ -4,8 +4,11 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
@@ -24,6 +27,10 @@ import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
 import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.local.getTextGenDatabase
 import com.back.frapuse.data.remote.TextGenBlockAPI
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -165,6 +172,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setNextPrompt(prompt: String, filePath: String) {
+        _apiStatus.value = AppStatus.LOADING
         _nextPrompt.value = "Human: $prompt"
         viewModelScope.launch {
             val tokens = repository.getTokenCount(TextGenPrompt(prompt)).results.first().tokens
@@ -176,10 +184,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     profilePicture = "",
                     message = prompt,
                     sentImage = "",
-                    sentDocument = filePath
+                    sentDocument = filePath,
+                    documentText = textOut.value.toString()
                 )
             )
             _chatLibrary.value = repository.getAllChats()
+            textOut.value = ""
             createFinalPrompt()
         }
     }
@@ -194,10 +204,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
             tokenCountCurrent += message.tokens.toInt()
             idTokenMap[message.chatID] = message.tokens
-            prevPrompt += message.name + ": " + message.message + "\n"
+            if (message.sentDocument.isNotEmpty()) {
+                prevPrompt += message.name + ": " + message.message + "\nText: " + message.documentText + "\n"
+            } else {
+                prevPrompt += message.name + ": " + message.message + "\n"
+            }
         }
 
-        if (tokenCountCurrent > 1500) {
+        if (tokenCountCurrent > 1700) {
             Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
             prevPrompt = ""
             do {
@@ -205,7 +219,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 Log.e(TAG, "Working count:\n\t$tokenCountCurrent")
                 tokenCountCurrent -= firstEntry.value.toInt()
                 idTokenMap.remove(firstEntry.key)
-            } while (tokenCountCurrent > 1500)
+            } while (tokenCountCurrent > 1700)
 
             Log.e(TAG, "Latest token count:\n\t$tokenCountCurrent")
 
@@ -215,7 +229,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     newChatLibrary.add(currentChat)
                 }
                 for (message in newChatLibrary) {
-                    prevPrompt += message.name + ": " + message.message + "\n"
+                    if (message.sentDocument.isNotEmpty()) {
+                        prevPrompt += message.name + ": " + message.message + "\nText:" + message.documentText + "\n"
+                    } else {
+                        prevPrompt += message.name + ": " + message.message + "\n"
+                    }
                 }
                 _prompt.value = TextGenPrompt(
                     prompt = _instructionsPrompt.value!! + "\n" +
@@ -256,7 +274,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun generateBlock(prompt: String) {
-        _apiStatus.value = AppStatus.LOADING
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = prompt,
@@ -298,7 +315,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         profilePicture = "",
                         message = _genResponseText.value!!.text.drop(1),
                         sentImage = "",
-                        sentDocument = ""
+                        sentDocument = "",
+                        documentText = ""
                     )
                 )
                 _chatLibrary.value = repository.getAllChats()
@@ -348,7 +366,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 profilePicture = "",
                 message = "Hello, who are you?",
                 sentImage = "",
-                sentDocument = ""
+                sentDocument = "",
+                documentText = ""
             ))
             tokens = repository.getTokenCount(
                 TextGenPrompt("AI: Greetings! I am an AI research assistant. How can I help you today?")
@@ -360,7 +379,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 profilePicture = "",
                 message = "Greetings! I am an AI research assistant. How can I help you today?",
                 sentImage = "",
-                sentDocument = ""
+                sentDocument = "",
+                documentText = ""
             ))
             _chatLibrary.value = repository.getAllChats()
             checkTokensCount()
@@ -426,5 +446,49 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         } catch (e: Exception) {
             Log.e(TAG, "Error deleting files:\n\t$e")
         }
+    }
+
+    fun processTextBlock(result: Text) {
+        val textBlocks = result.textBlocks
+        if (textBlocks.size == 0) {
+            textOut.value = "No text found"
+        }
+        val stringBuilder = StringBuilder()
+        for (block in textBlocks) {
+            stringBuilder.append("\n\n")
+            val lines = block.lines
+            for (line in lines) {
+                val elements = line.elements
+                for (element in elements) {
+                    val elementText = element.text
+                    stringBuilder.append("$elementText ")
+                }
+            }
+        }
+        textOut.value = stringBuilder.toString()
+    }
+
+    var count = MutableLiveData<String>()
+    fun getTokenCount(text: String) {
+        viewModelScope.launch {
+            count.value = repository.getTokenCount(TextGenPrompt(prompt = text)).results.first().tokens
+        }
+    }
+
+    var textOut = MutableLiveData<String>()
+    fun extractText(bitmap: Bitmap) {
+        _apiStatus.value = AppStatus.LOADING
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        val image = InputImage.fromBitmap(bitmap, 0)
+
+        recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                processTextBlock(visionText)
+                getTokenCount(textOut.value!!)
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error extracting text:\n\t$e")
+            }
     }
 }

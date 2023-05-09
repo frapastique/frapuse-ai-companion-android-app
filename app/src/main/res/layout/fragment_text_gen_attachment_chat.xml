@@ -17,6 +17,19 @@
                 android:layout_height="wrap_content"
                 tools:context=".ui.textgen.TextGenAttachmentChatFragment">
 
+            <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/siv_attachment_preview"
+                    android:background="@color/white"
+                    android:visibility="visible"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:src="@tools:sample/avatars" />
+
             <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_extracted_text"
                     android:layout_width="0dp"
@@ -24,8 +37,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:text="@string/app_description"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/siv_attachment_preview"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_extracted_text_token_count" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_extracted_text_token_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="context" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

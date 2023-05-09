@@ -14,5 +14,6 @@ data class TextGenChatLibrary(
     val message: String,
     val sentImage: String,
     val sentDocument: String,
+    val documentText: String,
     //val textGenGenerateRequest: TextGenGenerateRequest
 )

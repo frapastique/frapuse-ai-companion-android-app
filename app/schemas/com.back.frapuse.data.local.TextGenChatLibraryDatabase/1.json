@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "478dcba433e1965358c3a8683a5d11d4",
+    "identityHash": "2f8d355a7cfd66ac4ac174fe658ab8d1",
     "entities": [
       {
         "tableName": "textGenChatLibrary_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chatID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `name` TEXT NOT NULL, `profilePicture` TEXT NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chatID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `name` TEXT NOT NULL, `profilePicture` TEXT NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL, `documentText` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "chatID",
@@ -55,6 +55,12 @@
             "columnName": "sentDocument",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "documentText",
+            "columnName": "documentText",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -70,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '478dcba433e1965358c3a8683a5d11d4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2f8d355a7cfd66ac4ac174fe658ab8d1')"
     ]
   }
 }

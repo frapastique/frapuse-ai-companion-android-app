@@ -415,12 +415,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun deleteAllPdf(context: Context) {
-        val dir = context.filesDir
-        val pdfDir = File(dir, "pdf")
-        val files = pdfDir.listFiles()
+        try {
+            val dir = context.filesDir
+            val pdfDir = File(dir, "pdf")
+            val files = pdfDir.listFiles()
 
-        for (file in files) {
-            file.delete()
+            for (file in files!!) {
+                file.delete()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting files:\n\t$e")
         }
     }
 }

@@ -179,14 +179,12 @@ class TextGenFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Attachment")
                 .setMessage("Choose to attach a document or an image.")
-                .setNeutralButton("Cancel") { dialog, which ->
-                    // Respond to neutral button press
-                }
-                .setNegativeButton("Document") { dialog, which ->
+                .setNeutralButton("Cancel") { _, _ -> }
+                .setNegativeButton("Document") { _, _ ->
                     // Respond to positive button press
                     viewModel.launchPickPdf()
                 }
-                .setPositiveButton("Image") { dialog, which ->
+                .setPositiveButton("Image") { _, _ ->
                     // Respond to positive button press
                 }
                 .show()

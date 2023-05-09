@@ -16,7 +16,7 @@
                 android:id="@+id/coordinator"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/ti_prompt"
+                app:layout_constraintBottom_toTopOf="@id/rv_attachment_preview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
 
@@ -51,12 +51,31 @@
                     android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
                     android:layout_alignParentBottom="true"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/ti_prompt"
+                    app:layout_constraintBottom_toTopOf="@id/rv_attachment_preview"
                     app:flow_horizontalAlign="center"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/text_gen_rv_chat_item" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_attachment_preview"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:scrollbars="horizontal"
+                android:scrollbarSize="2dp"
+                android:scrollbarStyle="outsideOverlay"
+                android:fadeScrollbars="true"
+                android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/ti_prompt"
+                app:flow_horizontalAlign="center"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/text_gen_rv_attachment_item"
+                app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
                 android:id="@+id/tv_tokens"
@@ -76,7 +95,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="14dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/coordinator"
                 app:layout_constraintEnd_toStartOf="@id/btn_send"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="@string/prompt">
@@ -114,7 +132,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="8dp"
                 app:fabSize="mini"
-                app:layout_constraintTop_toBottomOf="@+id/coordinator" />
+                app:layout_constraintTop_toTopOf="@id/ti_prompt" />
 
         <ProgressBar
                 android:id="@+id/progressBar"

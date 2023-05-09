@@ -14,7 +14,9 @@ import androidx.navigation.findNavController
 import com.back.frapuse.AppStatus
 import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
+import com.back.frapuse.data.datamodels.textgen.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenBinding
+import com.back.frapuse.util.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -102,12 +104,13 @@ class TextGenFragment : Fragment() {
             }
         }
 
+        var filePath = ""
         binding.btnSend.setOnClickListener {
-            var filePath = ""
             // observe the LiveData variable from the viewmodel
             viewModel.filePathLiveData.observe(viewLifecycleOwner) { newFilePath ->
                 filePath = newFilePath
             }
+            binding.rvAttachmentPreview.visibility = View.GONE
             viewModel.setNextPrompt(prompt, filePath)
             binding.etPrompt.setText("")
             viewModel.resetFilePath()
@@ -183,6 +186,25 @@ class TextGenFragment : Fragment() {
                 .setNegativeButton("Document") { _, _ ->
                     // Respond to positive button press
                     viewModel.launchPickPdf()
+                    viewModel.filePathLiveData.observe(viewLifecycleOwner) { newFilePath ->
+                        if (newFilePath.isNotEmpty()) {
+                            filePath = newFilePath
+                            binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
+                                listOf(
+                                    TextGenAttachments(
+                                        attachmentID = 0,
+                                        attachmentFile = filePath
+                                    )
+                                )
+                            )
+                            binding.rvAttachmentPreview.visibility = View.VISIBLE
+                        } else {
+                            binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
+                                emptyList()
+                            )
+                            binding.rvAttachmentPreview.visibility = View.GONE
+                        }
+                    }
                 }
                 .setPositiveButton("Image") { _, _ ->
                     // Respond to positive button press

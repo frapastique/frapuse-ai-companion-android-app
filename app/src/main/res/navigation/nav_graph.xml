@@ -68,6 +68,9 @@
         <action
                 android:id="@+id/action_textGenFragment_to_textGenSettingsFragment"
                 app:destination="@id/textGenSettingsFragment" />
+        <action
+                android:id="@+id/action_textGenFragment_to_textGenAttachmentChatFragment"
+                app:destination="@id/textGenAttachmentChatFragment" />
     </fragment>
     <fragment
             android:id="@+id/textGenSettingsFragment"
@@ -77,5 +80,17 @@
         <action
                 android:id="@+id/action_textGenSettingsFragment_to_textGenFragment"
                 app:destination="@id/textGenFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/textGenAttachmentChatFragment"
+            android:name="com.back.frapuse.ui.textgen.TextGenAttachmentChatFragment"
+            android:label="TextGenAttachmentChatFragment"
+            tools:layout="@layout/fragment_text_gen_attachment_chat" >
+        <action
+                android:id="@+id/action_textGenAttachmentChatFragment_to_textGenFragment"
+                app:destination="@id/textGenFragment" />
+        <argument
+                android:name="pdf"
+                app:argType="string" />
     </fragment>
 </navigation>

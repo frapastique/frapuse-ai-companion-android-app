@@ -7,10 +7,12 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.data.datamodels.textgen.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatItemBinding
+import com.back.frapuse.ui.textgen.TextGenFragmentDirections
 import java.io.File
 
 class TextGenRVChatAdapter(
@@ -80,8 +82,14 @@ class TextGenRVChatAdapter(
             holder.binding.tvMessageInfoAi.text = chat.tokens + " - " + chat.dateTime
         }
 
-        /*holder.binding.sivProfilePicture.setImageBitmap(
-            viewModelImageGen.decodeImage(chat.profilePicture)
-        )*/
+        holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->
+            sivSentContent.findNavController().navigate(TextGenFragmentDirections
+                .actionTextGenFragmentToTextGenAttachmentChatFragment(
+                    pdf = chat.sentDocument
+                )
+            )
+
+            true
+        }
     }
 }

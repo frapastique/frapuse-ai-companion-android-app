@@ -2,6 +2,7 @@ package com.back.frapuse.util
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
@@ -64,6 +65,7 @@ class TextGenRVAttachmentAdapter(
             val pdfPage = pdfRenderer.openPage(0)
             // create a bitmap with the same size and config as the page
             val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(Color.WHITE)
             // render the page content to the bitmap
             pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             // set the bitmap to the ImageView

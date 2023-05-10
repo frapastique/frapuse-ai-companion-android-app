@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenAttachmentChatBinding
 import java.io.File
 

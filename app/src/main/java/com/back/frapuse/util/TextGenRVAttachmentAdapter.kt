@@ -8,8 +8,8 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.TextGenViewModel
-import com.back.frapuse.data.datamodels.textgen.TextGenAttachments
+import com.back.frapuse.ui.textgen.TextGenViewModel
+import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.TextGenRvAttachmentFooterBinding
 import com.back.frapuse.databinding.TextGenRvAttachmentItemBinding
 import java.io.File

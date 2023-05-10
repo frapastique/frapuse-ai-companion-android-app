@@ -7,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.R
 import com.back.frapuse.databinding.FragmentImageGenRvSmallBinding
 import com.back.frapuse.util.ImageGenRVSmallAdapter
 
 class ImageGenRVSmallFragment : Fragment() {
     // Load viewModel
-    private val viewModel: ImageGeneViewModel by activityViewModels()
+    private val viewModel: ImageGenViewModel by activityViewModels()
 
     // Set binding
     private lateinit var binding: FragmentImageGenRvSmallBinding

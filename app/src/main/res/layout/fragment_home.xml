@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.HomeFragment">
+            tools:context=".ui.home.HomeFragment">
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_image_library"

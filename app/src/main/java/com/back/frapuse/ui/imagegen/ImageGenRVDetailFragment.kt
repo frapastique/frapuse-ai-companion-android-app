@@ -6,15 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.SnapHelper
-import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.databinding.FragmentImageGenRvDetailBinding
 import com.back.frapuse.util.ImageGenRVDetailAdapter
 
 class ImageGenRVDetailFragment : Fragment() {
     // Get the viewModel into the logic
-    private val viewModel: ImageGeneViewModel by activityViewModels()
+    private val viewModel: ImageGenViewModel by activityViewModels()
 
     // Declaration of binding
     private lateinit var binding: FragmentImageGenRvDetailBinding

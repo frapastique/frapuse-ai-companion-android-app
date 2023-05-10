@@ -11,11 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.back.frapuse.AppStatus
 import com.back.frapuse.R
-import com.back.frapuse.TextGenViewModel
-import com.back.frapuse.data.datamodels.textgen.TextGenAttachments
+import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenBinding
+import com.back.frapuse.util.AppStatus
 import com.back.frapuse.util.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

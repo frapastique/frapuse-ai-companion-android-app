@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.ImageGeneViewModel
-import com.back.frapuse.data.datamodels.imagegen.ImageMetadata
+import com.back.frapuse.ui.imagegen.ImageGenViewModel
+import com.back.frapuse.data.imagegen.models.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
 import com.back.frapuse.ui.imagegen.ImageGenRVSmallFragmentDirections
 
 class ImageGenRVSmallAdapter(
     // ViewModel to interact with shared methods
-    private val viewModel: ImageGeneViewModel,
+    private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data
     private val dataset: List<ImageMetadata>
 ) : RecyclerView.Adapter<ImageGenRVSmallAdapter.ImageGenRVSmallViewHolder>() {

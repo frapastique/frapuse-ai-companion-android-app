@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.TextGenViewModel
-import com.back.frapuse.data.datamodels.textgen.TextGenChatLibrary
+import com.back.frapuse.ui.textgen.TextGenViewModel
+import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatItemBinding
 import com.back.frapuse.ui.textgen.TextGenFragmentDirections
 import java.io.File

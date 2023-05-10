@@ -11,16 +11,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.back.frapuse.AppStatus
 import com.back.frapuse.R
-import com.back.frapuse.ImageGeneViewModel
 import com.back.frapuse.databinding.FragmentImageGenTextToImageBinding
+import com.back.frapuse.util.AppStatus
 
 private const val TAG = "ImageGenTextToImageFragment"
 
 class ImageGenTextToImageFragment : Fragment() {
     // Get the viewModel into the logic
-    private val viewModel: ImageGeneViewModel by activityViewModels()
+    private val viewModel: ImageGenViewModel by activityViewModels()
 
     // Declaration of binding
     private lateinit var binding: FragmentImageGenTextToImageBinding

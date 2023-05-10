@@ -52,8 +52,6 @@ class TextGenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        //binding.tvInstructionsText.text = viewModel.instructionsPrompt.value
-
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
             btnBack.findNavController().navigate(TextGenFragmentDirections
                 .actionTextGenFragmentToHomeFragment()

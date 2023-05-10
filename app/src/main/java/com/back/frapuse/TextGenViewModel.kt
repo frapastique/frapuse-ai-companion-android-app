@@ -144,7 +144,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
 
     init {
-        setInstructionsPrompt("The following is a conversation with an AI research assistant. The assistant tone is technical and scientific.")
+        setInstructionsPrompt("The following is a chat between a curious user and an all knowing AI. The AI gives helpful, detailed and polite answers to the user's questions!")
         setPreviousChatHuman("Human:Hello, who are you?")
         setPreviousChatAI("AI:Greetings! I am an AI research assistant. How can I help you today?")
         viewModelScope.launch {

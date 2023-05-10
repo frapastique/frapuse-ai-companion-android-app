@@ -148,6 +148,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         setPreviousChatHuman("Human:Hello, who are you?")
         setPreviousChatAI("AI:Greetings! I am an AI research assistant. How can I help you today?")
         viewModelScope.launch {
+            getModel()
             if (repository.getChatCount() == 0) {
                 populateDB()
             }
@@ -250,6 +251,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             checkTokensCount()
             generateBlock(_prompt.value!!.prompt)
+        }
+    }
+
+    fun getModel() {
+        viewModelScope.launch {
+            _model.value = repository.getModel()
         }
     }
 

@@ -79,7 +79,7 @@ class TextGenRVChatAdapter(
             holder.binding.clChatHuman.visibility = View.GONE
             holder.binding.clChatAi.visibility = View.VISIBLE
             holder.binding.tvMessageTextAi.text = chat.message
-            holder.binding.tvMessageInfoAi.text = chat.tokens + " - " + chat.dateTime
+            holder.binding.tvMessageInfoAi.text = viewModelTextGen.model.value!!.result + " - " + chat.tokens + " - " + chat.dateTime
         }
 
         holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->

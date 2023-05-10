@@ -1,13 +1,17 @@
 package com.back.frapuse.util
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.imagegen.ImageGenViewModel
-import com.back.frapuse.R
 import com.back.frapuse.data.imagegen.models.ImageMetadata
 import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
+import com.back.frapuse.ui.imagegen.ImageGenRVDetailFragmentDirections
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ImageGenRVDetailAdapter(
     // Prepare an imageID
@@ -15,8 +19,17 @@ class ImageGenRVDetailAdapter(
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data
-    private val dataset: List<ImageMetadata>
+    private var dataset: List<ImageMetadata>,
+    // Set context
+    private val context: Context
 ) : RecyclerView.Adapter<ImageGenRVDetailAdapter.ImageGenRVDetailViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(list: List<ImageMetadata>) {
+        dataset = list
+        notifyDataSetChanged()
+    }
+
     inner class ImageGenRVDetailViewHolder(
         internal val binding: ImageGenRvDetailItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
@@ -37,50 +50,44 @@ class ImageGenRVDetailAdapter(
     override fun onBindViewHolder(holder: ImageGenRVDetailViewHolder, position: Int) {
         val imageMetadata = dataset[position]
 
-        var infoVisible = false
-        var favorite = false
-        var delete = 0
+        var shareButtonVisibility = false
 
         holder.binding.ivTextToImage.setOnClickListener {
-            infoVisible = !infoVisible
-
-            if (infoVisible) {
-                holder.binding.clInfoPlate.visibility = View.VISIBLE
-                holder.binding.clActionButtons.visibility = View.GONE
+            shareButtonVisibility = !shareButtonVisibility
+            if (shareButtonVisibility) {
+                holder.binding.btnShare.visibility = View.VISIBLE
             } else {
-                holder.binding.clInfoPlate.visibility = View.GONE
-                holder.binding.clActionButtons.visibility = View.VISIBLE
+                holder.binding.btnShare.visibility = View.GONE
             }
         }
 
         viewModel.setImageViewParams(holder.binding.ivTextToImage)
-        holder.binding.tvPromptValue.text = imageMetadata.positivePrompt
-        holder.binding.tvNegativePromptValue.text = imageMetadata.negativePrompt
-        holder.binding.tvModelValue.text = imageMetadata.model
-        holder.binding.tvSeedValue.text = imageMetadata.seed.toString()
-        holder.binding.tvHeightValue.text = imageMetadata.height.toString()
-        holder.binding.tvWidthValue.text = imageMetadata.width.toString()
-        holder.binding.tvSamplerValue.text = imageMetadata.sampler
-        holder.binding.tvStepsValue.text = imageMetadata.steps.toString()
-        holder.binding.tvCfgValue.text = imageMetadata.CFGScale.toString()
         holder.binding.ivTextToImage.setImageBitmap(viewModel.decodeImage(imageMetadata.image))
 
-        holder.binding.ivFavoriteBtn.setOnClickListener {
-            favorite = !favorite
-            if (favorite) {
-                holder.binding.ivFavoriteBtn.setImageResource(R.drawable.star_fill_purple)
-            } else {
-                holder.binding.ivFavoriteBtn.setImageResource(R.drawable.star_purple)
-            }
-        }
-
-        // Testing purposes
-        holder.binding.ivDeleteBtn.setOnClickListener {
-            delete++
-            if (delete == 2) {
-                viewModel.deleteImage(imageMetadata.id)
-                delete = 0
-            }
+        holder.binding.ivTextToImage.setOnLongClickListener { ivTextToImage ->
+            MaterialAlertDialogBuilder(context)
+                .setTitle("Options")
+                .setMessage("Choose between delete image or get back to generator.")
+                .setNeutralButton("Cancel") { _, _ -> }
+                .setNegativeButton("Delete") { _, _ ->
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("Delete Image")
+                        .setMessage("Are you sure you want to delete the image?")
+                        .setNeutralButton("Cancel") { _, _ -> }
+                        .setNegativeButton("Delete") { _, _ ->
+                            viewModel.deleteImage(imageMetadata.id)
+                        }
+                        .show()
+                }
+                .setPositiveButton("Generator") { _, _ ->
+                    viewModel.setImageMetadata(imageMetadata.id)
+                    ivTextToImage.findNavController()
+                        .navigate(ImageGenRVDetailFragmentDirections
+                            .actionImageGenRVDetailFragmentToImageGenTextToImageFragment()
+                        )
+                }
+                .show()
+            true
         }
     }
 }

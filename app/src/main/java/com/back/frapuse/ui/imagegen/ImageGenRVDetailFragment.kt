@@ -43,13 +43,15 @@ class ImageGenRVDetailFragment : Fragment() {
         //viewModel.getImageMetadata(imageID)
 
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
-            binding.rvImageLibrary.adapter = ImageGenRVDetailAdapter(
+            val imageAdapter = ImageGenRVDetailAdapter(
                 imageID = imageID,
                 viewModel = viewModel,
-                dataset = imageLibrary
+                dataset = imageLibrary,
+                requireContext()
             )
+            binding.rvImageLibrary.adapter = imageAdapter
+            imageAdapter.submitList(imageLibrary)
             binding.rvImageLibrary.setHasFixedSize(true)
-
             binding.rvImageLibrary.scrollToPosition(imageID)
 
             /*val helper: SnapHelper = PagerSnapHelper()

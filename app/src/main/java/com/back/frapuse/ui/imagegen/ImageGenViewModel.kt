@@ -34,7 +34,7 @@ private const val TAG = "ImageGenViewModel"
 class ImageGenViewModel(application: Application) : AndroidViewModel(application) {
 
     // Application context
-    private val app = getApplication<Application>()
+    val app = getApplication<Application>()
 
     // Database value
     private val database = getImageGenDatabase(application)
@@ -250,6 +250,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
 
     // Set current model, set options and update options value
     fun setModel(modelName: String) {
+        val setModelMessage = "$modelName model successfully loaded."
         _apiStatusOptions.value = AppStatus.LOADING
         val newModel = _models.value!!.find { it.model_name == modelName }
         val newOptions = Options(
@@ -260,6 +261,8 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
             _options.value = repository.getOptions()
             _models.value = repository.getModels()
             _apiStatusOptions.value = AppStatus.DONE
+            Toast.makeText(app.applicationContext, setModelMessage, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -464,6 +467,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                     repository.deleteImage(imageToDelete)
                     Toast.makeText(app.applicationContext, deleteMessage, Toast.LENGTH_SHORT)
                         .show()
+                    getAllImages()
                 } catch (e: Exception) {
                     Log.e(TAG, "Error deleting image from database: \n\t $e")
                 }
@@ -474,7 +478,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     }
 
     // Set image metadata for current image
-    fun getImageMetadata(imageID: Long) {
+    fun setImageMetadata(imageID: Long) {
         viewModelScope.launch {
             try {
                 _imageMetadata.value = repository.getImageMetadata(imageID)

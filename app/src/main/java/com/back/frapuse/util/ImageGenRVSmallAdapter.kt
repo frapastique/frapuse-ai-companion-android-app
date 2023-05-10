@@ -1,5 +1,6 @@
 package com.back.frapuse.util
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -13,8 +14,16 @@ class ImageGenRVSmallAdapter(
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data
-    private val dataset: List<ImageMetadata>
+    private var dataset: List<ImageMetadata>
 ) : RecyclerView.Adapter<ImageGenRVSmallAdapter.ImageGenRVSmallViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(list: List<ImageMetadata>) {
+        dataset = list
+        notifyDataSetChanged()
+    }
+
+
     inner class ImageGenRVSmallViewHolder(
         internal val binding: ImageGenRvSmallItemBinding
         ) : RecyclerView.ViewHolder(binding.root)

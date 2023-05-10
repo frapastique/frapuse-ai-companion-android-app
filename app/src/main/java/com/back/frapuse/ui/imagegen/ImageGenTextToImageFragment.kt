@@ -279,7 +279,6 @@ class ImageGenTextToImageFragment : Fragment() {
                 .navigate(ImageGenTextToImageFragmentDirections
                     .actionImageGenTextToImageFragmentToImageGenRVSmallFragment()
                 )
-
             true
         }
     }

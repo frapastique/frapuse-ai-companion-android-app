@@ -89,8 +89,5 @@
         <action
                 android:id="@+id/action_textGenAttachmentChatFragment_to_textGenFragment"
                 app:destination="@id/textGenFragment" />
-        <argument
-                android:name="pdf"
-                app:argType="string" />
     </fragment>
 </navigation>

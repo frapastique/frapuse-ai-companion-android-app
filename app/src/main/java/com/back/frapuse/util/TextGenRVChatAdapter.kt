@@ -2,6 +2,7 @@ package com.back.frapuse.util
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
@@ -48,6 +49,7 @@ class TextGenRVChatAdapter(
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 
+        // Set visibility and content of elements according to chat properties
         if (position == 0 && chat.name == "Human") {
             holder.binding.clChatInstructions.visibility = View.VISIBLE
             holder.binding.tvInstructionsText.text = viewModelTextGen.instructionsPrompt.value
@@ -58,20 +60,39 @@ class TextGenRVChatAdapter(
             holder.binding.clChatAi.visibility = View.GONE
             holder.binding.tvMessageTextHuman.text = chat.message
             holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
+
             if (chat.sentDocument.isNotEmpty()) {
+                // Create a file with sent document
                 val file = File(chat.sentDocument)
-                // create a PdfRenderer from the file
-                val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+
+                // Create a PdfRenderer from the file
+                val parcelFileDescriptor =
+                    ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
                 val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-                // get the first page of the PDF file
+
+                // Get the first page of the PDF file
                 val pdfPage = pdfRenderer.openPage(0)
-                // create a bitmap with the same size and config as the page
-                val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
-                // render the page content to the bitmap
-                pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                // set the bitmap to the ImageView
+
+                // Create a bitmap with the same size and config as the page
+                val bitmap = Bitmap.createBitmap(
+                    pdfPage.width,
+                    pdfPage.height,
+                    Bitmap.Config.ARGB_8888
+                )
+                bitmap.eraseColor(Color.WHITE)
+
+                // Render the page content to the bitmap
+                pdfPage.render(
+                    bitmap,
+                    null,
+                    null,
+                    PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                )
+
+                // Set bitmap into ImageView
                 holder.binding.sivSentContent.setImageBitmap(bitmap)
-                // close the page and the renderer
+
+                // Close pdf page and renderer
                 pdfPage.close()
                 pdfRenderer.close()
             }
@@ -80,16 +101,20 @@ class TextGenRVChatAdapter(
             holder.binding.clChatHuman.visibility = View.GONE
             holder.binding.clChatAi.visibility = View.VISIBLE
             holder.binding.tvMessageTextAi.text = chat.message
-            holder.binding.tvMessageInfoAi.text = viewModelTextGen.model.value!!.result + " - " + chat.tokens + " - " + chat.dateTime
+            holder.binding.tvMessageInfoAi.text =
+                viewModelTextGen.model.value!!.result +
+                    " - " +
+                    chat.tokens +
+                    " - " +
+                    chat.dateTime
         }
 
+        // Long click listener on attachment for navigation to attachment fragment
         holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->
+            viewModelTextGen.setCurrentChatMessage(chat.chatID)
             sivSentContent.findNavController().navigate(TextGenFragmentDirections
-                .actionTextGenFragmentToTextGenAttachmentChatFragment(
-                    pdf = chat.sentDocument
-                )
+                .actionTextGenFragmentToTextGenAttachmentChatFragment()
             )
-
             true
         }
     }

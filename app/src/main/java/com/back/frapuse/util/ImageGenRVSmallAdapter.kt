@@ -34,11 +34,8 @@ class ImageGenRVSmallAdapter(
 
     override fun onBindViewHolder(holder: ImageGenRVSmallViewHolder, position: Int) {
         val imageData = dataset[position]
-
         holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
-
         holder.binding.ivGenImage.setOnClickListener { ivGenImage ->
-
             ivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
                 .actionImageGenRVSmallFragmentToImageGenRVDetailFragment(
                     imageID = position

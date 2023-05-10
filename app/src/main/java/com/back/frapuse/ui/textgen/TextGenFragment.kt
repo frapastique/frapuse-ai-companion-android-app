@@ -199,8 +199,8 @@ class TextGenFragment : Fragment() {
                             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
                                 dataset = listOf(
                                     TextGenAttachments(
-                                        attachmentID = 0,
-                                        attachmentFile = filePath
+                                        id = 0,
+                                        file = filePath
                                     )
                                 ),
                                 viewModel = viewModel

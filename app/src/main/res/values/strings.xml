@@ -13,8 +13,11 @@
     <string name="back_button">back button</string>
     <string name="send_button">send button</string>
     <string name="generate_button">generate button</string>
+    <string name="settings_button">settings button</string>
 
     <string name="info">Info…</string>
+    <string name="instruction">INSTRUCTION</string>
+    <string name="settings">Settings</string>
 
     <string name="prompt">PROMPT</string>
     <string name="negative_prompt">NEGATIVE PROMPT</string>
@@ -39,13 +42,13 @@
     <string name="seed_value">-1</string>
 
     <string name="nav_to_rv">Tap and hold to navigate to the image library!</string>
+
     <string name="text_to_text_block">block</string>
     <string name="text_to_text_stream">stream</string>
     <string name="chat_ai">AI:</string>
-
-    <string name="instruction">INSTRUCTION</string>
-    <string name="settings_button">settings button</string>
+    <string name="chat_human">Human:</string>
     <string name="instructions">Instructions:</string>
-    <string name="settings">Settings</string>
+    <string name="tokens">Tokens:</string>
+
 
 </resources>

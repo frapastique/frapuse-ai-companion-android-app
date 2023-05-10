@@ -31,7 +31,6 @@ class HomeBackgroundAdapter(
 
     override fun onBindViewHolder(holder: HomeBackgroundViewHolder, position: Int) {
         val imageData = dataset.reversed()[position]
-
         holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
     }
 

@@ -96,8 +96,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Extracted text with OCR from bitmap
     private var _textOut = MutableLiveData<String>()
-    val textOut: LiveData<String>
-        get() = _textOut
 
     /* _______ Api Status ______________________________________________________________ */
 
@@ -118,6 +116,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val chatLibrary: LiveData<List<TextGenChatLibrary>>
         get() = _chatLibrary
 
+    // Current chat
+    private val _currentChatMessage = MutableLiveData<TextGenChatLibrary>()
+    val currentChatMessage: LiveData<TextGenChatLibrary>
+        get() = _currentChatMessage
+
     // LiveData variable to hold the pdf file path
     private val _pdfPath = MutableLiveData<String>()
     val pdfPath: LiveData<String>
@@ -125,8 +128,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // PDF as bitmap
     private var _pdfBitmap = MutableLiveData<Bitmap>()
-    val pdfBitmap: LiveData<Bitmap>
-        get() = _pdfBitmap
 
     // create a contract for picking a PDF file
     private val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
@@ -189,7 +190,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     message = prompt,
                     sentImage = "",
                     sentDocument = filePath,
-                    documentText = textOut.value.toString()
+                    documentText = _textOut.value.toString()
                 )
             )
             _chatLibrary.value = repository.getAllChats()
@@ -373,6 +374,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         return new.toString()
     }
 
+    // Method to get current message from chat library
+    fun setCurrentChatMessage(messageID: Long) {
+        viewModelScope.launch {
+            _currentChatMessage.value = repository.getChat(messageID)
+        }
+    }
+
     // Method to clear chat library and populate with base entries
     fun deleteChatLibrary() {
         viewModelScope.launch {
@@ -504,7 +512,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Method to get token count dedicated for extracted text
-    private fun getTokenCount(text: String) {
+    fun getTokenCount(text: String) {
         viewModelScope.launch {
             _count.value = repository.getTokenCount(TextGenPrompt(prompt = text)).results.first().tokens
         }
@@ -514,12 +522,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun extractText() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-        val image = InputImage.fromBitmap(pdfBitmap.value!!, 0)
+        val image = InputImage.fromBitmap(_pdfBitmap.value!!, 0)
 
         recognizer.process(image)
             .addOnSuccessListener { visionText ->
                 processTextBlock(visionText)
-                getTokenCount(textOut.value!!)
+                getTokenCount(_textOut.value!!)
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error extracting text:\n\t$e")

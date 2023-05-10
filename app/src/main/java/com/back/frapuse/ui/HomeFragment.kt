@@ -31,13 +31,12 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel.getAllImages()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.getAllImages()
-
         binding.btnTextToImage.setOnClickListener { btnTextToImage ->
             btnTextToImage.findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToImageGenTextToImageFragment()

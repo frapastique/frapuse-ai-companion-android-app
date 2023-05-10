@@ -18,18 +18,8 @@ import java.io.File
 class TextGenAttachmentChatFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: TextGenViewModel by activityViewModels()
-
     // Declaration of binding
     private lateinit var binding: FragmentTextGenAttachmentChatBinding
-
-    private var pdf = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            pdf = it.getString("pdf").toString()
-        }
-    }
 
     /**
      * Lifecycle Funktion onCreateView
@@ -50,29 +40,52 @@ class TextGenAttachmentChatFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val file = File(pdf)
-        // create a PdfRenderer from the file
-        val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-        val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-        // get the first page of the PDF file
-        val pdfPage = pdfRenderer.openPage(0)
-        // create a bitmap with the same size and config as the page
-        val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
-        bitmap.eraseColor(Color.WHITE)
-        // render the page content to the bitmap
-        pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+        // Grab current chat message
+        viewModel.currentChatMessage.observe(viewLifecycleOwner) { currentChatMessage ->
+            binding.tvMessageName.text = currentChatMessage.name + ":"
+            binding.tvMessageText.text = currentChatMessage.message
+            binding.tvMessageInfo.text = currentChatMessage.tokens + " - " + currentChatMessage.dateTime
+            binding.tvExtractedText.text = currentChatMessage.documentText
 
-        binding.sivAttachmentPreview.setImageBitmap(bitmap)
+            // Create a file with sent document
+            val file = File(currentChatMessage.sentDocument)
 
-        viewModel.textOut.observe(viewLifecycleOwner) { textOut ->
-            binding.tvExtractedText.text = textOut
+            // Create a PdfRenderer from the file
+            val parcelFileDescriptor =
+                ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+
+            // Get the first page of the PDF file
+            val pdfPage = pdfRenderer.openPage(0)
+
+            // Create a bitmap with the same size and config as the page
+            val bitmap = Bitmap.createBitmap(
+                pdfPage.width,
+                pdfPage.height,
+                Bitmap.Config.ARGB_8888
+            )
+            bitmap.eraseColor(Color.WHITE)
+
+            // Render the page content to the bitmap
+            pdfPage.render(
+                bitmap,
+                null,
+                null,
+                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+            )
+
+            // Set bitmap into ImageView
+            binding.sivAttachmentPreview.setImageBitmap(bitmap)
+
+            // Set the token count of extracted text
+            viewModel.getTokenCount(currentChatMessage.documentText)
+            viewModel.count.observe(viewLifecycleOwner) { count ->
+                binding.tvExtractedTextTokenCount.text = "Tokens: $count"
+            }
+
+            // Close pdf page and renderer
+            pdfPage.close()
+            pdfRenderer.close()
         }
-
-        viewModel.count.observe(viewLifecycleOwner) { count ->
-            binding.tvExtractedTextTokenCount.text = "Tokens: $count"
-        }
-
-        pdfPage.close()
-        pdfRenderer.close()
     }
 }

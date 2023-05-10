@@ -1,11 +1,7 @@
 package com.back.frapuse.ui.textgen
 
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,14 +19,12 @@ import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.io.File
 
 private const val TAG = "TextGenFragment"
 
 class TextGenFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: TextGenViewModel by activityViewModels()
-
     // Declaration of binding
     private lateinit var binding: FragmentTextGenBinding
 
@@ -44,20 +38,25 @@ class TextGenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.getAllChats()
-
         binding = FragmentTextGenBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Introduce local prompt variable
+        var prompt = ""
+        // Introduce local filePath variable
+        var filePath = ""
+        // Parse activityResultRegistry to viewModel for the pdf contract
+        viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
 
+        // Navigate to home
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
             btnBack.findNavController().navigate(TextGenFragmentDirections
                 .actionTextGenFragmentToHomeFragment()
             )
         }
-
+        // Menu item click listener for topAppBar
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.btn_settings -> {
@@ -70,14 +69,14 @@ class TextGenFragment : Fragment() {
             }
         }
 
-        var prompt = ""
+        // Set prompt variable on EditTextView text change and set visibility and state of buttons
         binding.etPrompt.addTextChangedListener { newPrompt ->
             if (!newPrompt.isNullOrEmpty()) {
                 prompt = newPrompt.toString()
             } else {
                 prompt = ""
             }
-
+            // Set the state and visibility of buttons according to prompt value
             if (prompt.isEmpty()) {
                 binding.btnAttachment.visibility = View.VISIBLE
                 binding.btnSend.isClickable = false
@@ -93,7 +92,6 @@ class TextGenFragment : Fragment() {
                 )
             } else {
                 binding.btnAttachment.visibility = View.GONE
-
                 binding.btnSend.isClickable = true
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -106,15 +104,17 @@ class TextGenFragment : Fragment() {
             }
         }
 
-        var filePath = ""
+        // Set next prompt value in viewModel and adjust visibility of elements
         binding.btnSend.setOnClickListener {
             binding.rvAttachmentPreview.visibility = View.GONE
             viewModel.setNextPrompt(prompt, filePath)
             binding.etPrompt.setText("")
             binding.btnAttachment.visibility = View.VISIBLE
             filePath = ""
+            viewModel.resetPdfPath()
         }
 
+        // Execute generate block when promptStatus is done
         viewModel.createPromptStatus.observe(viewLifecycleOwner) { promptStatus ->
             when (promptStatus) {
                 AppStatus.DONE -> {
@@ -124,13 +124,14 @@ class TextGenFragment : Fragment() {
             }
         }
 
+        // Empty chat history and pdf file cache
         binding.btnSend.setOnLongClickListener {
             viewModel.deleteChatLibrary()
             viewModel.deleteAllPdf(requireContext())
-
             true
         }
 
+        // Set chat library on RecyclerView
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
             val chatAdapter = TextGenRVChatAdapter(
                 dataset = chatLibrary,
@@ -142,14 +143,17 @@ class TextGenFragment : Fragment() {
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 
+        // Apply token count for current prompt context
         viewModel.tokenCount.observe(viewLifecycleOwner) { count ->
             binding.tvTokens.text = count
         }
 
+        // Scroll to the latest chat message when clicking to type next message
         binding.tiPrompt.setOnClickListener {
             binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
         }
 
+        // Set state and visibility of elements according to API status
         viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 AppStatus.LOADING -> {
@@ -180,15 +184,14 @@ class TextGenFragment : Fragment() {
             }
         }
 
-        viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
-
+        // Open a dialog when attachment button is clicked
         binding.btnAttachment.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Attachment")
                 .setMessage("Choose to attach a document or an image.")
                 .setNeutralButton("Cancel") { _, _ -> }
                 .setNegativeButton("Document") { _, _ ->
-                    // Respond to positive button press
+                    // Create attachment preview in a RecyclerView
                     viewModel.launchPickPdf()
                     viewModel.pdfPath.observe(viewLifecycleOwner) { newFilePath ->
                         if (newFilePath.isNotEmpty()) {

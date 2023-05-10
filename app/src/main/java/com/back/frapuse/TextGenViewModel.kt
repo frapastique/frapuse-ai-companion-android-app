@@ -299,6 +299,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // clean and place response into chat library
     fun generateBlock() {
         _apiStatus.value = AppStatus.LOADING
+        _createPromptStatus.value = AppStatus.WAITING
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = _prompt.value!!.prompt,

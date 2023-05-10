@@ -106,6 +106,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val apiStatus: LiveData<AppStatus>
         get() = _apiStatus
 
+    // Status of creating the final prompt
+    private val _createPromptStatus = MutableLiveData<AppStatus>()
+    val createPromptStatus: LiveData<AppStatus>
+        get() = _createPromptStatus
+
     /* _______ Values Local ____________________________________________________________ */
 
     // Chat library
@@ -163,8 +168,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         _previousPromptAI.value = prompt
     }
 
+    // Method which sets the next prompt from human and places it into the chat library
     fun setNextPrompt(prompt: String, filePath: String) {
         _apiStatus.value = AppStatus.LOADING
+        _createPromptStatus.value = AppStatus.LOADING
         _nextPrompt.value = "Human: $prompt"
         viewModelScope.launch {
             val tokens = repository.getTokenCount(TextGenPrompt(prompt)).results.first().tokens
@@ -186,13 +193,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Final prompt creator
     private fun createFinalPrompt() {
         _apiStatus.value = AppStatus.LOADING
+        _createPromptStatus.value = AppStatus.LOADING
         val idTokenMap = mutableMapOf<Long, String>()
         var tokenCountCurrent = 0
         var prevPrompt = ""
         val newChatLibrary = mutableListOf<TextGenChatLibrary>()
 
+        // Take name, message and if file is provided also the extracted text and construct the prompt
         for (message in _chatLibrary.value!!) {
             Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
             tokenCountCurrent += message.tokens.toInt()
@@ -204,6 +214,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
+        // When the calculated context size exceeds 1700 tokens, first chat entry gets dropped
+        // one by one and construction of prompt is redone, else the chat context is taken,
+        // instruction prompt and "AI: " is placed to tell the AI what, how and from where to
+        // respond.
         if (tokenCountCurrent > 1700) {
             Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
             prevPrompt = ""
@@ -234,6 +248,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
                 checkTokensCount()
                 generateBlock(_prompt.value!!.prompt)
+                _createPromptStatus.value = AppStatus.DONE
             }
         } else {
             _prompt.value = TextGenPrompt(
@@ -242,15 +257,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             checkTokensCount()
             generateBlock(_prompt.value!!.prompt)
+            _createPromptStatus.value = AppStatus.DONE
         }
     }
 
+    // Get the name of loaded AI model from API
     private fun getModel() {
         viewModelScope.launch {
             _model.value = repository.getModel()
         }
     }
 
+    // Check token count. On first launch populate the prompt value, else use just count tokens
     private fun checkTokensCount() {
         if (_prompt.value == null) {
             var prevPrompt: String = _instructionsPrompt.value!! + "\n"
@@ -272,6 +290,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Method to send final prompt to server and generate block response. After receiving response
+    // clean and place response into chat library
     private fun generateBlock(prompt: String) {
         _apiStatus.value = AppStatus.LOADING
         viewModelScope.launch {
@@ -332,12 +352,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Fill the chat library from database
     fun getAllChats() {
         viewModelScope.launch {
             _chatLibrary.value = repository.getAllChats()
         }
     }
 
+    // Method to calculate token count dedicated to createFinalPrompt method
     private fun calculateTokens(pre: String, add: String): String {
         val preInt = pre.toInt()
         val addInt = add.toInt()
@@ -345,6 +367,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         return new.toString()
     }
 
+    // Method to clear chat library and populate with base entries
     fun deleteChatLibrary() {
         viewModelScope.launch {
             repository.deleteAllChats()
@@ -354,6 +377,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // When chat library is empty populate it with base entries
     private fun populateDB() {
         viewModelScope.launch {
             var tokens = repository.getTokenCount(

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -79,7 +80,6 @@ class TextGenFragment : Fragment() {
 
             if (prompt.isEmpty()) {
                 binding.btnAttachment.visibility = View.VISIBLE
-
                 binding.btnSend.isClickable = false
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -109,40 +109,18 @@ class TextGenFragment : Fragment() {
         var filePath = ""
         binding.btnSend.setOnClickListener {
             binding.rvAttachmentPreview.visibility = View.GONE
-            if (filePath.isNotEmpty()) {
-                binding.etPrompt.setTextColor (ContextCompat.getColor (requireContext(), R.color.black))
-                val file = File(filePath)
-                // create a PdfRenderer from the file
-                val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-                val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-                // get the first page of the PDF file
-                val pdfPage = pdfRenderer.openPage(0)
-                // create a bitmap with the same size and config as the page
-                val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
-                bitmap.eraseColor(Color.WHITE)
-                // render the page content to the bitmap
-                pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            viewModel.setNextPrompt(prompt, filePath)
+            binding.etPrompt.setText("")
+            binding.btnAttachment.visibility = View.VISIBLE
+            filePath = ""
+        }
 
-                viewModel.extractText(bitmap)
-
-                pdfPage.close()
-                pdfRenderer.close()
-
-                viewModel.textOut.observe(viewLifecycleOwner) { textOut ->
-                    if (textOut.isNotEmpty()) {
-                        viewModel.setNextPrompt(prompt, filePath)
-                        binding.etPrompt.setText("")
-                        binding.etPrompt.setTextColor (ContextCompat.getColor (requireContext(), R.color.white))
-                        binding.btnAttachment.visibility = View.VISIBLE
-                        viewModel.resetPdfPath()
-                        filePath = ""
-                    }
+        viewModel.createPromptStatus.observe(viewLifecycleOwner) { promptStatus ->
+            when (promptStatus) {
+                AppStatus.DONE -> {
+                    viewModel.generateBlock()
                 }
-            } else {
-                viewModel.setNextPrompt(prompt, filePath)
-                binding.etPrompt.setText("")
-                binding.btnAttachment.visibility = View.VISIBLE
-                filePath = ""
+                else -> Log.e(TAG, "Prompt status:\n\t$promptStatus")
             }
         }
 
@@ -190,17 +168,14 @@ class TextGenFragment : Fragment() {
                 }
                 else -> {
                     binding.progressBar.visibility = View.GONE
-                    binding.btnSend.isClickable = true
                     binding.btnSend.backgroundTintList =
                         ColorStateList.valueOf(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.purple_200
+                                androidx.cardview.R.color.cardview_dark_background
                             )
                         )
-                    binding.btnSend.setImageResource(
-                        R.drawable.arrow_trianglepath_white
-                    )
+                    binding.btnSend.setImageResource(R.drawable.wand_and_stars_white)
                 }
             }
         }
@@ -219,17 +194,19 @@ class TextGenFragment : Fragment() {
                         if (newFilePath.isNotEmpty()) {
                             filePath = newFilePath
                             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
-                                listOf(
+                                dataset = listOf(
                                     TextGenAttachments(
                                         attachmentID = 0,
                                         attachmentFile = filePath
                                     )
-                                )
+                                ),
+                                viewModel = viewModel
                             )
                             binding.rvAttachmentPreview.visibility = View.VISIBLE
                         } else {
                             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
-                                emptyList()
+                                dataset = emptyList(),
+                                viewModel
                             )
                             binding.rvAttachmentPreview.visibility = View.GONE
                         }

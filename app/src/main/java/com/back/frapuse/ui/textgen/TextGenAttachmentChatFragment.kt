@@ -62,8 +62,6 @@ class TextGenAttachmentChatFragment : Fragment() {
         // render the page content to the bitmap
         pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
-        viewModel.extractText(bitmap)
-
         binding.sivAttachmentPreview.setImageBitmap(bitmap)
 
         viewModel.textOut.observe(viewLifecycleOwner) { textOut ->

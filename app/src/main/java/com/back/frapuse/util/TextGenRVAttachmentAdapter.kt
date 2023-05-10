@@ -8,13 +8,15 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.data.datamodels.textgen.TextGenAttachments
 import com.back.frapuse.databinding.TextGenRvAttachmentFooterBinding
 import com.back.frapuse.databinding.TextGenRvAttachmentItemBinding
 import java.io.File
 
 class TextGenRVAttachmentAdapter(
-    private var dataset: List<TextGenAttachments>
+    private var dataset: List<TextGenAttachments>,
+    private val viewModel: TextGenViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -70,6 +72,10 @@ class TextGenRVAttachmentAdapter(
             pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             // set the bitmap to the ImageView
             holder.binding.sivAttachmentPreview.setImageBitmap(bitmap)
+            // Parse the bitmap to the viewModel
+            viewModel.setPdfBitmap(bitmap)
+            // Extract text from pdf
+            viewModel.extractText()
             // close the page and the renderer
             pdfPage.close()
             pdfRenderer.close()

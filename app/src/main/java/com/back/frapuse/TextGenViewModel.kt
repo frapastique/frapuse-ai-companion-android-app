@@ -123,6 +123,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val pdfPath: LiveData<String>
         get() = _pdfPath
 
+    // PDF as bitmap
+    private var _pdfBitmap = MutableLiveData<Bitmap>()
+    val pdfBitmap: LiveData<Bitmap>
+        get() = _pdfBitmap
+
     // create a contract for picking a PDF file
     private val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
         override fun createIntent(context: Context, input: String): Intent {
@@ -247,7 +252,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                             prevPrompt + "AI:"
                 )
                 checkTokensCount()
-                generateBlock(_prompt.value!!.prompt)
+                // generateBlock(_prompt.value!!.prompt)
                 _createPromptStatus.value = AppStatus.DONE
             }
         } else {
@@ -256,7 +261,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         prevPrompt + "AI:"
             )
             checkTokensCount()
-            generateBlock(_prompt.value!!.prompt)
+            // generateBlock(_prompt.value!!.prompt)
             _createPromptStatus.value = AppStatus.DONE
         }
     }
@@ -292,11 +297,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Method to send final prompt to server and generate block response. After receiving response
     // clean and place response into chat library
-    private fun generateBlock(prompt: String) {
+    fun generateBlock() {
         _apiStatus.value = AppStatus.LOADING
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
-                prompt = prompt,
+                prompt = _prompt.value!!.prompt,
                 max_new_tokes = 250,
                 do_sample = true,
                 temperature = 1.3,
@@ -495,7 +500,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
         }
         _textOut.value = stringBuilder.toString()
-        _apiStatus.value = AppStatus.DONE
     }
 
     // Method to get token count dedicated for extracted text
@@ -506,11 +510,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Method to extract the text from a bitmap. Process the text block and get token count on success
-    fun extractText(bitmap: Bitmap) {
-        _apiStatus.value = AppStatus.LOADING
+    fun extractText() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-        val image = InputImage.fromBitmap(bitmap, 0)
+        val image = InputImage.fromBitmap(pdfBitmap.value!!, 0)
 
         recognizer.process(image)
             .addOnSuccessListener { visionText ->
@@ -520,5 +523,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error extracting text:\n\t$e")
             }
+    }
+
+    // Set the current pdf page as bitmap
+    fun setPdfBitmap(image: Bitmap) {
+        _pdfBitmap.value = image
     }
 }

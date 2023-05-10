@@ -1,6 +1,6 @@
 package com.back.frapuse.ui.textgen
 
-import android.content.res.ColorStateList
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
@@ -10,17 +10,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
-import com.back.frapuse.R
 import com.back.frapuse.TextGenViewModel
 import com.back.frapuse.databinding.FragmentTextGenAttachmentChatBinding
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import okio.blackholeSink
 import java.io.File
 
 class TextGenAttachmentChatFragment : Fragment() {
@@ -56,6 +48,7 @@ class TextGenAttachmentChatFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val file = File(pdf)
         // create a PdfRenderer from the file

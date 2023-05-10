@@ -44,6 +44,7 @@ class TextGenRVChatAdapter(
         return dataset.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
         val chat = dataset[position]
 

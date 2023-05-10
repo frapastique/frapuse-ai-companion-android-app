@@ -1,14 +1,13 @@
 package com.back.frapuse
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
@@ -24,7 +23,6 @@ import com.back.frapuse.data.datamodels.textgen.TextGenGenerateResponse
 import com.back.frapuse.data.datamodels.textgen.TextGenGenerateResponseText
 import com.back.frapuse.data.datamodels.textgen.TextGenModelResponse
 import com.back.frapuse.data.datamodels.textgen.TextGenPrompt
-import com.back.frapuse.data.datamodels.textgen.TextGenTokenCountBody
 import com.back.frapuse.data.local.getTextGenDatabase
 import com.back.frapuse.data.remote.TextGenBlockAPI
 import com.google.mlkit.vision.common.InputImage
@@ -58,23 +56,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Text generation parameters body
     private val _genRequestBody = MutableLiveData<TextGenGenerateRequest>()
-    val genRequestBody: LiveData<TextGenGenerateRequest>
-        get() = _genRequestBody
 
     // Text generation response holds a list of text
     private val _genResponseHolder = MutableLiveData<TextGenGenerateResponse>()
-    val genResponseHolder: LiveData<TextGenGenerateResponse>
-        get() = _genResponseHolder
 
     // Text response from genResponseHolder
     private val _genResponseText = MutableLiveData<TextGenGenerateResponseText>()
-    val genResponseText: LiveData<TextGenGenerateResponseText>
-        get() = _genResponseText
-
-    // Holder of token count
-    private val _tokenResponseHolder = MutableLiveData<TextGenTokenCountBody>()
-    val tokenResponseHolder: LiveData<TextGenTokenCountBody>
-        get() = _tokenResponseHolder
 
     // Tokens count of given text
     private val _tokenCount = MutableLiveData<String>()
@@ -90,23 +77,27 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Previous chat messages from human, gets inserted between instructions and next prompt
     private val _previousPromptHuman = MutableLiveData<String>()
-    val previousPromptHuman: LiveData<String>
-        get() = _previousPromptHuman
 
     // Previous chat messages from AI, gets inserted between instructions and next prompt
     private val _previousPromptAI = MutableLiveData<String>()
-    val previousPromptAI: LiveData<String>
-        get() = _previousPromptAI
 
     // Next prompt, gets inserted after final prompt and past nextPrompts
     private val _nextPrompt = MutableLiveData<String>()
-    val nextPrompt: LiveData<String>
-        get() = _nextPrompt
 
     // Prompt for text generation
     private val _prompt = MutableLiveData<TextGenPrompt>()
     val prompt: LiveData<TextGenPrompt>
         get() = _prompt
+
+    // Count of tokens
+    private var _count = MutableLiveData<String>()
+    val count: LiveData<String>
+        get() = _count
+
+    // Extracted text with OCR from bitmap
+    private var _textOut = MutableLiveData<String>()
+    val textOut: LiveData<String>
+        get() = _textOut
 
     /* _______ Api Status ______________________________________________________________ */
 
@@ -122,26 +113,26 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val chatLibrary: LiveData<List<TextGenChatLibrary>>
         get() = _chatLibrary
 
-    // Define a LiveData variable to hold the file path
-    val filePathLiveData = MutableLiveData<String>()
+    // LiveData variable to hold the pdf file path
+    private val _pdfPath = MutableLiveData<String>()
+    val pdfPath: LiveData<String>
+        get() = _pdfPath
 
     // create a contract for picking a PDF file
-    val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
+    private val pickPdfContract = object : ActivityResultContract<String, Uri?>() {
         override fun createIntent(context: Context, input: String): Intent {
             return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = input
             }
         }
-
         override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
             return if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
         }
     }
 
     // create a launcher variable to hold the ActivityResultLauncher
-    var pickPdfLauncher: ActivityResultLauncher<String>? = null
-
+    private var pickPdfLauncher: ActivityResultLauncher<String>? = null
 
     init {
         setInstructionsPrompt("The following is a chat between a curious user and an all knowing AI. The AI gives helpful, detailed and polite answers to the user's questions!")
@@ -160,15 +151,15 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     /* _______ Generation Parameters ___________________________________________________ */
 
-    fun setInstructionsPrompt(prompt: String) {
+    private fun setInstructionsPrompt(prompt: String) {
         _instructionsPrompt.value = prompt
     }
 
-    fun setPreviousChatHuman(prompt: String) {
+    private fun setPreviousChatHuman(prompt: String) {
         _previousPromptHuman.value = prompt
     }
 
-    fun setPreviousChatAI(prompt: String) {
+    private fun setPreviousChatAI(prompt: String) {
         _previousPromptAI.value = prompt
     }
 
@@ -190,12 +181,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
             )
             _chatLibrary.value = repository.getAllChats()
-            textOut.value = ""
+            _textOut.value = ""
             createFinalPrompt()
         }
     }
 
-    fun createFinalPrompt() {
+    private fun createFinalPrompt() {
         _apiStatus.value = AppStatus.LOADING
         val idTokenMap = mutableMapOf<Long, String>()
         var tokenCountCurrent = 0
@@ -254,7 +245,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun getModel() {
+    private fun getModel() {
         viewModelScope.launch {
             _model.value = repository.getModel()
         }
@@ -281,7 +272,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun generateBlock(prompt: String) {
+    private fun generateBlock(prompt: String) {
         _apiStatus.value = AppStatus.LOADING
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
@@ -347,7 +338,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun calculateTokens(pre: String, add: String): String {
+    private fun calculateTokens(pre: String, add: String): String {
         val preInt = pre.toInt()
         val addInt = add.toInt()
         val new = preInt + addInt
@@ -396,12 +387,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun getDateTime(): String {
+    // Get the date and time of given moment
+    @SuppressLint("SimpleDateFormat")
+    private fun getDateTime(): String {
         val sdf = SimpleDateFormat("dd.MM.yy - hh:mm:ss")
         return sdf.format(Date())
     }
 
-    // create a function to register the contract and get the launcher
+    // Method to register the pdf contract and get the launcher
     fun registerPickPdfContract(registry: ActivityResultRegistry) {
         pickPdfLauncher = registry.register("pickPdf", pickPdfContract) { uri ->
             // handle the URI of the selected file
@@ -409,18 +402,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 // call the function to create a local PDF file and pass the URI and context
                 val filePath = createLocalPdfFile(uri, app.applicationContext)
                 // update the LiveData variable with the file path
-                filePathLiveData.value = filePath
+                _pdfPath.value = filePath
             }
         }
     }
 
-    // create a function to launch the file picker
+    // Method to launch the file picker
     fun launchPickPdf() {
         pickPdfLauncher?.launch("application/pdf")
     }
 
-    // define a function to create a local PDF file from a URI and return its path
-    fun createLocalPdfFile(uri: Uri, context: Context): String {
+    // Method to create a local PDF file from a URI and return its path
+    private fun createLocalPdfFile(uri: Uri, context: Context): String {
         // get the app-specific internal storage directory
         val dir = context.filesDir
         // create a subdirectory for PDF files
@@ -439,10 +432,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         return file.path
     }
 
-    fun resetFilePath() {
-        filePathLiveData.value = ""
+    // Clear out file path
+    fun resetPdfPath() {
+        _pdfPath.value = ""
     }
 
+    // Delete all saved PDFs from directory
     fun deleteAllPdf(context: Context) {
         try {
             val dir = context.filesDir
@@ -457,10 +452,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun processTextBlock(result: Text) {
+    // Process extracted text block, build a string and set textOut value
+    private fun processTextBlock(result: Text) {
         val textBlocks = result.textBlocks
         if (textBlocks.size == 0) {
-            textOut.value = "No text found"
+            _textOut.value = "No text found"
         }
         val stringBuilder = StringBuilder()
         for (block in textBlocks) {
@@ -474,18 +470,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
         }
-        textOut.value = stringBuilder.toString()
+        _textOut.value = stringBuilder.toString()
         _apiStatus.value = AppStatus.DONE
     }
 
-    var count = MutableLiveData<String>()
-    fun getTokenCount(text: String) {
+    // Method to get token count dedicated for extracted text
+    private fun getTokenCount(text: String) {
         viewModelScope.launch {
-            count.value = repository.getTokenCount(TextGenPrompt(prompt = text)).results.first().tokens
+            _count.value = repository.getTokenCount(TextGenPrompt(prompt = text)).results.first().tokens
         }
     }
 
-    var textOut = MutableLiveData<String>()
+    // Method to extract the text from a bitmap. Process the text block and get token count on success
     fun extractText(bitmap: Bitmap) {
         _apiStatus.value = AppStatus.LOADING
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)

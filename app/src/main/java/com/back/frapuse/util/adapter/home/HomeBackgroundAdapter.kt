@@ -1,4 +1,4 @@
-package com.back.frapuse.util
+package com.back.frapuse.util.adapter.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

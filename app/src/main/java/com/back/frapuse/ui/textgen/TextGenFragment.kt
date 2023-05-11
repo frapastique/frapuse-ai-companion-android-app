@@ -15,8 +15,8 @@ import com.back.frapuse.R
 import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.AppStatus
-import com.back.frapuse.util.TextGenRVAttachmentAdapter
-import com.back.frapuse.util.TextGenRVChatAdapter
+import com.back.frapuse.util.adapter.textgen.TextGenRVAttachmentAdapter
+import com.back.frapuse.util.adapter.textgen.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "TextGenFragment"

@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.R
 import com.back.frapuse.databinding.FragmentImageGenRvSmallBinding
-import com.back.frapuse.util.ImageGenRVSmallAdapter
+import com.back.frapuse.util.adapter.imagegen.ImageGenRVSmallAdapter
 
 class ImageGenRVSmallFragment : Fragment() {
     // Load viewModel

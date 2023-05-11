@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.back.frapuse.databinding.FragmentImageGenRvDetailBinding
-import com.back.frapuse.util.ImageGenRVDetailAdapter
+import com.back.frapuse.util.adapter.imagegen.ImageGenRVDetailAdapter
 
 class ImageGenRVDetailFragment : Fragment() {
     // Get the viewModel into the logic

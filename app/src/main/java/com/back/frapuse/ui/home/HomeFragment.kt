@@ -12,8 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.back.frapuse.ui.imagegen.ImageGenViewModel
 import com.back.frapuse.databinding.FragmentHomeBinding
-import com.back.frapuse.util.HomeBackgroundAdapter
-import com.back.frapuse.util.NoScrollLayoutManager
+import com.back.frapuse.util.adapter.home.HomeBackgroundAdapter
+import com.back.frapuse.util.layoutmanager.NoScrollLayoutManager
 
 class HomeFragment : Fragment() {
     // Get the viewModel into the logic

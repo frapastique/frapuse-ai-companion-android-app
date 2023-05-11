@@ -1,4 +1,4 @@
-package com.back.frapuse.util
+package com.back.frapuse.util.layoutmanager
 
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager

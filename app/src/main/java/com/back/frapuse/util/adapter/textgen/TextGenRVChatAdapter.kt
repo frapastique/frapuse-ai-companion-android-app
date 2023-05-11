@@ -1,4 +1,4 @@
-package com.back.frapuse.util
+package com.back.frapuse.util.adapter.textgen
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

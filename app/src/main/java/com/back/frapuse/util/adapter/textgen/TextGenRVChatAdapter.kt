@@ -8,6 +8,7 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
@@ -97,16 +98,39 @@ class TextGenRVChatAdapter(
                 pdfRenderer.close()
             }
         } else if (chat.name == "AI") {
+            var previousAIMessage = ""
+
             holder.binding.clChatInstructions.visibility = View.GONE
             holder.binding.clChatHuman.visibility = View.GONE
-            holder.binding.clChatAi.visibility = View.VISIBLE
-            holder.binding.tvMessageTextAi.text = chat.message
-            holder.binding.tvMessageInfoAi.text =
-                viewModelTextGen.model.value!!.result +
-                    " - " +
-                    chat.tokens +
-                    " - " +
-                    chat.dateTime
+
+            if (chat.message.isEmpty()) {
+                viewModelTextGen.streamResponseMessage.observe(
+                    holder.itemView.context as LifecycleOwner
+                ) { streamResponseMessage ->
+                    when (streamResponseMessage.event) {
+                        "text_stream" -> {
+                            holder.binding.clChatAi.visibility = View.VISIBLE
+                            previousAIMessage += streamResponseMessage.text
+                            holder.binding.tvMessageTextAi.text = previousAIMessage.drop(1)
+                            holder.binding.tvMessageInfoAi.text =
+                                viewModelTextGen.model.value!!.result +
+                                        " - " +
+                                        streamResponseMessage.message_num.plus(1) +
+                                        " - " +
+                                        chat.dateTime
+                        }
+                    }
+                }
+            } else {
+                holder.binding.clChatAi.visibility = View.VISIBLE
+                holder.binding.tvMessageTextAi.text = chat.message
+                holder.binding.tvMessageInfoAi.text =
+                    viewModelTextGen.model.value!!.result +
+                            " - " +
+                            chat.tokens +
+                            " - " +
+                            chat.dateTime
+            }
         }
 
         // Long click listener on attachment for navigation to attachment fragment

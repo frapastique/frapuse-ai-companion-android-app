@@ -117,7 +117,8 @@ class TextGenFragment : Fragment() {
         viewModel.createPromptStatus.observe(viewLifecycleOwner) { promptStatus ->
             when (promptStatus) {
                 AppStatus.DONE -> {
-                    viewModel.generateBlock()
+                    // viewModel.generateBlock()
+                    viewModel.generateStream()
                 }
                 else -> Log.e(TAG, "Prompt status:\n\t$promptStatus")
             }
@@ -130,12 +131,12 @@ class TextGenFragment : Fragment() {
             true
         }
 
+        val chatAdapter = TextGenRVChatAdapter(
+            dataset = emptyList(),
+            viewModelTextGen = viewModel
+        )
         // Set chat library on RecyclerView
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
-            val chatAdapter = TextGenRVChatAdapter(
-                dataset = chatLibrary,
-                viewModelTextGen = viewModel
-            )
             binding.rvChatLibrary.adapter = chatAdapter
             chatAdapter.submitList(chatLibrary)
             binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
@@ -150,6 +151,29 @@ class TextGenFragment : Fragment() {
         // Scroll to the latest chat message when clicking to type next message
         binding.tiPrompt.setOnClickListener {
             binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
+        }
+
+        // Observe stream from server and create final output
+        var finalOutput = ""
+        viewModel.streamResponseMessage.observe(viewLifecycleOwner) { streamResponseMessage ->
+            when (streamResponseMessage.event) {
+                "text_stream" -> {
+                    finalOutput += streamResponseMessage.text
+                    binding.rvChatLibrary.smoothScrollToPosition(
+                        viewModel.chatLibrary.value!!.size
+                    )
+                }
+                "stream_end" -> {
+                    viewModel.updateChat(
+                        viewModel.chatLibrary.value!!.last().chatID,
+                        finalOutput
+                    )
+                    viewModel.resetStream()
+                }
+                "waiting" -> {
+                    finalOutput = ""
+                }
+            }
         }
 
         // Set state and visibility of elements according to API status

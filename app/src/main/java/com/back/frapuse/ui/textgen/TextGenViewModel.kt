@@ -69,6 +69,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val tokenCount: LiveData<String>
         get() = _tokenCount
 
+    // LiveData stream response object
+    val streamResponseMessage = repository.streamResponseMessage
+
+    // LiveData stream response object
+    val streamErrorMessage = repository.streamErrorMessage
+
     /* _______ Prompts _________________________________________________________________ */
 
     // Instructions prompt, tells the AI who it is and how to behave
@@ -294,6 +300,80 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _tokenCount.value = repository.getTokenCount(_prompt.value!!)
                     .results.first().tokens
             }
+        }
+    }
+
+    fun generateStream() {
+        _apiStatus.value = AppStatus.LOADING
+        _createPromptStatus.value = AppStatus.WAITING
+
+        viewModelScope.launch {
+            repository.insertChat(
+                TextGenChatLibrary(
+                    dateTime = getDateTime(),
+                    tokens = "1",
+                    name = "AI",
+                    profilePicture = "",
+                    message = "",
+                    sentImage = "",
+                    sentDocument = "",
+                    documentText = ""
+                )
+            )
+            _chatLibrary.value = repository.getAllChats()
+
+            _genRequestBody.value = TextGenGenerateRequest(
+                prompt = _prompt.value!!.prompt,
+                max_new_tokes = 250,
+                do_sample = true,
+                temperature = 1.3,
+                top_p = 0.1,
+                typical_p = 1.0,
+                repetition_penalty = 1.18,
+                top_k = 40,
+                min_length = 0,
+                no_repeat_ngram_size = 0,
+                num_beams = 1,
+                penalty_alpha = 0.0,
+                length_penalty = 1.0,
+                early_stopping = false,
+                seed = -1,
+                add_bos_token = true,
+                truncation_length = 2048,
+                ban_eos_token = false,
+                skip_special_tokens = true,
+                stopping_strings = listOf()
+            )
+
+            repository.sendMessageToWebSocket(_genRequestBody.value!!)
+        }
+    }
+
+    fun resetStream() {
+        repository.resetStreamResponseMessage()
+        _apiStatus.value = AppStatus.DONE
+    }
+
+    fun updateChat(messageID: Long, message: String) {
+        Log.e(TAG, "Latest response:\n\t$message")
+        viewModelScope.launch {
+            val tokens = repository.getTokenCount(
+                TextGenPrompt(message.drop(1))
+            ).results.first().tokens
+            repository.updateChat(
+                TextGenChatLibrary(
+                    chatID = messageID,
+                    dateTime = getDateTime(),
+                    tokens = tokens,
+                    name = "AI",
+                    profilePicture = "",
+                    message = message.drop(1),
+                    sentImage = "",
+                    sentDocument = "",
+                    documentText = ""
+                )
+            )
+            _chatLibrary.value = repository.getAllChats()
         }
     }
 

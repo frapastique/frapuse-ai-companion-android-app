@@ -1,6 +1,8 @@
 package com.back.frapuse.data.textgen
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.data.textgen.models.TextGenGenerateRequest
 import com.back.frapuse.data.textgen.models.TextGenGenerateResponse
@@ -10,13 +12,41 @@ import com.back.frapuse.data.textgen.models.TextGenPrompt
 import com.back.frapuse.data.textgen.models.TextGenTokenCountBody
 import com.back.frapuse.data.textgen.models.TextGenTokenCountResponse
 import com.back.frapuse.data.textgen.local.TextGenChatLibraryDatabase
+import com.back.frapuse.data.textgen.models.TextGenStreamResponse
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
+import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
 
 private const val TAG = "TextGenRepository"
 
-class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val database: TextGenChatLibraryDatabase) {
+class TextGenRepository(
+    private val apiBlock: TextGenBlockAPI,
+    private val database: TextGenChatLibraryDatabase
+    ) {
 
-    /* ____________________________________ Methods Remote _____________________________ */
+    // Instance of the WebSocketClient class
+    private val textGenStreamWebSocketClient = TextGenStreamWebSocketClient()
+
+    // LiveData object to expose the messages from the server
+    private val _streamResponseMessage = MutableLiveData<TextGenStreamResponse>()
+    val streamResponseMessage: LiveData<TextGenStreamResponse>
+        get() = _streamResponseMessage
+
+    // LiveData object to expose the errors from the websocket
+    private val _streamErrorMessage = MutableLiveData<String>()
+    val streamErrorMessage: LiveData<String>
+        get() = _streamErrorMessage
+
+    init {
+        // Callback method for the WebSocketClient class
+        textGenStreamWebSocketClient.onResponseReceived = { textGenStreamResponse ->
+            _streamResponseMessage.postValue(textGenStreamResponse)
+        }
+        textGenStreamWebSocketClient.onError = { text ->
+            _streamErrorMessage.postValue(text)
+        }
+    }
+
+    /* _______ TextGen Block ___________________________________________________________ */
 
     suspend fun getModel(): TextGenModelResponse {
         return try {
@@ -43,6 +73,34 @@ class TextGenRepository(private val apiBlock: TextGenBlockAPI, private val datab
             Log.e(TAG, "Error retrieving text response TextGen block API: \n\t $e")
             TextGenGenerateResponse(listOf(TextGenGenerateResponseText("Error")))
         }
+    }
+
+    /* _______ TextGen Stream __________________________________________________________ */
+
+    // Method to send a message to the server using the WebSocketClient class
+    fun sendMessageToWebSocket(textGenGenerateRequest: TextGenGenerateRequest) {
+        try {
+            textGenStreamWebSocketClient.sendMessage(textGenGenerateRequest)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error sending message to server over websocket:\n\t$e")
+        }
+    }
+
+    // Method to close the websocket connection using the WebSocketClient class
+    fun closeWebsocketClient() {
+        try {
+            textGenStreamWebSocketClient.close()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error closing websocket:\n\t$e")
+        }
+    }
+
+    // Method to reset stream response message
+    fun resetStreamResponseMessage() {
+        _streamResponseMessage.value = TextGenStreamResponse(
+            event = "waiting",
+            message_num = 0
+        )
     }
 
     /* ____________________________________ Methods Local ______________________________ */

@@ -131,15 +131,13 @@ class TextGenFragment : Fragment() {
             true
         }
 
-        val chatAdapter = TextGenRVChatAdapter(
-            dataset = emptyList(),
-            viewModelTextGen = viewModel
-        )
         // Set chat library on RecyclerView
         viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
-            binding.rvChatLibrary.adapter = chatAdapter
-            chatAdapter.submitList(chatLibrary)
-            binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
+            binding.rvChatLibrary.adapter = TextGenRVChatAdapter(
+                dataset = chatLibrary,
+                viewModelTextGen = viewModel
+            )
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size.plus(1))
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 

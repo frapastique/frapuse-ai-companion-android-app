@@ -20,14 +20,7 @@ import java.io.File
 class TextGenRVChatAdapter(
     private var dataset: List<TextGenChatLibrary>,
     private val viewModelTextGen: TextGenViewModel,
-   // private val viewModelImageGen: ImageGeneViewModel
 ) : RecyclerView.Adapter<TextGenRVChatAdapter.TextGenRVChatViewHolder>() {
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<TextGenChatLibrary>) {
-        dataset = list
-        notifyDataSetChanged()
-    }
 
     inner class TextGenRVChatViewHolder(
         internal val binding: TextGenRvChatItemBinding
@@ -58,11 +51,13 @@ class TextGenRVChatAdapter(
 
         if (chat.name == "Human") {
             holder.binding.clChatHuman.visibility = View.VISIBLE
+            holder.binding.sivSentContent.visibility = View.GONE
             holder.binding.clChatAi.visibility = View.GONE
             holder.binding.tvMessageTextHuman.text = chat.message
             holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
 
             if (chat.sentDocument.isNotEmpty()) {
+                holder.binding.sivSentContent.visibility = View.VISIBLE
                 // Create a file with sent document
                 val file = File(chat.sentDocument)
 

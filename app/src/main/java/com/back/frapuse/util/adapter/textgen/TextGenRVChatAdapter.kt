@@ -6,33 +6,99 @@ import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
-import com.back.frapuse.databinding.TextGenRvChatItemBinding
+import com.back.frapuse.databinding.TextGenRvChatAiAttachmentItemBinding
+import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
+import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
+import com.back.frapuse.databinding.TextGenRvChatHumanItemBinding
+import com.back.frapuse.databinding.TextGenRvChatInstructionItemBinding
 import com.back.frapuse.ui.textgen.TextGenFragmentDirections
 import java.io.File
 
 class TextGenRVChatAdapter(
     private var dataset: List<TextGenChatLibrary>,
     private val viewModelTextGen: TextGenViewModel,
-) : RecyclerView.Adapter<TextGenRVChatAdapter.TextGenRVChatViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    inner class TextGenRVChatViewHolder(
-        internal val binding: TextGenRvChatItemBinding
+    // Companion object defines type of item in dataset
+    companion object {
+        private const val TYPE_INSTRUCTION = 0
+        private const val TYPE_HUMAN_MESSAGE = 1
+        private const val TYPE_HUMAN_ATTACHMENT = 2
+        private const val TYPE_AI_MESSAGE = 3
+        private const val TYPE_AI_ATTACHMENT = 4
+    }
+
+    inner class TextGenRVChatInstructionViewHolder(
+        internal val binding: TextGenRvChatInstructionItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextGenRVChatViewHolder {
-        val binding = TextGenRvChatItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return TextGenRVChatViewHolder(binding)
+    inner class TextGenRVChatHumanViewHolder(
+        internal val binding: TextGenRvChatHumanItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatHumanAttachmentViewHolder(
+        internal val binding: TextGenRvChatHumanAttachmentItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatAIViewHolder(
+        internal val binding: TextGenRvChatAiItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatAIAttachmentViewHolder(
+        internal val binding: TextGenRvChatAiAttachmentItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        // Append view holder according the view type
+        return when (viewType) {
+            TYPE_INSTRUCTION -> {
+                val binding = TextGenRvChatInstructionItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatInstructionViewHolder(binding)
+            }
+            TYPE_HUMAN_MESSAGE -> {
+                val binding = TextGenRvChatHumanItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatHumanViewHolder(binding)
+            }
+            TYPE_HUMAN_ATTACHMENT -> {
+                val binding = TextGenRvChatHumanAttachmentItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatHumanAttachmentViewHolder(binding)
+            }
+            TYPE_AI_MESSAGE -> {
+                val binding = TextGenRvChatAiItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatAIViewHolder(binding)
+            }
+            TYPE_AI_ATTACHMENT -> {
+                val binding = TextGenRvChatAiAttachmentItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatAIAttachmentViewHolder(binding)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
     }
 
     override fun getItemCount(): Int {
@@ -40,24 +106,21 @@ class TextGenRVChatAdapter(
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: TextGenRVChatViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val chat = dataset[position]
 
-        // Set visibility and content of elements according to chat properties
-        if (position == 0 && chat.name == "Human") {
-            holder.binding.clChatInstructions.visibility = View.VISIBLE
-            holder.binding.tvInstructionsText.text = viewModelTextGen.instructionsPrompt.value
-        }
+        when (holder) {
+            is TextGenRVChatInstructionViewHolder -> {
+                holder.binding.tvInstructionsText.text = chat.message
+                holder.binding.tvInstructionsInfo.text = chat.tokens + " - " + chat.dateTime
+            }
 
-        if (chat.name == "Human") {
-            holder.binding.clChatHuman.visibility = View.VISIBLE
-            holder.binding.sivSentContent.visibility = View.GONE
-            holder.binding.clChatAi.visibility = View.GONE
-            holder.binding.tvMessageTextHuman.text = chat.message
-            holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
+            is TextGenRVChatHumanViewHolder -> {
+                holder.binding.tvMessageTextHuman.text = chat.message
+                holder.binding.tvMessageInfoHuman.text = chat.tokens + " - " + chat.dateTime
+            }
 
-            if (chat.sentDocument.isNotEmpty()) {
-                holder.binding.sivSentContent.visibility = View.VISIBLE
+            is TextGenRVChatHumanAttachmentViewHolder -> {
                 // Create a file with sent document
                 val file = File(chat.sentDocument)
 
@@ -75,6 +138,7 @@ class TextGenRVChatAdapter(
                     pdfPage.height,
                     Bitmap.Config.ARGB_8888
                 )
+                // Set bitmap background color
                 bitmap.eraseColor(Color.WHITE)
 
                 // Render the page content to the bitmap
@@ -91,50 +155,72 @@ class TextGenRVChatAdapter(
                 // Close pdf page and renderer
                 pdfPage.close()
                 pdfRenderer.close()
+
+                // Long click listener on attachment for navigation to attachment fragment
+                holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->
+                    viewModelTextGen.setCurrentChatMessage(chat.ID)
+                    sivSentContent.findNavController().navigate(TextGenFragmentDirections
+                        .actionTextGenFragmentToTextGenAttachmentChatFragment()
+                    )
+                    true
+                }
             }
-        } else if (chat.name == "AI") {
-            var previousAIMessage = ""
 
-            holder.binding.clChatInstructions.visibility = View.GONE
-            holder.binding.clChatHuman.visibility = View.GONE
-
-            if (chat.message.isEmpty()) {
-                viewModelTextGen.streamResponseMessage.observe(
-                    holder.itemView.context as LifecycleOwner
-                ) { streamResponseMessage ->
-                    when (streamResponseMessage.event) {
-                        "text_stream" -> {
-                            holder.binding.clChatAi.visibility = View.VISIBLE
-                            previousAIMessage += streamResponseMessage.text
-                            holder.binding.tvMessageTextAi.text = previousAIMessage.drop(1)
-                            holder.binding.tvMessageInfoAi.text =
-                                viewModelTextGen.model.value!!.result +
-                                        " - " +
-                                        streamResponseMessage.message_num.plus(1) +
-                                        " - " +
-                                        chat.dateTime
+            is TextGenRVChatAIViewHolder -> {
+                when {
+                    chat.message.isEmpty() -> {
+                        var previousAIMessage = ""
+                        viewModelTextGen.streamResponseMessage.observe(
+                            holder.itemView.context as LifecycleOwner
+                        ) { streamResponseMessage ->
+                            if (streamResponseMessage.event == "text_stream") {
+                                previousAIMessage += streamResponseMessage.text
+                                holder.binding.tvMessageTextAi.text = previousAIMessage.drop(1)
+                                holder.binding.tvMessageInfoAi.text =
+                                    viewModelTextGen.model.value!!.result +
+                                            " - " +
+                                            streamResponseMessage.message_num.plus(1) +
+                                            " - " +
+                                            chat.dateTime
+                            }
                         }
                     }
+                    else -> {
+                        holder.binding.tvMessageTextAi.text = chat.message
+                        holder.binding.tvMessageInfoAi.text =
+                            viewModelTextGen.model.value!!.result +
+                                    " - " +
+                                    chat.tokens +
+                                    " - " +
+                                    chat.dateTime
+                    }
                 }
-            } else {
-                holder.binding.clChatAi.visibility = View.VISIBLE
-                holder.binding.tvMessageTextAi.text = chat.message
-                holder.binding.tvMessageInfoAi.text =
-                    viewModelTextGen.model.value!!.result +
-                            " - " +
-                            chat.tokens +
-                            " - " +
-                            chat.dateTime
+            }
+
+            is TextGenRVChatAIAttachmentViewHolder -> {
+                TODO()
             }
         }
+    }
 
-        // Long click listener on attachment for navigation to attachment fragment
-        holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->
-            viewModelTextGen.setCurrentChatMessage(chat.chatID)
-            sivSentContent.findNavController().navigate(TextGenFragmentDirections
-                .actionTextGenFragmentToTextGenAttachmentChatFragment()
-            )
-            true
+    // Set view type according to position of the view
+    override fun getItemViewType(position: Int): Int {
+        return when (dataset[position].type) {
+            "Instructions" -> { // Instruction text
+                TYPE_INSTRUCTION
+            }
+            "Human" -> { // Human message text
+                TYPE_HUMAN_MESSAGE
+            }
+            "Human Attachment" -> { // Human attachment
+                TYPE_HUMAN_ATTACHMENT
+            }
+            "AI" -> { // AI message text
+                TYPE_AI_MESSAGE
+            }
+            else -> { // AI attachment
+                TYPE_AI_ATTACHMENT
+            }
         }
     }
 }

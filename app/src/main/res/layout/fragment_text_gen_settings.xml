@@ -63,7 +63,7 @@
                             tools:text="@string/app_description" />
 
                     <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tv_info_instructions"
+                            android:id="@+id/tv_instructions_info"
                             android:visibility="gone"
                             android:textSize="7sp"
                             android:textColor="@color/grey"

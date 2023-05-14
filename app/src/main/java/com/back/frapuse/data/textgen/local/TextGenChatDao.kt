@@ -56,6 +56,6 @@ interface TextGenChatDao {
      * @param chatID ID of the wanted chat
      * @return TextGenChatLibrary
      * */
-    @Query("SELECT * FROM textGenChatLibrary_table WHERE chatID = :chatID")
-    suspend fun getChat(chatID: Long): TextGenChatLibrary
+    @Query("SELECT * FROM textGenChatLibrary_table WHERE ID = :ID")
+    suspend fun getChat(ID: Long): TextGenChatLibrary
 }

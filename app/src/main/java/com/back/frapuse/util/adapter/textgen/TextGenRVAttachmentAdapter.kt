@@ -25,13 +25,6 @@ class TextGenRVAttachmentAdapter(
         private const val TYPE_FOOTER = 1
     }
 
-    // Method to update current dataset
-    @SuppressLint("NotifyDataSetChanged")
-    fun submitAttachmentList(newDataset: List<TextGenAttachments>) {
-        dataset = newDataset
-        notifyDataSetChanged()
-    }
-
     // Class for attachment item view holder, holds binding property
     inner class TextGenRVAttachmentItemViewHolder(
         internal val binding: TextGenRvAttachmentItemBinding

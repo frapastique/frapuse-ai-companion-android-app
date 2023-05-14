@@ -182,20 +182,22 @@ class TextGenRepository(
      * @param chatID ID of the wanted chat
      * @return TextGenChatLibrary
      * */
-    suspend fun getChat(chatID: Long): TextGenChatLibrary {
+    suspend fun getChat(ID: Long): TextGenChatLibrary {
         return try {
-            database.textGenChatDao.getChat(chatID)
+            database.textGenChatDao.getChat(ID)
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching chat from 'textGenChatLibrary_table': \n\t $e")
             TextGenChatLibrary(
+                conversationID = -1,
                 dateTime = "",
+                modelName = "",
                 tokens = "",
-                name = "",
-                profilePicture = "",
+                type = "",
                 message = "",
                 sentImage = "",
                 sentDocument = "",
-                documentText = ""
+                documentText = "",
+                finalContext = ""
             )
         }
     }

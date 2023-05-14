@@ -54,7 +54,7 @@
                     app:layout_constraintBottom_toTopOf="@id/rv_attachment_preview"
                     app:flow_horizontalAlign="center"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/text_gen_rv_chat_item" />
+                    tools:listitem="@layout/text_gen_rv_chat_instruction_item" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

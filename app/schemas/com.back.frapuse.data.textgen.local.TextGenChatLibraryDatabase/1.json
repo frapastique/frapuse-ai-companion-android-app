@@ -2,16 +2,28 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2f8d355a7cfd66ac4ac174fe658ab8d1",
+    "identityHash": "5649c90796c05706f509fc8b43e80109",
     "entities": [
       {
         "tableName": "textGenChatLibrary_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chatID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `name` TEXT NOT NULL, `profilePicture` TEXT NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL, `documentText` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `conversationID` INTEGER NOT NULL, `modelName` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `type` TEXT NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL, `documentText` TEXT NOT NULL, `finalContext` TEXT NOT NULL)",
         "fields": [
           {
-            "fieldPath": "chatID",
-            "columnName": "chatID",
+            "fieldPath": "ID",
+            "columnName": "ID",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conversationID",
+            "columnName": "conversationID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modelName",
+            "columnName": "modelName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -27,14 +39,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "profilePicture",
-            "columnName": "profilePicture",
+            "fieldPath": "type",
+            "columnName": "type",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -61,12 +67,18 @@
             "columnName": "documentText",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "finalContext",
+            "columnName": "finalContext",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "chatID"
+            "ID"
           ]
         },
         "indices": [],
@@ -76,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2f8d355a7cfd66ac4ac174fe658ab8d1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5649c90796c05706f509fc8b43e80109')"
     ]
   }
 }

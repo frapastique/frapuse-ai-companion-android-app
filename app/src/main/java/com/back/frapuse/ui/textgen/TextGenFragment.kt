@@ -70,10 +70,10 @@ class TextGenFragment : Fragment() {
 
         // Set prompt variable on EditTextView text change and set visibility and state of buttons
         binding.etPrompt.addTextChangedListener { newPrompt ->
-            if (!newPrompt.isNullOrEmpty()) {
-                prompt = newPrompt.toString()
+            prompt = if (!newPrompt.isNullOrEmpty()) {
+                newPrompt.toString()
             } else {
-                prompt = ""
+                ""
             }
             // Set the state and visibility of buttons according to prompt value
             if (prompt.isEmpty()) {
@@ -106,7 +106,10 @@ class TextGenFragment : Fragment() {
         // Set next prompt value in viewModel and adjust visibility of elements
         binding.btnSend.setOnClickListener {
             binding.rvAttachmentPreview.visibility = View.GONE
-            viewModel.setNextPrompt(prompt, filePath)
+            if (filePath.isNotEmpty()) {
+                viewModel.saveAttachment(filePath)
+            }
+            viewModel.setHumanContext(prompt, filePath)
             binding.etPrompt.setText("")
             binding.btnAttachment.visibility = View.VISIBLE
             filePath = ""
@@ -137,7 +140,7 @@ class TextGenFragment : Fragment() {
                 dataset = chatLibrary,
                 viewModelTextGen = viewModel
             )
-            binding.rvChatLibrary.scrollToPosition(chatLibrary.size.plus(1))
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size.minus(1))
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 
@@ -163,7 +166,7 @@ class TextGenFragment : Fragment() {
                 }
                 "stream_end" -> {
                     viewModel.updateChat(
-                        viewModel.chatLibrary.value!!.last().chatID,
+                        viewModel.chatLibrary.value!!.last().ID,
                         finalOutput
                     )
                     viewModel.resetStream()

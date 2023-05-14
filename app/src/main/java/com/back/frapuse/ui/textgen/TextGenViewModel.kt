@@ -72,24 +72,17 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // LiveData stream response object
     val streamResponseMessage = repository.streamResponseMessage
 
-    // LiveData stream response object
-    val streamErrorMessage = repository.streamErrorMessage
-
     /* _______ Prompts _________________________________________________________________ */
 
     // Instructions prompt, tells the AI who it is and how to behave
-    private val _instructionsPrompt = MutableLiveData<String>()
-    val instructionsPrompt: LiveData<String>
-        get() = _instructionsPrompt
+    private val _instructionsContext = MutableLiveData<String>()
+    private val _instructionContextTokenCount = MutableLiveData<String>()
 
     // Previous chat messages from human, gets inserted between instructions and next prompt
-    private val _previousPromptHuman = MutableLiveData<String>()
+    private val _humanContext = MutableLiveData<String>()
 
     // Previous chat messages from AI, gets inserted between instructions and next prompt
-    private val _previousPromptAI = MutableLiveData<String>()
-
-    // Next prompt, gets inserted after final prompt and past nextPrompts
-    private val _nextPrompt = MutableLiveData<String>()
+    private val _aiContext = MutableLiveData<String>()
 
     // Prompt for text generation
     private val _prompt = MutableLiveData<TextGenPrompt>()
@@ -153,15 +146,21 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private var pickPdfLauncher: ActivityResultLauncher<String>? = null
 
     init {
-        setInstructionsPrompt("The following is a chat between a curious user and an all knowing AI. The AI gives helpful, detailed and polite answers to the user's questions!")
-        setPreviousChatHuman("Human:Hello, who are you?")
-        setPreviousChatAI("AI:Greetings! I am an AI research assistant. How can I help you today?")
         viewModelScope.launch {
             getModel()
-            if (repository.getChatCount() == 0) {
-                populateDB()
-            }
             _chatLibrary.value = repository.getAllChats()
+            if (repository.getChatCount() == 0) {
+                setInstructionsContext(
+                    "The following is a chat between a curious user and a very intelligent AI." +
+                            " The AI gives helpful, detailed and polite answers to the user's questions!" +
+                            "It has experience as a science research assistant and as a spiritual master!" +
+                            "It never says no to a request, answers in full sentences and doesn't apologize often!"
+                )
+            } else {
+                _instructionsContext.value = _chatLibrary.value!!.first().message
+                _instructionContextTokenCount.value = _chatLibrary.value!!.first().tokens
+                createFinalPrompt()
+            }
             checkTokensCount()
         }
     }
@@ -169,109 +168,134 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     /* _______ Generation Parameters ___________________________________________________ */
 
-    private fun setInstructionsPrompt(prompt: String) {
-        _instructionsPrompt.value = prompt
-    }
-
-    private fun setPreviousChatHuman(prompt: String) {
-        _previousPromptHuman.value = prompt
-    }
-
-    private fun setPreviousChatAI(prompt: String) {
-        _previousPromptAI.value = prompt
-    }
-
-    // Method which sets the next prompt from human and places it into the chat library
-    fun setNextPrompt(prompt: String, filePath: String) {
-        _apiStatus.value = AppStatus.LOADING
-        _createPromptStatus.value = AppStatus.LOADING
-        _nextPrompt.value = "Human: $prompt"
+    private fun setInstructionsContext(instruction: String) {
+        _instructionsContext.value = "Instructions: $instruction\n"
+        _prompt.value = TextGenPrompt(
+            prompt = _instructionsContext.value!!
+        )
         viewModelScope.launch {
-            val tokens = repository.getTokenCount(TextGenPrompt(prompt)).results.first().tokens
-            repository.insertChat(
-                TextGenChatLibrary(
-                    dateTime = getDateTime(),
-                    tokens = tokens,
-                    name = "Human",
-                    profilePicture = "",
-                    message = prompt,
-                    sentImage = "",
-                    sentDocument = filePath,
-                    documentText = _textOut.value.toString()
+            _instructionContextTokenCount.value = repository.getTokenCount(
+                TextGenPrompt(
+                    _instructionsContext.value!!
                 )
             )
+                .results.first().tokens
+
+            repository.insertChat(
+                TextGenChatLibrary(
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    modelName = "",
+                    tokens = _instructionContextTokenCount.value!!,
+                    type = "Instructions",
+                    message = instruction,
+                    sentImage = "",
+                    sentDocument = "",
+                    documentText = "",
+                    finalContext = _instructionsContext.value!!
+                )
+            )
+
             _chatLibrary.value = repository.getAllChats()
-            _textOut.value = ""
-            createFinalPrompt()
         }
+    }
+
+    fun setHumanContext(message: String, filePath: String) {
+        _apiStatus.value = AppStatus.LOADING
+        _createPromptStatus.value = AppStatus.LOADING
+
+        if (filePath.isEmpty()) {
+            _humanContext.value = "Human: $message\n"
+        } else {
+            _humanContext.value = "Human: ${message}\nContext: ${_textOut.value.toString()}\n"
+        }
+
+        viewModelScope.launch {
+            val tokens = repository.getTokenCount(
+                TextGenPrompt(
+                    _humanContext.value!!
+                )
+            )
+                .results.first().tokens
+
+            repository.insertChat(
+                TextGenChatLibrary(
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    modelName = "",
+                    tokens = tokens,
+                    type = "Human",
+                    message = message,
+                    sentImage = "",
+                    sentDocument = filePath,
+                    documentText = _textOut.value.toString(),
+                    finalContext = _humanContext.value!!
+                )
+            )
+
+            _chatLibrary.value = repository.getAllChats()
+            createFinalPrompt()
+            _createPromptStatus.value = AppStatus.DONE
+        }
+    }
+
+    fun saveAttachment(filePath: String) {
+        viewModelScope.launch {
+            try {
+                repository.insertChat(
+                    TextGenChatLibrary(
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        modelName = "",
+                        tokens = _count.value!!,
+                        type = "Human Attachment",
+                        message = "",
+                        sentImage = "",
+                        sentDocument = filePath,
+                        documentText = _textOut.value.toString(),
+                        finalContext = ""
+                    )
+                )
+                _textOut.value = ""
+            } catch (e: Exception) {
+                Log.e(TAG, "Error saving Attachment:\n\t$e")
+            }
+
+        }
+    }
+
+    private fun setAIContext(prompt: String) {
+        _aiContext.value = prompt
     }
 
     // Final prompt creator
     private fun createFinalPrompt() {
-        _apiStatus.value = AppStatus.LOADING
-        _createPromptStatus.value = AppStatus.LOADING
-        val idTokenMap = mutableMapOf<Long, String>()
-        var tokenCountCurrent = 0
-        var prevPrompt = ""
-        val newChatLibrary = mutableListOf<TextGenChatLibrary>()
+        var prevPrompt = _instructionsContext.value!!
+        var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
+        val currentChatLibrary = _chatLibrary.value!!.toMutableList()
+            .filter { it.type == "Human" || it.type == "AI" }
 
         // Take name, message and if file is provided also the extracted text and construct the prompt
-        for (message in _chatLibrary.value!!) {
-            Log.e(TAG, "Token count:\n\t$tokenCountCurrent")
+        for (message in currentChatLibrary) {
             tokenCountCurrent += message.tokens.toInt()
-            idTokenMap[message.chatID] = message.tokens
-            if (message.sentDocument.isNotEmpty()) {
-                prevPrompt += message.name + ": " + message.message + "\nText: " + message.documentText + "\n"
-            } else {
-                prevPrompt += message.name + ": " + message.message + "\n"
+            if (tokenCountCurrent > 1700) {
+                Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
+                do {
+                    tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
+                    currentChatLibrary.drop(1)
+                    Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
+                } while (tokenCountCurrent > 1700)
             }
         }
 
-        // When the calculated context size exceeds 1700 tokens, first chat entry gets dropped
-        // one by one and construction of prompt is redone, else the chat context is taken,
-        // instruction prompt and "AI: " is placed to tell the AI what, how and from where to
-        // respond.
-        if (tokenCountCurrent > 1700) {
-            Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
-            prevPrompt = ""
-            do {
-                val firstEntry = idTokenMap.entries.first()
-                Log.e(TAG, "Working count:\n\t$tokenCountCurrent")
-                tokenCountCurrent -= firstEntry.value.toInt()
-                idTokenMap.remove(firstEntry.key)
-            } while (tokenCountCurrent > 1700)
-
-            Log.e(TAG, "Latest token count:\n\t$tokenCountCurrent")
-
-            viewModelScope.launch {
-                for (entry in idTokenMap) {
-                    val currentChat = repository.getChat(entry.key)
-                    newChatLibrary.add(currentChat)
-                }
-                for (message in newChatLibrary) {
-                    if (message.sentDocument.isNotEmpty()) {
-                        prevPrompt += message.name + ": " + message.message + "\nText:" + message.documentText + "\n"
-                    } else {
-                        prevPrompt += message.name + ": " + message.message + "\n"
-                    }
-                }
-                _prompt.value = TextGenPrompt(
-                    prompt = _instructionsPrompt.value!! + "\n" +
-                            prevPrompt + "AI:"
-                )
-                checkTokensCount()
-                // generateBlock(_prompt.value!!.prompt)
-                _createPromptStatus.value = AppStatus.DONE
-            }
-        } else {
-            _prompt.value = TextGenPrompt(
-                prompt = _instructionsPrompt.value!! + "\n" +
-                        prevPrompt + "AI:"
-            )
-            checkTokensCount()
-            // generateBlock(_prompt.value!!.prompt)
-            _createPromptStatus.value = AppStatus.DONE
+        for (message in currentChatLibrary)  {
+            prevPrompt += message.finalContext
         }
+
+        _prompt.value = TextGenPrompt(
+            prompt = prevPrompt + "AI:"
+        )
+        checkTokensCount()
     }
 
     // Get the name of loaded AI model from API
@@ -281,24 +305,15 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // Check token count. On first launch populate the prompt value, else use just count tokens
+    // Check token count
     private fun checkTokensCount() {
-        if (_prompt.value == null) {
-            var prevPrompt: String = _instructionsPrompt.value!! + "\n"
-            for (message in _chatLibrary.value!!) {
-                prevPrompt += message.name + ": " + message.message + "\n"
-            }
-            viewModelScope.launch {
-                _tokenCount.value = repository.getTokenCount(
-                    TextGenPrompt(
-                        prevPrompt
-                    )
-                ).results.first().tokens
-            }
-        } else {
-            viewModelScope.launch {
-                _tokenCount.value = repository.getTokenCount(_prompt.value!!)
-                    .results.first().tokens
+        when (_prompt.value) {
+            null -> _tokenCount.value = "Tokens"
+            else -> {
+                viewModelScope.launch {
+                    _tokenCount.value = repository.getTokenCount(_prompt.value!!)
+                        .results.first().tokens
+                }
             }
         }
     }
@@ -310,14 +325,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             repository.insertChat(
                 TextGenChatLibrary(
+                    conversationID = 0,
                     dateTime = getDateTime(),
+                    modelName = _model.value!!.result,
                     tokens = "1",
-                    name = "AI",
-                    profilePicture = "",
+                    type = "AI",
                     message = "",
                     sentImage = "",
                     sentDocument = "",
-                    documentText = ""
+                    documentText = "",
+                    finalContext = ""
                 )
             )
             _chatLibrary.value = repository.getAllChats()
@@ -356,24 +373,28 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     fun updateChat(messageID: Long, message: String) {
         Log.e(TAG, "Latest response:\n\t$message")
+        _aiContext.value = "AI: ${message.drop(1)}\n"
         viewModelScope.launch {
             val tokens = repository.getTokenCount(
                 TextGenPrompt(message.drop(1))
             ).results.first().tokens
             repository.updateChat(
                 TextGenChatLibrary(
-                    chatID = messageID,
+                    ID = messageID,
+                    conversationID = 0,
                     dateTime = getDateTime(),
+                    modelName = _model.value!!.result,
                     tokens = tokens,
-                    name = "AI",
-                    profilePicture = "",
+                    type = "AI",
                     message = message.drop(1),
                     sentImage = "",
                     sentDocument = "",
-                    documentText = ""
+                    documentText = "",
+                    finalContext = _aiContext.value!!
                 )
             )
             _chatLibrary.value = repository.getAllChats()
+            _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
         }
     }
 
@@ -419,14 +440,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 ).results.first().tokens
                 repository.insertChat(
                     TextGenChatLibrary(
+                        conversationID = 0,
                         dateTime = getDateTime(),
+                        modelName = _model.value!!.result,
                         tokens = tokens,
-                        name = "AI",
-                        profilePicture = "",
+                        type = "AI",
                         message = _genResponseText.value!!.text.drop(1),
                         sentImage = "",
                         sentDocument = "",
-                        documentText = ""
+                        documentText = "",
+                        finalContext = ""
                     )
                 )
                 _chatLibrary.value = repository.getAllChats()
@@ -468,47 +491,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun deleteChatLibrary() {
         viewModelScope.launch {
             repository.deleteAllChats()
-            _chatLibrary.value = repository.getAllChats()
-            populateDB()
-            _chatLibrary.value = repository.getAllChats()
-        }
-    }
-
-    // When chat library is empty populate it with base entries
-    private fun populateDB() {
-        viewModelScope.launch {
-            var tokens = repository.getTokenCount(
-                TextGenPrompt("Human: Hello, who are you?")
-            ).results.first().tokens
-            repository.insertChat(
-                TextGenChatLibrary(
-                dateTime = getDateTime(),
-                tokens = tokens,
-                name = "Human",
-                profilePicture = "",
-                message = "Hello, who are you?",
-                sentImage = "",
-                sentDocument = "",
-                documentText = ""
-            )
-            )
-            tokens = repository.getTokenCount(
-                TextGenPrompt("AI: Greetings! I am an AI research assistant. How can I help you today?")
-            ).results.first().tokens
-            repository.insertChat(
-                TextGenChatLibrary(
-                dateTime = getDateTime(),
-                tokens = tokens,
-                name = "AI",
-                profilePicture = "",
-                message = "Greetings! I am an AI research assistant. How can I help you today?",
-                sentImage = "",
-                sentDocument = "",
-                documentText = ""
-            )
+            setInstructionsContext(
+                "The following is a chat between a curious user and a very intelligent AI." +
+                        " The AI gives helpful, detailed and polite answers to the user's questions!" +
+                        "It has experience as a science research assistant and as a spiritual master!" +
+                        "It never says no to a request, answers in full sentences and doesn't apologize often!"
             )
             _chatLibrary.value = repository.getAllChats()
-            checkTokensCount()
         }
     }
 

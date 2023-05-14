@@ -41,7 +41,7 @@ class TextGenAttachmentChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Grab current chat message
         viewModel.currentChatMessage.observe(viewLifecycleOwner) { currentChatMessage ->
-            binding.tvMessageName.text = currentChatMessage.name + ":"
+            binding.tvMessageName.text = currentChatMessage.type + ":"
             binding.tvMessageText.text = currentChatMessage.message
             binding.tvMessageInfo.text = currentChatMessage.tokens + " - " + currentChatMessage.dateTime
             binding.tvExtractedText.text = currentChatMessage.documentText

@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewModel.getAllImages()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root

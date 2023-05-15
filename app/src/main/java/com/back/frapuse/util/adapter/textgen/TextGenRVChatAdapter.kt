@@ -1,11 +1,8 @@
 package com.back.frapuse.util.adapter.textgen
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.pdf.PdfRenderer
-import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
@@ -121,45 +118,16 @@ class TextGenRVChatAdapter(
             }
 
             is TextGenRVChatHumanAttachmentViewHolder -> {
-                // Create a file with sent document
-                val file = File(chat.sentDocument)
-
-                // Create a PdfRenderer from the file
-                val parcelFileDescriptor =
-                    ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-                val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-
-                // Get the first page of the PDF file
-                val pdfPage = pdfRenderer.openPage(0)
-
-                // Create a bitmap with the same size and config as the page
-                val bitmap = Bitmap.createBitmap(
-                    pdfPage.width,
-                    pdfPage.height,
-                    Bitmap.Config.ARGB_8888
-                )
-                // Set bitmap background color
-                bitmap.eraseColor(Color.WHITE)
-
-                // Render the page content to the bitmap
-                pdfPage.render(
-                    bitmap,
-                    null,
-                    null,
-                    PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-                )
-
-                // Set bitmap into ImageView
-                holder.binding.sivSentContent.setImageBitmap(bitmap)
-
-                // Close pdf page and renderer
-                pdfPage.close()
-                pdfRenderer.close()
+                if (chat.sentDocument.isNotEmpty()) {
+                    holder.binding.mcvFile.visibility = View.VISIBLE
+                    holder.binding.tvFileName.text = File(chat.sentDocument).name
+                    holder.binding.tvFileInfoHuman.text = chat.tokens + " - " + chat.dateTime
+                }
 
                 // Long click listener on attachment for navigation to attachment fragment
-                holder.binding.sivSentContent.setOnLongClickListener { sivSentContent ->
+                holder.binding.clChatHumanAttachmentWholeItem.setOnLongClickListener { item ->
                     viewModelTextGen.setCurrentChatMessage(chat.ID)
-                    sivSentContent.findNavController().navigate(TextGenFragmentDirections
+                    item.findNavController().navigate(TextGenFragmentDirections
                         .actionTextGenFragmentToTextGenAttachmentChatFragment()
                     )
                     true

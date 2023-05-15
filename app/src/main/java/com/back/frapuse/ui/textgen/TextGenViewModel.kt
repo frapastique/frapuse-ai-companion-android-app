@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
@@ -525,14 +526,36 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Method to create a local PDF file from a URI and return its path
+    @SuppressLint("Range")
     private fun createLocalPdfFile(uri: Uri, context: Context): String {
+        var fileName: String? = null
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor?.close()
+            }
+        }
+        if (fileName == null) {
+            fileName = uri.path
+            val cut = fileName?.lastIndexOf('/')
+            if (cut != -1) {
+                if (cut != null) {
+                    fileName = fileName?.substring(cut + 1)
+                }
+            }
+        }
+
         // get the app-specific internal storage directory
         val dir = context.filesDir
         // create a subdirectory for PDF files
         val pdfDir = File(dir, "pdf")
         pdfDir.mkdirs()
         // create a file with a unique name
-        val file = File.createTempFile("pdf_", ".pdf", pdfDir)
+        val file = File(pdfDir, fileName.toString())
         // copy the content of the URI to the file
         val inputStream = context.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)

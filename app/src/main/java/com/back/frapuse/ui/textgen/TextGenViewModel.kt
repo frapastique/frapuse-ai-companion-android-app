@@ -151,10 +151,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             _chatLibrary.value = repository.getAllChats()
             if (repository.getChatCount() == 0) {
                 setInstructionsContext(
-                    "The following is a chat between a curious user and a very intelligent AI." +
-                            " The AI gives helpful, detailed and polite answers to the user's questions!" +
-                            "It has experience as a science research assistant and as a spiritual master!" +
-                            "It never says no to a request, answers in full sentences and doesn't apologize often!"
+                    "A chat between a curious user and an artificial intelligence" +
+                            " assistant. The assistant gives helpful, detailed, and " +
+                            "polite answers to the user's questions."
                 )
             } else {
                 _instructionsContext.value = _chatLibrary.value!!.first().message
@@ -169,7 +168,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     /* _______ Generation Parameters ___________________________________________________ */
 
     private fun setInstructionsContext(instruction: String) {
-        _instructionsContext.value = "Instructions: $instruction\n"
+        _instructionsContext.value = "$instruction "
         _prompt.value = TextGenPrompt(
             prompt = _instructionsContext.value!!
         )
@@ -205,9 +204,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         _createPromptStatus.value = AppStatus.LOADING
 
         if (filePath.isEmpty()) {
-            _humanContext.value = "Human: $message\n"
+            _humanContext.value = "USER: $message "
         } else {
-            _humanContext.value = "Human: ${message}\nContext: ${_textOut.value.toString()}\n"
+            _humanContext.value = "USER: ${message}Context: ${_textOut.value.toString()} "
         }
 
         viewModelScope.launch {
@@ -293,7 +292,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
 
         _prompt.value = TextGenPrompt(
-            prompt = prevPrompt + "AI:"
+            prompt = prevPrompt + "ASSISTANT:"
         )
         checkTokensCount()
     }
@@ -373,7 +372,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     fun updateChat(messageID: Long, message: String) {
         Log.e(TAG, "Latest response:\n\t$message")
-        _aiContext.value = "AI: ${message.drop(1)}\n"
+        _aiContext.value = "ASSISTANT: ${message.drop(1)} "
         viewModelScope.launch {
             val tokens = repository.getTokenCount(
                 TextGenPrompt(message.drop(1))
@@ -492,10 +491,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             repository.deleteAllChats()
             setInstructionsContext(
-                "The following is a chat between a curious user and a very intelligent AI." +
-                        " The AI gives helpful, detailed and polite answers to the user's questions!" +
-                        "It has experience as a science research assistant and as a spiritual master!" +
-                        "It never says no to a request, answers in full sentences and doesn't apologize often!"
+                "A chat between a curious user and an artificial intelligence" +
+                        " assistant. The assistant gives helpful, detailed, and " +
+                        "polite answers to the user's questions."
             )
             _chatLibrary.value = repository.getAllChats()
         }

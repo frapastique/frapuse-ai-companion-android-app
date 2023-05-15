@@ -53,9 +53,6 @@
         <action
                 android:id="@+id/action_imageGenRVDetailFragment_to_imageGenRVSmallFragment"
                 app:destination="@id/imageGenRVSmallFragment" />
-        <argument
-                android:name="imageID"
-                app:argType="integer" />
     </fragment>
     <fragment
             android:id="@+id/textGenFragment"
@@ -70,7 +67,7 @@
                 app:destination="@id/textGenSettingsFragment" />
         <action
                 android:id="@+id/action_textGenFragment_to_textGenAttachmentChatFragment"
-                app:destination="@id/textGenAttachmentChatFragment" />
+                app:destination="@id/textGenAttachmentDetailFragment" />
     </fragment>
     <fragment
             android:id="@+id/textGenSettingsFragment"
@@ -82,12 +79,12 @@
                 app:destination="@id/textGenFragment" />
     </fragment>
     <fragment
-            android:id="@+id/textGenAttachmentChatFragment"
-            android:name="com.back.frapuse.ui.textgen.TextGenAttachmentChatFragment"
+            android:id="@+id/textGenAttachmentDetailFragment"
+            android:name="com.back.frapuse.ui.textgen.TextGenAttachmentDetailFragment"
             android:label="TextGenAttachmentChatFragment"
-            tools:layout="@layout/fragment_text_gen_attachment_chat" >
+            tools:layout="@layout/fragment_text_gen_attachment_detail" >
         <action
-                android:id="@+id/action_textGenAttachmentChatFragment_to_textGenFragment"
+                android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenFragment"
                 app:destination="@id/textGenFragment" />
     </fragment>
 </navigation>

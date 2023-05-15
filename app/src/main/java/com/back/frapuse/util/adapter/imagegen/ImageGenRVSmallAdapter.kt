@@ -46,9 +46,7 @@ class ImageGenRVSmallAdapter(
         holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
         holder.binding.ivGenImage.setOnClickListener { ivGenImage ->
             ivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
-                .actionImageGenRVSmallFragmentToImageGenRVDetailFragment(
-                    imageID = position
-                )
+                .actionImageGenRVSmallFragmentToImageGenRVDetailFragment()
             )
         }
     }

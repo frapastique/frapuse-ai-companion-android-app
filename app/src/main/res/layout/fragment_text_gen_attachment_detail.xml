@@ -7,15 +7,11 @@
 
     </data>
 
-    <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp">
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".ui.textgen.TextGenAttachmentChatFragment">
+                android:padding="8dp"
+                tools:context=".ui.textgen.TextGenAttachmentDetailFragment">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_chat_instructions"
@@ -81,37 +77,16 @@
                 </com.google.android.material.card.MaterialCardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/siv_attachment_preview"
-                    android:background="@color/white"
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_attachment_preview"
                     android:visibility="visible"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl_chat_instructions"
                     app:layout_constraintEnd_toEndOf="parent"
-                    tools:src="@tools:sample/avatars" />
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_extracted_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:text="@string/app_description"
-                    app:layout_constraintTop_toBottomOf="@id/siv_attachment_preview"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_extracted_text_token_count" />
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_extracted_text_token_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:text="@string/tokens" />
+                    tools:itemCount="1"
+                    tools:listitem="@layout/text_gen_rv_attachment_detail_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
 </layout>

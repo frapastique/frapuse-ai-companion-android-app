@@ -1,8 +1,6 @@
 package com.back.frapuse.ui.textgen
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
@@ -11,14 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.back.frapuse.databinding.FragmentTextGenAttachmentChatBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
+import com.back.frapuse.databinding.FragmentTextGenAttachmentDetailBinding
+import com.back.frapuse.util.adapter.textgen.TextGenRVAttachmentDetailAdapter
 import java.io.File
 
-class TextGenAttachmentChatFragment : Fragment() {
+class TextGenAttachmentDetailFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: TextGenViewModel by activityViewModels()
     // Declaration of binding
-    private lateinit var binding: FragmentTextGenAttachmentChatBinding
+    private lateinit var binding: FragmentTextGenAttachmentDetailBinding
 
     /**
      * Lifecycle Funktion onCreateView
@@ -29,7 +31,7 @@ class TextGenAttachmentChatFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTextGenAttachmentChatBinding.inflate(
+        binding = FragmentTextGenAttachmentDetailBinding.inflate(
             inflater,
             container,
             false
@@ -44,7 +46,6 @@ class TextGenAttachmentChatFragment : Fragment() {
             binding.tvMessageName.text = "Attachment:"
             binding.tvMessageText.text = File(currentChatMessage.sentDocument).name
             binding.tvMessageInfo.text = currentChatMessage.tokens + " - " + currentChatMessage.dateTime
-            binding.tvExtractedText.text = currentChatMessage.documentText
 
             // Create a file with sent document
             val file = File(currentChatMessage.sentDocument)
@@ -54,36 +55,27 @@ class TextGenAttachmentChatFragment : Fragment() {
                 ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val pdfRenderer = PdfRenderer(parcelFileDescriptor)
 
-            // Get the first page of the PDF file
-            val pdfPage = pdfRenderer.openPage(0)
+            // get the number of pages in the PDF document
+            val pageCount = pdfRenderer.pageCount
 
-            // Create a bitmap with the same size and config as the page
-            val bitmap = Bitmap.createBitmap(
-                pdfPage.width,
-                pdfPage.height,
-                Bitmap.Config.ARGB_8888
-            )
-            bitmap.eraseColor(Color.WHITE)
-
-            // Render the page content to the bitmap
-            pdfPage.render(
-                bitmap,
-                null,
-                null,
-                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+            binding.rvAttachmentPreview.adapter = TextGenRVAttachmentDetailAdapter(
+                viewModel = viewModel,
+                pageCount = pageCount,
+                filepath = currentChatMessage.sentDocument
             )
 
-            // Set bitmap into ImageView
-            binding.sivAttachmentPreview.setImageBitmap(bitmap)
+            binding.rvAttachmentPreview.layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
 
-            // Set the token count of extracted text
-            viewModel.getTokenCount(currentChatMessage.documentText)
-            viewModel.count.observe(viewLifecycleOwner) { count ->
-                binding.tvExtractedTextTokenCount.text = "Tokens: $count"
-            }
+            binding.rvAttachmentPreview.setHasFixedSize(true)
 
-            // Close pdf page and renderer
-            pdfPage.close()
+            val helper: SnapHelper = PagerSnapHelper()
+            helper.attachToRecyclerView(binding.rvAttachmentPreview)
+
+            // Close pdf renderer
             pdfRenderer.close()
         }
     }

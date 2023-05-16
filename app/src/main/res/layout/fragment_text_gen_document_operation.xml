@@ -30,17 +30,30 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/text_gen_rv_attachment_item" />
+            tools:itemCount="1"
+            tools:listitem="@layout/text_gen_rv_attachment_footer" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_start_operation"
-            android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_operation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_attachment_preview" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/wand_and_stars_white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/trash_white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/btn_start_operation"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_document_operation"
@@ -58,8 +71,8 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_start_operation"
-            tools:listitem="@layout/text_gen_document_operation_step_item" />
+            app:layout_constraintTop_toBottomOf="@+id/rv_attachment_preview"
+            tools:listitem="@layout/text_gen_rv_document_operation_step_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

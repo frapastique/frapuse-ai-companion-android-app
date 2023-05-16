@@ -140,7 +140,7 @@ class TextGenFragment : Fragment() {
                 dataset = chatLibrary,
                 viewModelTextGen = viewModel
             )
-            binding.rvChatLibrary.scrollToPosition(chatLibrary.size.minus(1))
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 
@@ -151,7 +151,7 @@ class TextGenFragment : Fragment() {
 
         // Scroll to the latest chat message when clicking to type next message
         binding.tiPrompt.setOnClickListener {
-            binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size - 1)
+            binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size)
         }
 
         // Observe stream from server and create final output
@@ -224,7 +224,7 @@ class TextGenFragment : Fragment() {
                                 dataset = listOf(
                                     TextGenAttachments(
                                         id = 0,
-                                        file = filePath
+                                        path = filePath
                                     )
                                 ),
                                 viewModel = viewModel

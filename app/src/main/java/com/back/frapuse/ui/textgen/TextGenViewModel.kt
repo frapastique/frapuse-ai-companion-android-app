@@ -6,8 +6,11 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.pdf.PdfRenderer
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
@@ -25,6 +28,8 @@ import com.back.frapuse.data.textgen.models.TextGenGenerateResponseText
 import com.back.frapuse.data.textgen.models.TextGenModelResponse
 import com.back.frapuse.data.textgen.models.TextGenPrompt
 import com.back.frapuse.data.textgen.local.getTextGenDatabase
+import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
+import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.util.AppStatus
 import com.google.mlkit.vision.common.InputImage
@@ -43,11 +48,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // Application context
     private val app = getApplication<Application>()
 
-    // Database value
-    private val database = getTextGenDatabase(application)
+    // Database chat parameter
+    private val databaseChat = getTextGenDatabase(application)
+
+    // Database operation parameter
+    private val databaseOperation = getTextGenDocumentOperationDatabase(application)
 
     // Initialize repository
-    private val repository = TextGenRepository(TextGenBlockAPI, database)
+    private val repository = TextGenRepository(TextGenBlockAPI, databaseChat, databaseOperation)
 
     /* _______ Values Remote ___________________________________________________________ */
 
@@ -640,5 +648,305 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // Set the current pdf page as bitmap
     fun setPdfBitmap(image: Bitmap) {
         _pdfBitmap.value = image
+    }
+
+    /* _______ Document Operation ______________________________________________________ */
+
+    // Operation instruction
+    private val operationInstruction =
+        "A chat between a curious user and an artificial intelligence " +
+                "assistant. The assistant gives helpful, detailed, and " +
+                "polite answers to the user's questions. " +
+                "User: Write a concise summery of the following context!"
+
+    // Operation library LiveData
+    private val _operationLibrary = MutableLiveData<List<TextGenDocumentOperation>>()
+    val operationLibrary: LiveData<List<TextGenDocumentOperation>>
+        get() = _operationLibrary
+
+    // Document id LiveData
+    private val _documentID = MutableLiveData<Long>(0)
+    val documentID: LiveData<Long>
+        get() = _documentID
+
+    // File path of current document
+    private val _currentDocumentPath = MutableLiveData<String>()
+    val currentDocumentPath: LiveData<String>
+        get() = _currentDocumentPath
+
+    // Page count of current document
+    private val _currentPageCount = MutableLiveData<Int>(0)
+    val currentPageCount: LiveData<Int>
+        get() = _currentPageCount
+
+    // Current page number
+    private val _currentPage = MutableLiveData<Int>()
+    val currentPage: LiveData<Int>
+        get() = _currentPage
+
+    // Current document page LiveData
+    private val _currentPageBitmap = MutableLiveData<Bitmap>()
+    val currentPageBitmap: LiveData<Bitmap>
+        get() = _currentPageBitmap
+
+    // Current extraction LiveData
+    private val _currentExtraction = MutableLiveData<Text>()
+    val currentExtraction: LiveData<Text>
+        get() = _currentExtraction
+
+    fun setDocumentID() {
+        _documentID.value = _documentID.value!! + 1
+    }
+
+    fun setPageCount(pageCount: Int) {
+        _currentPageCount.value = pageCount
+    }
+
+    fun insertOperationDocument() {
+        viewModelScope.launch {
+            val tokens = repository.getTokenCount(
+                TextGenPrompt(
+                    operationInstruction
+                )
+            )
+                .results.first().tokens
+
+            repository.insertOperation(
+                TextGenDocumentOperation(
+                    documentID = _documentID.value!!,
+                    modelName = _model.value!!.result,
+                    dateTime = getDateTime(),
+                    tokens = tokens,
+                    type = "Document",
+                    message = operationInstruction,
+                    status = "Done",
+                    pageCount = _currentPageCount.value!!,
+                    currentPage = 0,
+                    path = _currentDocumentPath.value!!,
+                    context = ""
+                )
+            )
+            _operationLibrary.value = repository.getAllOperations()
+            _currentPage.value = 0
+        }
+    }
+
+    fun insertOperationStep(step: String) {
+        viewModelScope.launch {
+            try {
+                repository.insertOperation(
+                    TextGenDocumentOperation(
+                        documentID = _documentID.value!!,
+                        modelName = "",
+                        dateTime = getDateTime(),
+                        tokens = "",
+                        type = "Operation",
+                        message = step,
+                        status = "Loading",
+                        pageCount = _currentPageCount.value!!,
+                        currentPage = _currentPage.value!!,
+                        path = _currentDocumentPath.value!!,
+                        context = ""
+                    )
+                )
+                _operationLibrary.value = repository.getAllOperations()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error inserting operation:\r\t$e")
+            }
+        }
+    }
+
+    private fun updateOperationStep(id: Long, step: String, context: String) {
+        viewModelScope.launch {
+            repository.updateOperation(
+                TextGenDocumentOperation(
+                    id = id,
+                    documentID = _documentID.value!!,
+                    modelName = _model.value!!.result,
+                    dateTime = getDateTime(),
+                    tokens = "",
+                    type = "Operation",
+                    message = step,
+                    status = "Done",
+                    pageCount = _currentPageCount.value!!,
+                    currentPage = _currentPage.value!!,
+                    path = _currentDocumentPath.value!!,
+                    context = context
+                )
+            )
+            _operationLibrary.value = repository.getAllOperations()
+        }
+    }
+
+    fun setCurrentDocumentPath(documentPath: String) {
+        _currentDocumentPath.value = documentPath
+    }
+
+    fun convertDocument(stepID: Long) {
+        // Create a file with attachment file
+        val file = File(_currentDocumentPath.value!!)
+
+        // Create a PdfRenderer from the file
+        val parcelFileDescriptor = ParcelFileDescriptor.open(
+            file,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        )
+        val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+
+        // Get the first page of the PDF file
+        val pdfPage = pdfRenderer.openPage(_currentPage.value!!)
+
+        // Create a bitmap with the same size and config as the page
+        val bitmap = Bitmap.createBitmap(
+            pdfPage.width,
+            pdfPage.height,
+            Bitmap.Config.ARGB_8888
+        )
+        bitmap.eraseColor(Color.WHITE)
+
+        // Render the page content to the bitmap
+        pdfPage.render(
+            bitmap,
+            null,
+            null,
+            PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+        )
+
+        _currentPageBitmap.value = bitmap
+
+        // Close pdf page and renderer
+        pdfPage.close()
+        pdfRenderer.close()
+
+        // Update current operation
+        updateOperationStep(stepID, "Convert page...", "")
+
+        // Start new operation
+        insertOperationStep("Extract text...")
+    }
+
+    // Method to extract the text from a bitmap. Process the text block and get token count on success
+    fun extractDocumentText(stepID: Long) {
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
+
+        recognizer.process(image)
+            .addOnSuccessListener { extractedText ->
+                _currentExtraction.value = extractedText
+                updateOperationStep(stepID, "Extract text...", "")
+                insertOperationStep("Process text...")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error extracting text:\n\t$e")
+            }
+    }
+
+    // Process extracted document text, build a string and return text
+    fun processDocumentText(stepID: Long) {
+        val textBlocks = _currentExtraction.value!!.textBlocks
+        if (textBlocks.size == 0) {
+            _textOut.value = "No text found"
+        }
+        val stringBuilder = StringBuilder()
+        for (block in textBlocks) {
+            stringBuilder.append("\n\n")
+            val lines = block.lines
+            for (line in lines) {
+                val elements = line.elements
+                for (element in elements) {
+                    val elementText = element.text
+                    stringBuilder.append("$elementText ")
+                }
+            }
+        }
+        updateOperationStep(stepID, "Process text...", stringBuilder.toString())
+        insertAIResponseOperation(stringBuilder.toString())
+    }
+
+    // Insert AI response operation
+    private fun insertAIResponseOperation(extractedText: String) {
+        viewModelScope.launch {
+            repository.insertOperation(
+                TextGenDocumentOperation(
+                    documentID = _documentID.value!!,
+                    modelName = _model.value!!.result,
+                    dateTime = getDateTime(),
+                    tokens = "",
+                    type = "AI",
+                    message = "",
+                    status = "Loading",
+                    pageCount = _currentPageCount.value!!,
+                    currentPage = _currentPage.value!!,
+                    path = _currentDocumentPath.value!!,
+                    context = ""
+                )
+            )
+            _operationLibrary.value = repository.getAllOperations()
+
+            val summaryPrompt: String = operationInstruction + extractedText + "Assistant:"
+            repository.sendMessageToWebSocket(
+                TextGenGenerateRequest(
+                    prompt = summaryPrompt,
+                    max_new_tokes = 250,
+                    do_sample = true,
+                    temperature = 1.3,
+                    top_p = 0.1,
+                    typical_p = 1.0,
+                    repetition_penalty = 1.18,
+                    top_k = 40,
+                    min_length = 0,
+                    no_repeat_ngram_size = 0,
+                    num_beams = 1,
+                    penalty_alpha = 0.0,
+                    length_penalty = 1.0,
+                    early_stopping = false,
+                    seed = -1,
+                    add_bos_token = true,
+                    truncation_length = 2048,
+                    ban_eos_token = false,
+                    skip_special_tokens = true,
+                    stopping_strings = listOf()
+                )
+            )
+        }
+    }
+
+    // Update AI response operation
+    fun updateAIResponseOperation(id: Long, aiMessage: String) {
+        viewModelScope.launch {
+            val tokensCountMessage = repository.getTokenCount(
+                TextGenPrompt(aiMessage)
+            )
+                .results.first().tokens
+            repository.updateOperation(
+                TextGenDocumentOperation(
+                    id = id,
+                    documentID = _documentID.value!!,
+                    modelName = _model.value!!.result,
+                    dateTime = getDateTime(),
+                    tokens = tokensCountMessage,
+                    type = "AI",
+                    message = aiMessage,
+                    status = "Done",
+                    pageCount = _currentPageCount.value!!,
+                    currentPage = _currentPage.value!!,
+                    path = _currentDocumentPath.value!!,
+                    context = ""
+                )
+            )
+            _operationLibrary.value = repository.getAllOperations()
+            if (_currentPage.value!! < _currentPageCount.value!!-1) {
+                _currentPage.value = _currentPage.value!! + 1
+            }
+        }
+    }
+
+    // Reset operation library
+    fun deleteOperationLibrary() {
+        viewModelScope.launch {
+            repository.deleteAllOperations()
+            _operationLibrary.value = repository.getAllOperations()
+        }
     }
 }

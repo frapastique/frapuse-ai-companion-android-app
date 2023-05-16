@@ -66,7 +66,7 @@ class TextGenRVAttachmentAdapter(
             val attachment = dataset[position]
 
             // Create a file with attachment file
-            val file = File(attachment.file)
+            val file = File(attachment.path)
 
             // Create a PdfRenderer from the file
             val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
@@ -100,12 +100,18 @@ class TextGenRVAttachmentAdapter(
             // Extract text from pdf
             viewModel.extractText()
 
+            // Set current document file path
+            viewModel.setCurrentDocumentPath(attachment.path)
+
+            // Set page count of current document
+            viewModel.setPageCount(pdfRenderer.pageCount)
+
             // Close pdf page and renderer
             pdfPage.close()
             pdfRenderer.close()
 
         } else if (holder is TextGenRVAttachmentFooterViewHolder) {
-            holder.binding.clAddAttachment.setOnClickListener {
+            holder.binding.btnAttachment.setOnClickListener {
                 MaterialAlertDialogBuilder(holder.itemView.context)
                     .setTitle("Attachment")
                     .setMessage("Upload an attachment.")

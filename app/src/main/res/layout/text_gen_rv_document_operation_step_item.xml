@@ -18,7 +18,7 @@
             android:id="@+id/tv_current_operation_step"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="current operation step" />
@@ -29,8 +29,7 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tv_current_operation_step"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_current_operation_step" />
@@ -41,7 +40,6 @@
             android:layout_height="15dp"
             android:src="@drawable/checkmark_seal_white"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tv_current_operation_step"
             app:layout_constraintStart_toStartOf="parent"

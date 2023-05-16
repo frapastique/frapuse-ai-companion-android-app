@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.textgen.TextGenDocumentOperationFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_attachment_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:clipToPadding="false"
+            android:fadeScrollbars="true"
+            android:orientation="horizontal"
+            android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
+            android:scrollbarSize="2dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="horizontal"
+            android:visibility="visible"
+            app:flow_horizontalAlign="center"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/text_gen_rv_attachment_item" />
+
+        <Button
+            android:id="@+id/btn_start_operation"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_operation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_attachment_preview" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_document_operation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:clipToPadding="false"
+            android:fadeScrollbars="true"
+            android:paddingBottom="2dp"
+            android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
+            android:scrollbarSize="2dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
+            app:flow_horizontalAlign="center"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_start_operation"
+            tools:listitem="@layout/text_gen_document_operation_step_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

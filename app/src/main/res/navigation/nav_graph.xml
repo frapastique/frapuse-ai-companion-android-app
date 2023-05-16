@@ -17,6 +17,9 @@
         <action
                 android:id="@+id/action_homeFragment_to_textGenFragment"
                 app:destination="@id/textGenFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_textGenDocumentOperationFragment"
+            app:destination="@id/textGenDocumentOperationFragment" />
     </fragment>
     <fragment
             android:id="@+id/imageGenTextToImageFragment"
@@ -86,5 +89,14 @@
         <action
                 android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenFragment"
                 app:destination="@id/textGenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/textGenDocumentOperationFragment"
+        android:name="com.back.frapuse.ui.textgen.TextGenDocumentOperationFragment"
+        android:label="TextGenDocumentOperationFragment"
+        tools:layout="@layout/fragment_text_gen_document_operation">
+        <action
+            android:id="@+id/action_textGenDocumentOperationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

@@ -49,6 +49,12 @@ class HomeFragment : Fragment() {
             )
         }
 
+        binding.btnDocument.setOnClickListener { btnDocument ->
+            btnDocument.findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToTextGenDocumentOperationFragment()
+            )
+        }
+
         // Observer for imageLibrary, which sets a blurred RecyclerView into the background when min
         // build version of phone is same or greater than min requirement.
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->

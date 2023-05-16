@@ -1,6 +1,5 @@
 package com.back.frapuse.util.adapter.textgen
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
@@ -12,6 +11,7 @@ import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.TextGenRvAttachmentFooterBinding
 import com.back.frapuse.databinding.TextGenRvAttachmentItemBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
 class TextGenRVAttachmentAdapter(
@@ -103,6 +103,19 @@ class TextGenRVAttachmentAdapter(
             // Close pdf page and renderer
             pdfPage.close()
             pdfRenderer.close()
+
+        } else if (holder is TextGenRVAttachmentFooterViewHolder) {
+            holder.binding.clAddAttachment.setOnClickListener {
+                MaterialAlertDialogBuilder(holder.itemView.context)
+                    .setTitle("Attachment")
+                    .setMessage("Upload an attachment.")
+                    .setNeutralButton("Cancel") { _, _ -> }
+                    .setPositiveButton("Upload") { _, _ ->
+                        // Respond to positive button press
+                        viewModel.launchPickPdf()
+                    }
+                    .show()
+            }
         }
     }
 

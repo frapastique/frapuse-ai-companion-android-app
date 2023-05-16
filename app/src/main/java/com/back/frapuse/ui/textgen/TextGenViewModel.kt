@@ -530,7 +530,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private fun createLocalPdfFile(uri: Uri, context: Context): String {
         var fileName: String? = null
         if (uri.scheme == "content") {
-            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            val cursor = context.contentResolver.query(
+                uri,
+                null,
+                null,
+                null,
+                null
+            )
             try {
                 if (cursor != null && cursor.moveToFirst()) {
                     fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))

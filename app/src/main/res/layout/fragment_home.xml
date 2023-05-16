@@ -28,18 +28,19 @@
                 tools:listitem="@layout/image_gen_rv_small_item" />
 
         <TextView
-                android:id="@+id/tv_introduction"
-                android:text="@string/app_description"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:layout_marginTop="161dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/tv_introduction"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:padding="16dp"
+            android:text="@string/app_description"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
                 android:id="@+id/btn_text_to_image"
@@ -54,7 +55,7 @@
 
         <Button
                 android:id="@+id/btn_chat"
-                android:text="@string/text_to_text"
+                android:text="@string/chat"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,6 +63,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_text_to_image" />
+
+        <Button
+            android:id="@+id/btn_document"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/document_operation"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_chat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

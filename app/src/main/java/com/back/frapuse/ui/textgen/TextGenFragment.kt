@@ -224,7 +224,8 @@ class TextGenFragment : Fragment() {
                                 dataset = listOf(
                                     TextGenAttachments(
                                         id = 0,
-                                        path = filePath
+                                        path = filePath,
+                                        pageCount = 0
                                     )
                                 ),
                                 viewModel = viewModel

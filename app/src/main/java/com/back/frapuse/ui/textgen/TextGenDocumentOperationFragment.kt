@@ -46,24 +46,18 @@ class TextGenDocumentOperationFragment : Fragment() {
         )
 
         // Observe pdf path and update the recycler view with current document
-        viewModel.pdfPath.observe(viewLifecycleOwner) { newFilePath ->
-            if (newFilePath.isNotEmpty()) {
-                binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
-                    dataset = listOf(
-                        TextGenAttachments(
-                            id = viewModel.documentID.value!!,
-                            path = newFilePath
-                        )
-                    ),
-                    viewModel = viewModel
-                )
-                viewModel.setDocumentID()
-                binding.btnStartOperation.visibility = View.VISIBLE
-            }
+        viewModel.documentDataset.observe(viewLifecycleOwner) { documents ->
+            binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
+                dataset = documents.toList(),
+                viewModel = viewModel
+            )
+            viewModel.setDocumentID()
+            binding.tvDocumentCount.text = documents.size.toString()
         }
 
         // On click listener for start operation button
         binding.btnStartOperation.setOnClickListener {
+            viewModel.setCurrentDocument(viewModel.documentDataset.value!!.first())
             viewModel.insertOperationDocument()
         }
 
@@ -79,9 +73,8 @@ class TextGenDocumentOperationFragment : Fragment() {
         }
 
         // Reset operation library
-        binding.btnReset.setOnClickListener { btnReset ->
+        binding.btnReset.setOnClickListener {
             viewModel.deleteOperationLibrary()
-            btnReset.visibility = View.GONE
             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
                 dataset = emptyList(),
                 viewModel = viewModel
@@ -95,8 +88,8 @@ class TextGenDocumentOperationFragment : Fragment() {
                 dataset = operationLibrary,
                 viewModelTextGen = viewModel
             )
-            binding.rvDocumentOperation.smoothScrollToPosition(
-                viewModel.operationLibrary.value!!.size
+            binding.rvDocumentOperation.scrollToPosition(
+                viewModel.operationLibrary.value!!.size - 1
             )
             binding.rvDocumentOperation.setHasFixedSize(true)
         }

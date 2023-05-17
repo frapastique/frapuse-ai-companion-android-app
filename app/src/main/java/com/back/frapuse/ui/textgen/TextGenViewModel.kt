@@ -29,6 +29,7 @@ import com.back.frapuse.data.textgen.models.TextGenModelResponse
 import com.back.frapuse.data.textgen.models.TextGenPrompt
 import com.back.frapuse.data.textgen.local.getTextGenDatabase
 import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
+import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.util.AppStatus
@@ -170,6 +171,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 createFinalPrompt()
             }
             checkTokensCount()
+            _operationLibrary.value = repository.getAllOperations()
+            _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
         }
     }
 
@@ -524,6 +527,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 val filePath = createLocalPdfFile(uri, app.applicationContext)
                 // update the LiveData variable with the file path
                 _pdfPath.value = filePath
+                addDocumentToDataset(
+                    TextGenAttachments(
+                        id = _documentID.value!!,
+                        path = filePath,
+                        pageCount = 0
+                    )
+                )
             }
         }
     }
@@ -669,6 +679,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val documentID: LiveData<Long>
         get() = _documentID
 
+    // List of document paths
+    private var _documentDataset = MutableLiveData<MutableList<TextGenAttachments>>()
+    val documentDataset: LiveData<MutableList<TextGenAttachments>>
+        get() = _documentDataset
+
     // File path of current document
     private val _currentDocumentPath = MutableLiveData<String>()
     val currentDocumentPath: LiveData<String>
@@ -695,11 +710,29 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         get() = _currentExtraction
 
     fun setDocumentID() {
+        Log.e(TAG, "Current documentID:\n\t${_documentID.value}")
         _documentID.value = _documentID.value!! + 1
+        Log.e(TAG, "New documentID:\n\t${_documentID.value}")
     }
 
-    fun setPageCount(pageCount: Int) {
-        _currentPageCount.value = pageCount
+    fun addDocumentToDataset(attachment: TextGenAttachments) {
+        Log.e(TAG, "Current dataset.size:\n\t${_documentDataset.value?.size}")
+        val newDataset = _documentDataset.value?.toMutableList() ?: mutableListOf()
+        Log.e(TAG, "Old dataset.size:\n\t${newDataset.size}")
+        newDataset.add(attachment)
+        Log.e(TAG, "Updated dataset.size:\n\t${newDataset.size}")
+        _documentDataset.value = newDataset
+        Log.e(TAG, "New dataset.size:\n\t${_documentDataset.value?.size}")
+    }
+
+    fun setCurrentDocument(attachment: TextGenAttachments) {
+        _currentPageCount.value = attachment.pageCount
+        _currentDocumentPath.value = attachment.path
+        _documentID.value = attachment.id
+    }
+
+    fun updateAttachmentPageCount(pageCount: Int) {
+        _documentDataset.value!!.find { it.path == _currentDocumentPath.value }!!.pageCount = pageCount
     }
 
     fun insertOperationDocument() {
@@ -720,7 +753,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     type = "Document",
                     message = operationInstruction,
                     status = "Done",
-                    pageCount = _currentPageCount.value!!,
+                    pageCount = 0,
                     currentPage = 0,
                     path = _currentDocumentPath.value!!,
                     context = ""
@@ -778,10 +811,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun setCurrentDocumentPath(documentPath: String) {
-        _currentDocumentPath.value = documentPath
-    }
-
     fun convertDocument(stepID: Long) {
         // Create a file with attachment file
         val file = File(_currentDocumentPath.value!!)
@@ -811,6 +840,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             null,
             PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
         )
+
+        _currentPageCount.value = pdfRenderer.pageCount
 
         _currentPageBitmap.value = bitmap
 
@@ -938,6 +969,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             _operationLibrary.value = repository.getAllOperations()
             if (_currentPage.value!! < _currentPageCount.value!!-1) {
                 _currentPage.value = _currentPage.value!! + 1
+            } else if (_documentDataset.value!!.size > 1) {
+                val nextDocument = _documentDataset.value!!
+                    .getOrNull(_documentDataset.value!!
+                        .indexOfFirst { it.id == _documentID.value!! } + 1)
+                if (nextDocument != null) {
+                    setCurrentDocument(nextDocument)
+                    insertOperationDocument()
+                }
             }
         }
     }
@@ -946,7 +985,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun deleteOperationLibrary() {
         viewModelScope.launch {
             repository.deleteAllOperations()
+            deleteAllPdf(app)
+            _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
             _operationLibrary.value = repository.getAllOperations()
+            _documentID.value = 0
+            Log.e(TAG, "Current _documentID.value:\n\t${_documentID.value}")
         }
     }
 }

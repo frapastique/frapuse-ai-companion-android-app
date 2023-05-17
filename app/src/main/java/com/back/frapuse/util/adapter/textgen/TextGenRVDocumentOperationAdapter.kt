@@ -85,9 +85,7 @@ class TextGenRVDocumentOperationAdapter(
                         operation.dateTime
             }
             is TextGenRVDocumentOperationStepViewHolder -> {
-                holder.binding.tvCurrentOperationStep.text =
-                    operation.message +
-                            " (${operation.currentPage+1}/${operation.pageCount})"
+                holder.binding.tvCurrentOperationStep.text = operation.message
                 when (operation.status) {
                     "Loading" -> {
                         holder.binding.pbOperationRunning.visibility = View.VISIBLE
@@ -95,6 +93,9 @@ class TextGenRVDocumentOperationAdapter(
                         when (operation.message) {
                             "Convert page..." -> {
                                 viewModelTextGen.convertDocument(operation.id)
+                                holder.binding.tvCurrentOperationStep.text =
+                                    "${operation.currentPage+1} of ${operation.pageCount} " +
+                                            operation.message
                             }
                             "Extract text..." -> {
                                 viewModelTextGen.extractDocumentText(operation.id)

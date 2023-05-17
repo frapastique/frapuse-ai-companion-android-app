@@ -62,6 +62,7 @@ class TextGenRVAttachmentAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         if (holder is TextGenRVAttachmentItemViewHolder) {
             val attachment = dataset[position]
 
@@ -99,12 +100,6 @@ class TextGenRVAttachmentAdapter(
 
             // Extract text from pdf
             viewModel.extractText()
-
-            // Set current document file path
-            viewModel.setCurrentDocumentPath(attachment.path)
-
-            // Set page count of current document
-            viewModel.setPageCount(pdfRenderer.pageCount)
 
             // Close pdf page and renderer
             pdfPage.close()

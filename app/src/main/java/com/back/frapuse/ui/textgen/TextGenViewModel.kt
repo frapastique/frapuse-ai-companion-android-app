@@ -168,7 +168,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } else {
                 _instructionsContext.value = _chatLibrary.value!!.first().message
                 _instructionContextTokenCount.value = _chatLibrary.value!!.first().tokens
-                createFinalPrompt()
+                try {
+                    createFinalPrompt()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error creating final prompt:\n\t$e")
+                }
             }
             checkTokensCount()
             _operationLibrary.value = repository.getAllOperations()

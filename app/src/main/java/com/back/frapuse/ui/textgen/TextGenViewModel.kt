@@ -984,12 +984,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // Reset operation library
     fun deleteOperationLibrary() {
         viewModelScope.launch {
-            repository.deleteAllOperations()
-            deleteAllPdf(app)
-            _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
-            _operationLibrary.value = repository.getAllOperations()
-            _documentID.value = 0
-            Log.e(TAG, "Current _documentID.value:\n\t${_documentID.value}")
+            try {
+                repository.deleteAllOperations()
+                deleteAllPdf(app)
+                _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
+                _operationLibrary.value = repository.getAllOperations()
+                _documentID.value = 0
+                Log.e(TAG, "Current _documentID.value:\n\t${_documentID.value}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error resetting document operation:\n\t$e")
+            }
         }
     }
 }

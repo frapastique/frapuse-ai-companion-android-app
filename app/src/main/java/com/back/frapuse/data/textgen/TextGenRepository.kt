@@ -14,14 +14,22 @@ import com.back.frapuse.data.textgen.models.TextGenTokenCountResponse
 import com.back.frapuse.data.textgen.local.TextGenChatLibraryDatabase
 import com.back.frapuse.data.textgen.local.TextGenDocumentOperationDatabase
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.TextGenHaystackFileUpload
+import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsRequest
+import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsResponse
+import com.back.frapuse.data.textgen.models.TextGenHaystackMeta
+import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
+import com.back.frapuse.data.textgen.models.TextGenHaystackQueryResponse
 import com.back.frapuse.data.textgen.models.TextGenStreamResponse
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
+import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
 
 private const val TAG = "TextGenRepository"
 
 class TextGenRepository(
     private val apiBlock: TextGenBlockAPI,
+    private val apiHaystack: TextGenHaystackAPI,
     private val databaseChat: TextGenChatLibraryDatabase,
     private val databaseOperation: TextGenDocumentOperationDatabase
     ) {
@@ -124,6 +132,86 @@ class TextGenRepository(
             event = "waiting",
             message_num = 0
         )
+    }
+
+    /* _______ TextGen Haystack ________________________________________________________ */
+
+    /**
+     * Method to upload file to haystack api
+     * @param textGenHaystackFileUpload File, parameters and meta information
+     * @return String -> null on success
+     * */
+    suspend fun haystackUploadFile(textGenHaystackFileUpload: TextGenHaystackFileUpload): String? {
+        return try {
+            apiHaystack.retrofitService.uploadFile(textGenHaystackFileUpload)
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error uploading file to haystack:" +
+                        "\n\t$e"
+            )
+            null
+        }
+    }
+
+    /**
+     * Method to get filtered documents
+     * @param textGenHaystackFilterDocumentsRequest Filters
+     * @return TextGenHaystackFilterDocumentsResponse
+     * */
+    suspend fun haystackGetDocuments(
+        textGenHaystackFilterDocumentsRequest: TextGenHaystackFilterDocumentsRequest
+    ): TextGenHaystackFilterDocumentsResponse? {
+        return try {
+            apiHaystack.retrofitService.getDocuments(textGenHaystackFilterDocumentsRequest)
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error getting filtered documents from haystack:" +
+                        "\n\t$e"
+            )
+            null
+        }
+    }
+
+    /**
+     * Method to delete filtered documents
+     * @param textGenHaystackFilterDocumentsRequest Filters
+     * @return Boolean -> true on success
+     * */
+    suspend fun haystackDeleteDocuments(
+        textGenHaystackFilterDocumentsRequest: TextGenHaystackFilterDocumentsRequest
+    ): Boolean {
+        return try {
+            apiHaystack.retrofitService.deleteDocuments(textGenHaystackFilterDocumentsRequest)
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error deleting filtered documents from haystack:" +
+                        "\n\t$e"
+            )
+            false
+        }
+    }
+
+    /**
+     * Method to query haystack database
+     * @param textGenHaystackQueryRequest Query -> includes question, parameters, debug
+     * @return TextGenHaystackQueryResponse -> includes query, answers
+     * */
+    suspend fun haystackQuery(
+        textGenHaystackQueryRequest: TextGenHaystackQueryRequest
+    ): TextGenHaystackQueryResponse? {
+        return try {
+            apiHaystack.retrofitService.query(textGenHaystackQueryRequest)
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error querying haystack:" +
+                        "\n\t$e"
+            )
+            null
+        }
     }
 
     /* _______ Methods Local Chat ______________________________________________________ */

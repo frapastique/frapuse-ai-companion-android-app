@@ -46,7 +46,7 @@ interface TextGenHaystackApiService {
     @POST("documents/delete_by_filters")
     suspend fun deleteDocuments(
         @Body body: TextGenHaystackFilterDocumentsRequest
-    ): TextGenHaystackFilterDocumentsResponse
+    ): Boolean
 
     @POST("query")
     suspend fun query(

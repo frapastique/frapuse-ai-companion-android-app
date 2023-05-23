@@ -40,7 +40,7 @@ class TextGenStreamWebSocketClient {
     }
 
     // Websocket instance which passes the request and the listener
-    private val webSocket: WebSocket
+    private var webSocket: WebSocket? = null
 
     // Callback method to handle the messages from the server
     var onResponseReceived: ((TextGenStreamResponse?) -> Unit)? = null
@@ -48,22 +48,23 @@ class TextGenStreamWebSocketClient {
     // Callback method to handle the errors from the websocket
     var onError: ((String?) -> Unit)? = null
 
-    init {
-        // Request builder object with the websocket URL
-        val request = Request.Builder().url(BASE_URL).build()
-        // Initialize the websocket instance
-        webSocket = okHttpClient.newWebSocket(request, listener)
-    }
-
     // Method to send a message to the server
     fun sendMessage(textGenGenerateRequest: TextGenGenerateRequest) {
-        webSocket.send(moshi.adapter(TextGenGenerateRequest::class.java)
+        webSocket?.send(moshi.adapter(TextGenGenerateRequest::class.java)
             .toJson(textGenGenerateRequest)
         )
     }
 
     // Method to close the websocket connection
     fun close() {
-        webSocket.close(1000, "Stream ended")
+        webSocket?.close(1000, "Stream ended")
+    }
+
+    // Method to open the websocket connection
+    fun open() {
+        // Request builder object with the websocket URL
+        val request = Request.Builder().url(BASE_URL).build()
+        // Initialize the websocket instance
+        webSocket = okHttpClient.newWebSocket(request, listener)
     }
 }

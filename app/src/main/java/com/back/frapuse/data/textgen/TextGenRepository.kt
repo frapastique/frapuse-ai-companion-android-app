@@ -17,7 +17,6 @@ import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.models.TextGenHaystackFileUpload
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsRequest
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsResponse
-import com.back.frapuse.data.textgen.models.TextGenHaystackMeta
 import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
 import com.back.frapuse.data.textgen.models.TextGenHaystackQueryResponse
 import com.back.frapuse.data.textgen.models.TextGenStreamResponse
@@ -29,13 +28,11 @@ private const val TAG = "TextGenRepository"
 
 class TextGenRepository(
     private val apiBlock: TextGenBlockAPI,
+    private val apiStream: TextGenStreamWebSocketClient,
     private val apiHaystack: TextGenHaystackAPI,
     private val databaseChat: TextGenChatLibraryDatabase,
     private val databaseOperation: TextGenDocumentOperationDatabase
     ) {
-
-    // Instance of the WebSocketClient class
-    private val textGenStreamWebSocketClient = TextGenStreamWebSocketClient()
 
     // LiveData object to expose the messages from the server
     private val _streamResponseMessage = MutableLiveData<TextGenStreamResponse>()
@@ -49,10 +46,11 @@ class TextGenRepository(
 
     init {
         // Callback method for the WebSocketClient class
-        textGenStreamWebSocketClient.onResponseReceived = { textGenStreamResponse ->
+        apiStream.onResponseReceived = { textGenStreamResponse ->
             _streamResponseMessage.postValue(textGenStreamResponse)
+            Log.e(TAG, "${_streamResponseMessage.value?.text}")
         }
-        textGenStreamWebSocketClient.onError = { text ->
+        apiStream.onError = { text ->
             _streamErrorMessage.postValue(text)
         }
     }
@@ -103,7 +101,7 @@ class TextGenRepository(
     // Method to send a message to the server using the WebSocketClient class
     fun sendMessageToWebSocket(textGenGenerateRequest: TextGenGenerateRequest) {
         try {
-            textGenStreamWebSocketClient.sendMessage(textGenGenerateRequest)
+            apiStream.sendMessage(textGenGenerateRequest)
         } catch (e: Exception) {
             Log.e(
                 TAG,
@@ -113,10 +111,23 @@ class TextGenRepository(
         }
     }
 
+    // Method to open the websocket connection using the WebSocketClient class
+    fun openWebsocketClient() {
+        try {
+            apiStream.open()
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error opening websocket:" +
+                        "\n\t$e"
+            )
+        }
+    }
+
     // Method to close the websocket connection using the WebSocketClient class
     fun closeWebsocketClient() {
         try {
-            textGenStreamWebSocketClient.close()
+            apiStream.close()
         } catch (e: Exception) {
             Log.e(
                 TAG,

@@ -140,8 +140,17 @@ class TextGenFragment : Fragment() {
                 dataset = chatLibrary,
                 viewModelTextGen = viewModel
             )
-            binding.rvChatLibrary.scrollToPosition(chatLibrary.size)
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
             binding.rvChatLibrary.setHasFixedSize(true)
+        }
+
+        // Observe final stream response and adjust recyclerview position
+        viewModel.finalStreamResponse.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.rvChatLibrary.smoothScrollToPosition(
+                    viewModel.chatLibrary.value!!.size
+                )
+            }
         }
 
         // Apply token count for current prompt context
@@ -152,29 +161,6 @@ class TextGenFragment : Fragment() {
         // Scroll to the latest chat message when clicking to type next message
         binding.tiPrompt.setOnClickListener {
             binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size)
-        }
-
-        // Observe stream from server and create final output
-        var finalOutput = ""
-        viewModel.streamResponseMessage.observe(viewLifecycleOwner) { streamResponseMessage ->
-            when (streamResponseMessage.event) {
-                "text_stream" -> {
-                    finalOutput += streamResponseMessage.text
-                    binding.rvChatLibrary.smoothScrollToPosition(
-                        viewModel.chatLibrary.value!!.size
-                    )
-                }
-                "stream_end" -> {
-                    viewModel.updateChat(
-                        viewModel.chatLibrary.value!!.last().ID,
-                        finalOutput
-                    )
-                    viewModel.resetStream()
-                }
-                "waiting" -> {
-                    finalOutput = ""
-                }
-            }
         }
 
         // Set state and visibility of elements according to API status

@@ -17,8 +17,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.textgen.TextGenRepository
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
@@ -32,11 +34,14 @@ import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
 import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
+import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
+import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
 import com.back.frapuse.util.AppStatus
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -56,7 +61,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val databaseOperation = getTextGenDocumentOperationDatabase(application)
 
     // Initialize repository
-    private val repository = TextGenRepository(TextGenBlockAPI, databaseChat, databaseOperation)
+    private val repository = TextGenRepository(
+        apiBlock = TextGenBlockAPI,
+        apiStream = TextGenStreamWebSocketClient(),
+        apiHaystack = TextGenHaystackAPI,
+        databaseChat = databaseChat,
+        databaseOperation = databaseOperation
+    )
 
     /* _______ Values Remote ___________________________________________________________ */
 
@@ -81,6 +92,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // LiveData stream response object
     val streamResponseMessage = repository.streamResponseMessage
+
+    // LiveData of final response string
+    private val _finalStreamResponse = MutableLiveData<String>("")
+    val finalStreamResponse: LiveData<String>
+        get() = _finalStreamResponse
 
     /* _______ Prompts _________________________________________________________________ */
 
@@ -177,6 +193,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             checkTokensCount()
             _operationLibrary.value = repository.getAllOperations()
             _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
+            repository.closeWebsocketClient()
         }
     }
 
@@ -352,7 +369,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     finalContext = ""
                 )
             )
-            _chatLibrary.value = repository.getAllChats()
 
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = _prompt.value!!.prompt,
@@ -377,7 +393,36 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 stopping_strings = listOf()
             )
 
+            _chatLibrary.value = repository.getAllChats()
+            repository.openWebsocketClient()
             repository.sendMessageToWebSocket(_genRequestBody.value!!)
+
+            updateFinalResponse()
+        }
+    }
+
+    private fun updateFinalResponse() {
+        viewModelScope.launch {
+            streamResponseMessage.asFlow().collect { stream ->
+                when (stream.event) {
+                    "text_stream" -> {
+                        _finalStreamResponse.value += stream.text
+                    }
+                    "stream_end" -> {
+                        updateChat(
+                            _chatLibrary.value!!.last().ID,
+                            _finalStreamResponse.value!!
+                        )
+                        resetStream()
+                        repository.closeWebsocketClient()
+                        _finalStreamResponse.value = ""
+                        this.cancel()
+                    }
+                    "waiting" -> {
+
+                    }
+                }
+            }
         }
     }
 
@@ -920,30 +965,52 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             _operationLibrary.value = repository.getAllOperations()
 
             val summaryPrompt: String = operationInstruction + extractedText + "Assistant:"
-            repository.sendMessageToWebSocket(
-                TextGenGenerateRequest(
-                    prompt = summaryPrompt,
-                    max_new_tokes = 250,
-                    do_sample = true,
-                    temperature = 1.3,
-                    top_p = 0.1,
-                    typical_p = 1.0,
-                    repetition_penalty = 1.18,
-                    top_k = 40,
-                    min_length = 0,
-                    no_repeat_ngram_size = 0,
-                    num_beams = 1,
-                    penalty_alpha = 0.0,
-                    length_penalty = 1.0,
-                    early_stopping = false,
-                    seed = -1,
-                    add_bos_token = true,
-                    truncation_length = 2048,
-                    ban_eos_token = false,
-                    skip_special_tokens = true,
-                    stopping_strings = listOf()
-                )
+            _genRequestBody.value = TextGenGenerateRequest(
+                prompt = summaryPrompt,
+                max_new_tokes = 250,
+                do_sample = true,
+                temperature = 1.3,
+                top_p = 0.1,
+                typical_p = 1.0,
+                repetition_penalty = 1.18,
+                top_k = 40,
+                min_length = 0,
+                no_repeat_ngram_size = 0,
+                num_beams = 1,
+                penalty_alpha = 0.0,
+                length_penalty = 1.0,
+                early_stopping = false,
+                seed = -1,
+                add_bos_token = true,
+                truncation_length = 2048,
+                ban_eos_token = false,
+                skip_special_tokens = true,
+                stopping_strings = listOf()
             )
+
+            repository.openWebsocketClient()
+            repository.sendMessageToWebSocket(_genRequestBody.value!!)
+
+            streamResponseMessage.asFlow().collect { stream ->
+                when (stream.event) {
+                    "text_stream" -> {
+                        _finalStreamResponse.value += stream.text
+                    }
+                    "stream_end" -> {
+                        updateAIResponseOperation(
+                            operationLibrary.value!!.last().id,
+                            _finalStreamResponse.value!!.drop(1)
+                        )
+                        resetStream()
+                        repository.closeWebsocketClient()
+                        _finalStreamResponse.value = ""
+                        this.cancel()
+                    }
+                    "waiting" -> {
+
+                    }
+                }
+            }
         }
     }
 
@@ -1000,4 +1067,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
+    /* _______ TextGen Haystack ________________________________________________________ */
+
+
 }

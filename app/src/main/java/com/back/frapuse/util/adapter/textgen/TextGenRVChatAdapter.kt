@@ -137,20 +137,16 @@ class TextGenRVChatAdapter(
             is TextGenRVChatAIViewHolder -> {
                 when {
                     chat.message.isEmpty() -> {
-                        var previousAIMessage = ""
-                        viewModelTextGen.streamResponseMessage.observe(
+                        viewModelTextGen.finalStreamResponse.observe(
                             holder.itemView.context as LifecycleOwner
-                        ) { streamResponseMessage ->
-                            if (streamResponseMessage.event == "text_stream") {
-                                previousAIMessage += streamResponseMessage.text
-                                holder.binding.tvMessageTextAi.text = previousAIMessage.drop(1)
-                                holder.binding.tvMessageInfoAi.text =
-                                    viewModelTextGen.model.value!!.result +
-                                            " - " +
-                                            streamResponseMessage.message_num.plus(1) +
-                                            " - " +
-                                            chat.dateTime
-                            }
+                        ) { finalStreamResponse ->
+                            holder.binding.tvMessageTextAi.text = finalStreamResponse.drop(1)
+                            holder.binding.tvMessageInfoAi.text =
+                                viewModelTextGen.model.value!!.result +
+                                        " - " +
+                                        viewModelTextGen.streamResponseMessage.value?.message_num?.plus(1) +
+                                        " - " +
+                                        chat.dateTime
                         }
                     }
                     else -> {

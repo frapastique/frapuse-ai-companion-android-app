@@ -94,26 +94,12 @@ class TextGenDocumentOperationFragment : Fragment() {
             binding.rvDocumentOperation.setHasFixedSize(true)
         }
 
-        // Observe stream from server and create final output
-        var finalOutput = ""
-        viewModel.streamResponseMessage.observe(viewLifecycleOwner) { streamResponseMessage ->
-            when (streamResponseMessage.event) {
-                "text_stream" -> {
-                    finalOutput += streamResponseMessage.text
-                    binding.rvDocumentOperation.smoothScrollToPosition(
-                        viewModel.operationLibrary.value!!.size
-                    )
-                }
-                "stream_end" -> {
-                    viewModel.updateAIResponseOperation(
-                        viewModel.operationLibrary.value!!.last().id,
-                        finalOutput.drop(1)
-                    )
-                    viewModel.resetStream()
-                }
-                "waiting" -> {
-                    finalOutput = ""
-                }
+        // Observe final stream response and adjust recyclerview position
+        viewModel.finalStreamResponse.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.rvDocumentOperation.smoothScrollToPosition(
+                    viewModel.operationLibrary.value!!.size
+                )
             }
         }
     }

@@ -42,6 +42,7 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -786,6 +787,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     fun insertOperationDocument() {
         viewModelScope.launch {
+            delay(1000)
             val tokens = repository.getTokenCount(
                 TextGenPrompt(
                     operationInstruction
@@ -810,11 +812,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             _operationLibrary.value = repository.getAllOperations()
             _currentPage.value = 0
+            this.cancel()
         }
     }
 
     fun insertOperationStep(step: String) {
         viewModelScope.launch {
+            delay(1000)
             try {
                 repository.insertOperation(
                     TextGenDocumentOperation(
@@ -835,11 +839,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(TAG, "Error inserting operation:\r\t$e")
             }
+            this.cancel()
         }
     }
 
     private fun updateOperationStep(id: Long, step: String, context: String) {
         viewModelScope.launch {
+            delay(1000)
             repository.updateOperation(
                 TextGenDocumentOperation(
                     id = id,
@@ -857,96 +863,110 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
             )
             _operationLibrary.value = repository.getAllOperations()
+            this.cancel()
         }
     }
 
     fun convertDocument(stepID: Long) {
-        // Create a file with attachment file
-        val file = File(_currentDocumentPath.value!!)
+        viewModelScope.launch {
+            delay(1000)
+            // Create a file with attachment file
+            val file = File(_currentDocumentPath.value!!)
 
-        // Create a PdfRenderer from the file
-        val parcelFileDescriptor = ParcelFileDescriptor.open(
-            file,
-            ParcelFileDescriptor.MODE_READ_ONLY
-        )
-        val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+            // Create a PdfRenderer from the file
+            val parcelFileDescriptor = ParcelFileDescriptor.open(
+                file,
+                ParcelFileDescriptor.MODE_READ_ONLY
+            )
+            val pdfRenderer = PdfRenderer(parcelFileDescriptor)
 
-        // Get the first page of the PDF file
-        val pdfPage = pdfRenderer.openPage(_currentPage.value!!)
+            // Get the first page of the PDF file
+            val pdfPage = pdfRenderer.openPage(_currentPage.value!!)
 
-        // Create a bitmap with the same size and config as the page
-        val bitmap = Bitmap.createBitmap(
-            pdfPage.width,
-            pdfPage.height,
-            Bitmap.Config.ARGB_8888
-        )
-        bitmap.eraseColor(Color.WHITE)
+            // Create a bitmap with the same size and config as the page
+            val bitmap = Bitmap.createBitmap(
+                pdfPage.width,
+                pdfPage.height,
+                Bitmap.Config.ARGB_8888
+            )
+            bitmap.eraseColor(Color.WHITE)
 
-        // Render the page content to the bitmap
-        pdfPage.render(
-            bitmap,
-            null,
-            null,
-            PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-        )
+            // Render the page content to the bitmap
+            pdfPage.render(
+                bitmap,
+                null,
+                null,
+                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+            )
 
-        _currentPageCount.value = pdfRenderer.pageCount
+            _currentPageCount.value = pdfRenderer.pageCount
 
-        _currentPageBitmap.value = bitmap
+            _currentPageBitmap.value = bitmap
 
-        // Close pdf page and renderer
-        pdfPage.close()
-        pdfRenderer.close()
+            // Close pdf page and renderer
+            pdfPage.close()
+            pdfRenderer.close()
 
-        // Update current operation
-        updateOperationStep(stepID, "Convert page...", "")
+            // Update current operation
+            updateOperationStep(stepID, "Convert page...", "")
 
-        // Start new operation
-        insertOperationStep("Extract text...")
+            // Start new operation
+            insertOperationStep("Extract text...")
+            this.cancel()
+        }
     }
 
     // Method to extract the text from a bitmap. Process the text block and get token count on success
     fun extractDocumentText(stepID: Long) {
-        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        viewModelScope.launch {
+            delay(1000)
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-        val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
+            val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
 
-        recognizer.process(image)
-            .addOnSuccessListener { extractedText ->
-                _currentExtraction.value = extractedText
-                updateOperationStep(stepID, "Extract text...", "")
-                insertOperationStep("Process text...")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error extracting text:\n\t$e")
-            }
+            recognizer.process(image)
+                .addOnSuccessListener { extractedText ->
+                    _currentExtraction.value = extractedText
+                    updateOperationStep(stepID, "Extract text...", "")
+                    insertOperationStep("Process text...")
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error extracting text:\n\t$e")
+                }
+            this.cancel()
+        }
     }
 
     // Process extracted document text, build a string and return text
     fun processDocumentText(stepID: Long) {
-        val textBlocks = _currentExtraction.value!!.textBlocks
-        if (textBlocks.size == 0) {
-            _textOut.value = "No text found"
-        }
-        val stringBuilder = StringBuilder()
-        for (block in textBlocks) {
-            stringBuilder.append("\n\n")
-            val lines = block.lines
-            for (line in lines) {
-                val elements = line.elements
-                for (element in elements) {
-                    val elementText = element.text
-                    stringBuilder.append("$elementText ")
+        viewModelScope.launch {
+            delay(1000)
+            val textBlocks = _currentExtraction.value!!.textBlocks
+            if (textBlocks.size == 0) {
+                _textOut.value = "No text found"
+            }
+            val stringBuilder = StringBuilder()
+            for (block in textBlocks) {
+                stringBuilder.append("\n\n")
+                val lines = block.lines
+                for (line in lines) {
+                    val elements = line.elements
+                    for (element in elements) {
+                        val elementText = element.text
+                        stringBuilder.append("$elementText ")
+                    }
                 }
             }
+            updateOperationStep(stepID, "Process text...", stringBuilder.toString())
+            insertAIResponseOperation(stringBuilder.toString())
+            this.cancel()
         }
-        updateOperationStep(stepID, "Process text...", stringBuilder.toString())
-        insertAIResponseOperation(stringBuilder.toString())
     }
 
     // Insert AI response operation
     private fun insertAIResponseOperation(extractedText: String) {
         viewModelScope.launch {
+            delay(1000)
             repository.insertOperation(
                 TextGenDocumentOperation(
                     documentID = _documentID.value!!,
@@ -997,13 +1017,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         _finalStreamResponse.value += stream.text
                     }
                     "stream_end" -> {
+                        repository.closeWebsocketClient()
                         updateAIResponseOperation(
                             operationLibrary.value!!.last().id,
                             _finalStreamResponse.value!!.drop(1)
                         )
-                        resetStream()
-                        repository.closeWebsocketClient()
-                        _finalStreamResponse.value = ""
                         this.cancel()
                     }
                     "waiting" -> {
@@ -1016,7 +1034,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Update AI response operation
     fun updateAIResponseOperation(id: Long, aiMessage: String) {
+        resetStream()
+        _finalStreamResponse.value = ""
+
         viewModelScope.launch {
+            delay(1000)
             val tokensCountMessage = repository.getTokenCount(
                 TextGenPrompt(aiMessage)
             )
@@ -1049,6 +1071,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     insertOperationDocument()
                 }
             }
+            repository.closeWebsocketClient()
+            this.cancel()
         }
     }
 

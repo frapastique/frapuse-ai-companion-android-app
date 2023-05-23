@@ -1,9 +1,11 @@
 package com.back.frapuse.data.textgen.models
 
+import java.io.File
+
 data class TextGenHaystackFileUpload(
-    val files: List<String>,
-    var meta: String?,
-    var additional_params: String?,
+    val files: File,
+    val meta: String,
+    val additional_params: String,
     val remove_numeric_tables: Boolean,
     val valid_languages: List<String>,
     val clean_whitespace: Boolean,

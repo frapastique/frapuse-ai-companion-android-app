@@ -28,7 +28,7 @@ class TextGenFragment : Fragment() {
     private lateinit var binding: FragmentTextGenBinding
 
     /**
-     * Lifecycle Funktion onCreateView
+     * Lifecycle Function onCreateView
      * binding gets initialized and the layout built
      */
     override fun onCreateView(
@@ -140,7 +140,7 @@ class TextGenFragment : Fragment() {
                 dataset = chatLibrary,
                 viewModelTextGen = viewModel
             )
-            binding.rvChatLibrary.scrollToPosition(chatLibrary.size - 1)
+            binding.rvChatLibrary.scrollToPosition(chatLibrary.size-1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 

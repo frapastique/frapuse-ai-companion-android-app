@@ -68,7 +68,10 @@ class TextGenDocumentOperationFragment : Fragment() {
                     viewModel.insertOperationStep("Convert page...")
                 }
             } catch (e: Exception) {
-                Log.e("TextGenDocumentOperationFragment", "Got called from:\n\tviewModel.currentPage.observe(viewLifecycleOwner)")
+                Log.e(
+                    "TextGenDocumentOperationFragment",
+                    "Got called from:\n\tviewModel.currentPage.observe(viewLifecycleOwner)"
+                )
             }
         }
 

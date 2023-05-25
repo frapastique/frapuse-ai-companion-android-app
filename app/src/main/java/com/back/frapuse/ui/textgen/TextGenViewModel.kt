@@ -13,11 +13,11 @@ import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
@@ -188,7 +188,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 try {
                     createFinalPrompt()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error creating final prompt:\n\t$e")
+                    Log.e(
+                        TAG,
+                        "Error creating final prompt:\n\t$e"
+                    )
                 }
             }
             checkTokensCount()
@@ -291,7 +294,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
                 _textOut.value = ""
             } catch (e: Exception) {
-                Log.e(TAG, "Error saving Attachment:\n\t$e")
+                Log.e(
+                    TAG,
+                    "Error saving Attachment:\n\t$e"
+                )
             }
 
         }
@@ -490,7 +496,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             try {
                 _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading response holder: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error loading response holder:\n\t$e"
+                )
             }
             try {
                 _genResponseText.value = _genResponseHolder.value!!.results.first()
@@ -521,7 +530,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 ).results.first().tokens)
                 _apiStatus.value = AppStatus.DONE
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading response text from holder: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error loading response text from holder:\n\t$e"
+                )
             }
         }
     }
@@ -564,8 +576,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // Get the date and time of given moment
     @SuppressLint("SimpleDateFormat")
     private fun getDateTime(): String {
-        val sdf = SimpleDateFormat("dd.MM.yy - hh:mm:ss")
-        return sdf.format(Date())
+        return SimpleDateFormat("dd.MM.yy - hh:mm:ss").format(Date())
     }
 
     // Method to register the pdf contract and get the launcher
@@ -637,6 +648,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         // close the streams
         inputStream?.close()
         outputStream.close()
+        // Upload the file to haystack
+        uploadFileToHaystack(file)
         // get and return the file path
         return file.path
     }
@@ -657,7 +670,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 file.delete()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting files:\n\t$e")
+            Log.e(
+                TAG,
+                "Error deleting files:\n\t$e"
+            )
         }
     }
 
@@ -701,7 +717,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 getTokenCount(_textOut.value!!)
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Error extracting text:\n\t$e")
+                Log.e(
+                    TAG,
+                    "Error extracting text:\n\t$e"
+                )
             }
     }
 
@@ -760,29 +779,19 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         get() = _currentExtraction
 
     fun setDocumentID() {
-        Log.e(TAG, "Current documentID:\n\t${_documentID.value}")
         _documentID.value = _documentID.value!! + 1
-        Log.e(TAG, "New documentID:\n\t${_documentID.value}")
     }
 
-    fun addDocumentToDataset(attachment: TextGenAttachments) {
-        Log.e(TAG, "Current dataset.size:\n\t${_documentDataset.value?.size}")
+    private fun addDocumentToDataset(attachment: TextGenAttachments) {
         val newDataset = _documentDataset.value?.toMutableList() ?: mutableListOf()
-        Log.e(TAG, "Old dataset.size:\n\t${newDataset.size}")
         newDataset.add(attachment)
-        Log.e(TAG, "Updated dataset.size:\n\t${newDataset.size}")
         _documentDataset.value = newDataset
-        Log.e(TAG, "New dataset.size:\n\t${_documentDataset.value?.size}")
     }
 
     fun setCurrentDocument(attachment: TextGenAttachments) {
         _currentPageCount.value = attachment.pageCount
         _currentDocumentPath.value = attachment.path
         _documentID.value = attachment.id
-    }
-
-    fun updateAttachmentPageCount(pageCount: Int) {
-        _documentDataset.value!!.find { it.path == _currentDocumentPath.value }!!.pageCount = pageCount
     }
 
     fun insertOperationDocument() {
@@ -837,7 +846,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
                 _operationLibrary.value = repository.getAllOperations()
             } catch (e: Exception) {
-                Log.e(TAG, "Error inserting operation:\r\t$e")
+                Log.e(
+                    TAG,
+                    "Error inserting operation:\r\t$e"
+                )
             }
             this.cancel()
         }
@@ -870,6 +882,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun convertDocument(stepID: Long) {
         viewModelScope.launch {
             delay(1000)
+            try {
             // Create a file with attachment file
             val file = File(_currentDocumentPath.value!!)
 
@@ -912,6 +925,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             // Start new operation
             insertOperationStep("Extract text...")
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error converting document:\n\t$e"
+                )
+            }
             this.cancel()
         }
     }
@@ -920,19 +939,28 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun extractDocumentText(stepID: Long) {
         viewModelScope.launch {
             delay(1000)
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            try {
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
 
-            val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
-
-            recognizer.process(image)
-                .addOnSuccessListener { extractedText ->
-                    _currentExtraction.value = extractedText
-                    updateOperationStep(stepID, "Extract text...", "")
-                    insertOperationStep("Process text...")
-                }
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Error extracting text:\n\t$e")
-                }
+                recognizer.process(image)
+                    .addOnSuccessListener { extractedText ->
+                        _currentExtraction.value = extractedText
+                        updateOperationStep(stepID, "Extract text...", "")
+                        insertOperationStep("Process text...")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(
+                            TAG,
+                            "Error extracting text:\n\t$e"
+                        )
+                    }
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error extracting text with ocr:\n\t$e"
+                )
+            }
             this.cancel()
         }
     }
@@ -941,24 +969,31 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun processDocumentText(stepID: Long) {
         viewModelScope.launch {
             delay(1000)
-            val textBlocks = _currentExtraction.value!!.textBlocks
-            if (textBlocks.size == 0) {
-                _textOut.value = "No text found"
-            }
-            val stringBuilder = StringBuilder()
-            for (block in textBlocks) {
-                stringBuilder.append("\n\n")
-                val lines = block.lines
-                for (line in lines) {
-                    val elements = line.elements
-                    for (element in elements) {
-                        val elementText = element.text
-                        stringBuilder.append("$elementText ")
+            try {
+                val textBlocks = _currentExtraction.value!!.textBlocks
+                if (textBlocks.size == 0) {
+                    _textOut.value = "No text found"
+                }
+                val stringBuilder = StringBuilder()
+                for (block in textBlocks) {
+                    stringBuilder.append("\n\n")
+                    val lines = block.lines
+                    for (line in lines) {
+                        val elements = line.elements
+                        for (element in elements) {
+                            val elementText = element.text
+                            stringBuilder.append("$elementText ")
+                        }
                     }
                 }
+                updateOperationStep(stepID, "Process text...", stringBuilder.toString())
+                insertAIResponseOperation(stringBuilder.toString())
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error processing document text:\n\t$e"
+                )
             }
-            updateOperationStep(stepID, "Process text...", stringBuilder.toString())
-            insertAIResponseOperation(stringBuilder.toString())
             this.cancel()
         }
     }
@@ -1094,5 +1129,15 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     /* _______ TextGen Haystack ________________________________________________________ */
 
+    fun uploadFileToHaystack(file: File) {
+        val fileUploadMessage = "File successfully uploaded!"
 
+        val meta = ("{\"author\": \"Alan Watts\"}")
+
+        viewModelScope.launch {
+            repository.haystackUploadFile(file, meta)
+            Toast.makeText(app.applicationContext, fileUploadMessage, Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
 }

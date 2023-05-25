@@ -1,11 +1,9 @@
 package com.back.frapuse.data.textgen.remote
 
-import android.util.Log
 import com.back.frapuse.data.textgen.models.TextGenGenerateRequest
 import com.back.frapuse.data.textgen.models.TextGenStreamResponse
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import okhttp3.OkHttpClient
+import com.back.frapuse.util.Companions.Companion.moshi
+import com.back.frapuse.util.Companions.Companion.okHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -15,14 +13,6 @@ private const val TAG = "TextGenStreamSocketClient"
 private const val BASE_URL = "ws://192.168.178.20:7864/api/v1/stream"
 
 class TextGenStreamWebSocketClient {
-
-    private val moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
-
-    // OkHttpClient instance
-    private val okHttpClient = OkHttpClient()
-
     // Listener object which extends the WebSocketListener
     private val listener = object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {

@@ -14,7 +14,6 @@ import com.back.frapuse.data.textgen.models.TextGenTokenCountResponse
 import com.back.frapuse.data.textgen.local.TextGenChatLibraryDatabase
 import com.back.frapuse.data.textgen.local.TextGenDocumentOperationDatabase
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
-import com.back.frapuse.data.textgen.models.TextGenHaystackFileUpload
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsRequest
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsResponse
 import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
@@ -23,6 +22,11 @@ import com.back.frapuse.data.textgen.models.TextGenStreamResponse
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 private const val TAG = "TextGenRepository"
 
@@ -149,19 +153,31 @@ class TextGenRepository(
 
     /**
      * Method to upload file to haystack api
-     * @param textGenHaystackFileUpload File, parameters and meta information
-     * @return String -> null on success
+     * @param file File to upload (currently pdf and txt possible)
+     * @param meta Metadata of current file
+     * @return String -> OK on success
      * */
-    suspend fun haystackUploadFile(textGenHaystackFileUpload: TextGenHaystackFileUpload): String? {
+    suspend fun haystackUploadFile(
+        file: File, meta: String
+    ): String? {
         return try {
-            apiHaystack.retrofitService.uploadFile(textGenHaystackFileUpload)
+            val filePart = MultipartBody.Part.createFormData(
+                "files",
+                file.name,
+                file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+            )
+
+            apiHaystack.retrofitService.uploadFile(
+                filePart = filePart,
+                meta = meta.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            )
         } catch (e: Exception) {
             Log.e(
                 TAG,
                 "Error uploading file to haystack:" +
                         "\n\t$e"
             )
-            null
+            "Error"
         }
     }
 

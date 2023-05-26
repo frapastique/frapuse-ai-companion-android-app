@@ -13,78 +13,69 @@
         android:layout_height="match_parent"
         tools:context=".ui.textgen.TextGenDocumentOperationFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_attachment_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:clipToPadding="false"
-            android:fadeScrollbars="true"
-            android:orientation="horizontal"
-            android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
-            android:scrollbarSize="2dp"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="horizontal"
-            android:visibility="visible"
-            app:flow_horizontalAlign="center"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:itemCount="1"
-            tools:listitem="@layout/text_gen_rv_attachment_footer" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_start_operation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/wand_and_stars_white"
-            android:visibility="visible"
-            app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_reset"
-            android:layout_width="wrap_content"
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/trash_white"
-            android:visibility="visible"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/btn_start_operation"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:liftOnScroll="true">
 
-        <TextView
-            android:id="@+id/tv_document_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_reset"
-            app:layout_constraintEnd_toEndOf="@+id/btn_reset"
-            app:layout_constraintStart_toStartOf="@+id/btn_reset"
-            tools:text="0" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/black"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:navigationIcon="@drawable/back_icon"
+                app:title="Document Operation"
+                app:menu="@menu/top_app_bar" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_document_operation"
+            android:id="@+id/rv_document_preview"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:clipToPadding="false"
             android:fadeScrollbars="true"
-            android:paddingBottom="2dp"
             android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
             android:scrollbarSize="2dp"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
+            android:visibility="visible"
             app:flow_horizontalAlign="center"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_attachment_preview"
-            tools:listitem="@layout/text_gen_rv_document_operation_step_item" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/image_gen_rv_small_item" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add_document"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="64dp"
+            android:src="@drawable/plus_icon"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

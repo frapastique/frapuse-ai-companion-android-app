@@ -2,6 +2,7 @@ package com.back.frapuse.util.adapter.imagegen
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -42,10 +43,12 @@ class ImageGenRVSmallAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageGenRVSmallViewHolder, position: Int) {
+        holder.binding.btnSettings.visibility = View.GONE
+        holder.binding.mcvFileDescription.visibility = View.GONE
         val imageData = dataset[position]
-        holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
-        holder.binding.ivGenImage.setOnClickListener { ivGenImage ->
-            ivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
+        holder.binding.sivPreview.setImageBitmap(viewModel.decodeImage(imageData.image))
+        holder.binding.sivPreview.setOnClickListener { sivGenImage ->
+            sivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
                 .actionImageGenRVSmallFragmentToImageGenRVDetailFragment()
             )
         }

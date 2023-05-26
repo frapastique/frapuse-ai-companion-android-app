@@ -1,6 +1,7 @@
 package com.back.frapuse.util.adapter.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.imagegen.ImageGenViewModel
@@ -30,8 +31,10 @@ class HomeBackgroundAdapter(
     }
 
     override fun onBindViewHolder(holder: HomeBackgroundViewHolder, position: Int) {
+        holder.binding.btnSettings.visibility = View.GONE
+        holder.binding.mcvFileDescription.visibility = View.GONE
         val imageData = dataset.reversed()[position]
-        holder.binding.ivGenImage.setImageBitmap(viewModel.decodeImage(imageData.image))
+        holder.binding.sivPreview.setImageBitmap(viewModel.decodeImage(imageData.image))
     }
 
 }

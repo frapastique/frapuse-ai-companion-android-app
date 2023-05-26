@@ -1,156 +1,78 @@
 package com.back.frapuse.util.adapter.textgen
 
-import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
-import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
-import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
-import com.back.frapuse.databinding.TextGenRvDocumentOperationStepItemBinding
+import com.back.frapuse.data.textgen.models.TextGenAttachments
+import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import java.io.File
 
 class TextGenRVDocumentOperationAdapter(
-    private var dataset: List<TextGenDocumentOperation>,
-    private val viewModelTextGen: TextGenViewModel,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    // Companion object defines type of item in dataset
-    companion object {
-        private const val TYPE_DOCUMENT = 0
-        private const val TYPE_OPERATION = 1
-        private const val TYPE_AI = 2
-    }
-
-    inner class TextGenRVDocumentOperationTypeViewHolder(
-        internal val binding: TextGenRvChatHumanAttachmentItemBinding
+    private var dataset: MutableList<TextGenAttachments>,
+    private val viewModel: TextGenViewModel,
+) : RecyclerView.Adapter<TextGenRVDocumentOperationAdapter.TextGenRVDocumentOperationViewHolder>() {
+    inner class TextGenRVDocumentOperationViewHolder(
+        internal val binding: ImageGenRvSmallItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    inner class TextGenRVDocumentOperationStepViewHolder(
-        internal val binding: TextGenRvDocumentOperationStepItemBinding
-    ) : RecyclerView.ViewHolder(binding.root)
-
-    inner class TextGenRVDocumentOperationAIViewHolder(
-        internal val binding: TextGenRvChatAiItemBinding
-    ) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        // Append view holder according the view type
-        return when (viewType) {
-            TYPE_DOCUMENT -> {
-                val binding = TextGenRvChatHumanAttachmentItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-                TextGenRVDocumentOperationTypeViewHolder(binding)
-            }
-            TYPE_OPERATION -> {
-                val binding = TextGenRvDocumentOperationStepItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-                TextGenRVDocumentOperationStepViewHolder(binding)
-            }
-            TYPE_AI -> {
-                val binding = TextGenRvChatAiItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-                TextGenRVDocumentOperationAIViewHolder(binding)
-            }
-            else -> throw IllegalArgumentException("Invalid view type")
-        }
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): TextGenRVDocumentOperationViewHolder {
+        val binding = ImageGenRvSmallItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return TextGenRVDocumentOperationViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
         return dataset.size
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val operation = dataset[position]
+    override fun onBindViewHolder(holder: TextGenRVDocumentOperationViewHolder, position: Int) {
+        val document = dataset[position]
 
-        when (holder) {
-            is TextGenRVDocumentOperationTypeViewHolder -> {
-                holder.binding.tvFileName.text = File(operation.path).name
-                holder.binding.tvFileInfoHuman.text =
-                    operation.tokens +
-                        " - " +
-                        operation.dateTime
-            }
-            is TextGenRVDocumentOperationStepViewHolder -> {
-                holder.binding.tvCurrentOperationStep.text = operation.message
-                when (operation.status) {
-                    "Loading" -> {
-                        holder.binding.pbOperationRunning.visibility = View.VISIBLE
-                        holder.binding.sivOperationDone.visibility = View.GONE
-                        when (operation.message) {
-                            "Convert page..." -> {
-                                viewModelTextGen.convertDocument(operation.id)
-                                holder.binding.tvCurrentOperationStep.text =
-                                    "${operation.currentPage+1} of ${operation.pageCount} " +
-                                            operation.message
-                            }
-                            "Extract text..." -> {
-                                viewModelTextGen.extractDocumentText(operation.id)
-                            }
-                            "Process text..." -> {
-                                viewModelTextGen.processDocumentText(operation.id)
-                            }
-                        }
-                    }
-                    "Done" -> {
-                        holder.binding.pbOperationRunning.visibility = View.GONE
-                        holder.binding.sivOperationDone.visibility = View.VISIBLE
-                    }
-                }
-            }
-            is TextGenRVDocumentOperationAIViewHolder -> {
-                when (operation.status) {
-                    "Loading" -> {
-                        viewModelTextGen.finalStreamResponse.observe(
-                            holder.itemView.context as LifecycleOwner
-                        ) { finalStreamResponse ->
-                            holder.binding.tvMessageTextAi.text = finalStreamResponse.drop(1)
-                            holder.binding.tvMessageInfoAi.text =
-                                viewModelTextGen.model.value!!.result +
-                                        " - " +
-                                        viewModelTextGen.streamResponseMessage.value?.message_num?.plus(1) +
-                                        " - " +
-                                        operation.dateTime
-                        }
-                    }
-                    else -> {
-                        holder.binding.tvMessageTextAi.text = operation.message
-                        holder.binding.tvMessageInfoAi.text =
-                            viewModelTextGen.model.value!!.result +
-                                    " - " +
-                                    operation.tokens +
-                                    " - " +
-                                    operation.dateTime
-                    }
-                }
-            }
-        }
-    }
+        // Create a file with attachment file
+        val file = File(document.path)
 
-    override fun getItemViewType(position: Int): Int {
-        return when (dataset[position].type) {
-            "Document" -> {
-                TYPE_DOCUMENT
-            }
-            "Operation" -> {
-                TYPE_OPERATION
-            }
-            else -> {
-                TYPE_AI
-            }
-        }
+        // Set file name
+        holder.binding.mtvFileName.text = file.nameWithoutExtension
+
+        // Create a PdfRenderer from the file
+        val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+        val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+
+        // Get the first page of the PDF file
+        val pdfPage = pdfRenderer.openPage(0)
+
+        // Create a bitmap with the same size and config as the page
+        val bitmap = Bitmap.createBitmap(
+            pdfPage.width,
+            pdfPage.height,
+            Bitmap.Config.ARGB_8888
+        )
+        bitmap.eraseColor(Color.WHITE)
+
+        // Render the page content to the bitmap
+        pdfPage.render(
+            bitmap,
+            null,
+            null,
+            PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+        )
+
+        // Set the bitmap to the ImageView
+        holder.binding.sivPreview.setImageBitmap(bitmap)
+
+        // Close pdf page and renderer
+        pdfPage.close()
+        pdfRenderer.close()
     }
 }

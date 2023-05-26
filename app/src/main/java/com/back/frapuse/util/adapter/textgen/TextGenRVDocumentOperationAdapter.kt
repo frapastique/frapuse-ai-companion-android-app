@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.data.textgen.models.TextGenAttachments
-import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
+import com.back.frapuse.databinding.TextGenRvDocumentPreviewGalleryMediumItemBinding
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import java.io.File
 
@@ -17,14 +17,14 @@ class TextGenRVDocumentOperationAdapter(
     private val viewModel: TextGenViewModel,
 ) : RecyclerView.Adapter<TextGenRVDocumentOperationAdapter.TextGenRVDocumentOperationViewHolder>() {
     inner class TextGenRVDocumentOperationViewHolder(
-        internal val binding: ImageGenRvSmallItemBinding
+        internal val binding: TextGenRvDocumentPreviewGalleryMediumItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): TextGenRVDocumentOperationViewHolder {
-        val binding = ImageGenRvSmallItemBinding.inflate(
+        val binding = TextGenRvDocumentPreviewGalleryMediumItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -43,7 +43,10 @@ class TextGenRVDocumentOperationAdapter(
         val file = File(document.path)
 
         // Set file name
-        holder.binding.mtvFileName.text = file.nameWithoutExtension
+        holder.binding.mtvFileName.text = file.name
+        // Set file name to scroll horizontally
+        holder.binding.mtvFileName.isSelected = true
+        holder.binding.mtvFileName.requestFocus()
 
         // Create a PdfRenderer from the file
         val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)

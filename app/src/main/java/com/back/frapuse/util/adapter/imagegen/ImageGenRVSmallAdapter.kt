@@ -43,12 +43,10 @@ class ImageGenRVSmallAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageGenRVSmallViewHolder, position: Int) {
-        holder.binding.btnSettings.visibility = View.GONE
-        holder.binding.mcvFileDescription.visibility = View.GONE
         val imageData = dataset[position]
-        holder.binding.sivPreview.setImageBitmap(viewModel.decodeImage(imageData.image))
-        holder.binding.sivPreview.setOnClickListener { sivGenImage ->
-            sivGenImage.findNavController().navigate(ImageGenRVSmallFragmentDirections
+        holder.binding.sivImageGen.setImageBitmap(viewModel.decodeImage(imageData.image))
+        holder.binding.sivImageGen.setOnClickListener { sivImageGen ->
+            sivImageGen.findNavController().navigate(ImageGenRVSmallFragmentDirections
                 .actionImageGenRVSmallFragmentToImageGenRVDetailFragment()
             )
         }

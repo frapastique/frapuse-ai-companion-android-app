@@ -7,13 +7,13 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.data.textgen.models.TextGenAttachments
+import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.databinding.TextGenRvDocumentPreviewGalleryMediumItemBinding
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import java.io.File
 
 class TextGenRVDocumentOperationAdapter(
-    private var dataset: MutableList<TextGenAttachments>,
+    private var dataset: List<TextGenDocumentOperation>,
     private val viewModel: TextGenViewModel,
 ) : RecyclerView.Adapter<TextGenRVDocumentOperationAdapter.TextGenRVDocumentOperationViewHolder>() {
     inner class TextGenRVDocumentOperationViewHolder(

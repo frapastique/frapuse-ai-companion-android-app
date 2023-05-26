@@ -6,11 +6,8 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.pdf.PdfRenderer
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
@@ -31,8 +28,8 @@ import com.back.frapuse.data.textgen.models.TextGenModelResponse
 import com.back.frapuse.data.textgen.models.TextGenPrompt
 import com.back.frapuse.data.textgen.local.getTextGenDatabase
 import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
-import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.TextGenHaystackMeta
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
@@ -42,7 +39,6 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -195,8 +191,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
             checkTokensCount()
-            _operationLibrary.value = repository.getAllOperations()
-            _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
+
+            if (repository.getOperationCount() > 0) {
+                _documentLibrary.value = repository.getAllOperations()
+                /*_documentDataset.value = emptyList<TextGenAttachments>().toMutableList()*/
+            } else {
+                _documentLibrary.value = emptyList()
+            }
+
             repository.closeWebsocketClient()
         }
     }
@@ -588,13 +590,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 val filePath = createLocalPdfFile(uri, app.applicationContext)
                 // update the LiveData variable with the file path
                 _pdfPath.value = filePath
-                addDocumentToDataset(
+                /*addDocumentToDataset(
                     TextGenAttachments(
                         id = _documentID.value!!,
                         path = filePath,
                         pageCount = 0
                     )
-                )
+                )*/
             }
         }
     }
@@ -649,7 +651,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         inputStream?.close()
         outputStream.close()
         // Upload the file to haystack
-        uploadFileToHaystack(file)
+        uploadFile(file)
         // get and return the file path
         return file.path
     }
@@ -731,17 +733,72 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     /* _______ Document Operation ______________________________________________________ */
 
-    // Operation instruction
+    // Document library LiveData
+    private val _documentLibrary = MutableLiveData<List<TextGenDocumentOperation>>()
+    val documentLibrary: LiveData<List<TextGenDocumentOperation>>
+        get() = _documentLibrary
+
+    // Load file in local and upload to haystack database
+    fun uploadFile(file: File) {
+        val fileUploadMessage = "File successfully uploaded!"
+
+        val meta = TextGenHaystackMeta(
+            author = "Alan Watts",
+            summary = "",
+            topic = emptyList(),
+            title = file.nameWithoutExtension,
+            type = "",
+            name = file.name
+        )
+
+        viewModelScope.launch {
+            try {
+                repository.insertOperation(
+                    TextGenDocumentOperation(
+                        dateTime = getDateTime(),
+                        path = file.path
+                    )
+                )
+                _documentLibrary.value = repository.getAllOperations()
+                repository.haystackUploadFile(file, meta)
+                Toast.makeText(app.applicationContext, fileUploadMessage, Toast.LENGTH_SHORT)
+                    .show()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error uploading documents:\n\t$e"
+                )
+            }
+        }
+    }
+
+    // Reset document library
+    fun deleteAllDocuments() {
+        viewModelScope.launch {
+            try {
+                repository.deleteAllOperations()
+                _documentLibrary.value = emptyList()
+                deleteAllPdf(app)
+                repository.haystackDeleteAllDocuments()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error resetting document operation:\n\t$e"
+                )
+            }
+        }
+    }
+
+
+
+
+
+    /*// Operation instruction
     private val operationInstruction =
         "A chat between a curious user and an artificial intelligence " +
                 "assistant. The assistant gives helpful, detailed, and " +
                 "polite answers to the user's questions. " +
                 "User: Write a concise summery of the following context!"
-
-    // Operation library LiveData
-    private val _operationLibrary = MutableLiveData<List<TextGenDocumentOperation>>()
-    val operationLibrary: LiveData<List<TextGenDocumentOperation>>
-        get() = _operationLibrary
 
     // Document id LiveData
     private val _documentID = MutableLiveData<Long>(0)
@@ -1117,27 +1174,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             try {
                 repository.deleteAllOperations()
                 deleteAllPdf(app)
-                _documentDataset.value = emptyList<TextGenAttachments>().toMutableList()
-                _operationLibrary.value = repository.getAllOperations()
-                _documentID.value = 0
-                Log.e(TAG, "Current _documentID.value:\n\t${_documentID.value}")
+                /*_documentDataset.value = emptyList<TextGenAttachments>().toMutableList()*/
+                _documentLibrary.value = repository.getAllOperations()
+                /*_documentID.value = 0*/
             } catch (e: Exception) {
                 Log.e(TAG, "Error resetting document operation:\n\t$e")
             }
         }
-    }
+    }*/
 
     /* _______ TextGen Haystack ________________________________________________________ */
-
-    fun uploadFileToHaystack(file: File) {
-        val fileUploadMessage = "File successfully uploaded!"
-
-        val meta = ("{\"author\": \"Alan Watts\"}")
-
-        viewModelScope.launch {
-            repository.haystackUploadFile(file, meta)
-            Toast.makeText(app.applicationContext, fileUploadMessage, Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
 }

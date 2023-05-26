@@ -16,12 +16,14 @@ import com.back.frapuse.data.textgen.local.TextGenDocumentOperationDatabase
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsRequest
 import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsResponse
+import com.back.frapuse.data.textgen.models.TextGenHaystackMeta
 import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
 import com.back.frapuse.data.textgen.models.TextGenHaystackQueryResponse
 import com.back.frapuse.data.textgen.models.TextGenStreamResponse
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
+import com.back.frapuse.util.Companions.Companion.moshi
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -158,7 +160,7 @@ class TextGenRepository(
      * @return String -> OK on success
      * */
     suspend fun haystackUploadFile(
-        file: File, meta: String
+        file: File, meta: TextGenHaystackMeta
     ): String? {
         return try {
             val filePart = MultipartBody.Part.createFormData(
@@ -166,10 +168,14 @@ class TextGenRepository(
                 file.name,
                 file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
             )
+            val metaPart = moshi
+                .adapter(TextGenHaystackMeta::class.java)
+                .toJson(meta)
+                .toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
             apiHaystack.retrofitService.uploadFile(
                 filePart = filePart,
-                meta = meta.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+                meta = metaPart
             )
         } catch (e: Exception) {
             Log.e(
@@ -206,11 +212,29 @@ class TextGenRepository(
      * @param textGenHaystackFilterDocumentsRequest Filters
      * @return Boolean -> true on success
      * */
-    suspend fun haystackDeleteDocuments(
+    suspend fun haystackFilterDeleteDocuments(
         textGenHaystackFilterDocumentsRequest: TextGenHaystackFilterDocumentsRequest
     ): Boolean {
         return try {
             apiHaystack.retrofitService.deleteDocuments(textGenHaystackFilterDocumentsRequest)
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error deleting filtered documents from haystack:" +
+                        "\n\t$e"
+            )
+            false
+        }
+    }
+
+    /**
+     * Method to delete all documents
+     * @return Boolean -> true on success
+     * */
+    suspend fun haystackDeleteAllDocuments(
+    ): Boolean {
+        return try {
+            apiHaystack.retrofitService.deleteDocuments(TextGenHaystackFilterDocumentsRequest())
         } catch (e: Exception) {
             Log.e(
                 TAG,
@@ -471,7 +495,7 @@ class TextGenRepository(
      * @param id ID of the wanted operation
      * @return TextGenDocumentOperation
      * */
-    suspend fun getOperation(id: Long): TextGenDocumentOperation {
+    suspend fun getOperation(id: Long): TextGenDocumentOperation? {
         return try {
             databaseOperation.textGenDocumentOperationDao.getOperation(id)
         } catch (e: Exception) {
@@ -480,19 +504,7 @@ class TextGenRepository(
                 "Error fetching operation from 'textGenDocumentOperation_table':" +
                         "\n\t$e"
             )
-            TextGenDocumentOperation(
-                documentID = -1,
-                modelName = "",
-                dateTime = "",
-                tokens = "",
-                type = "",
-                message = "",
-                status = "",
-                pageCount = 0,
-                currentPage = 0,
-                path = "",
-                context = ""
-            )
+            null
         }
     }
 }

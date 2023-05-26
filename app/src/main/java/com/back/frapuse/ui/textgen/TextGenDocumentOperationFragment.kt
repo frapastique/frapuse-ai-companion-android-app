@@ -38,17 +38,22 @@ class TextGenDocumentOperationFragment : Fragment() {
 
         val recycler = binding.rvDocumentPreview
 
-        viewModel.documentDataset.observe(viewLifecycleOwner) { documentDataset ->
+        viewModel.documentLibrary.observe(viewLifecycleOwner) { documentLibrary ->
             recycler.adapter = TextGenRVDocumentOperationAdapter(
-                dataset = documentDataset,
+                dataset = documentLibrary,
                 viewModel = viewModel
             )
-            recycler.scrollToPosition(documentDataset.size - 1)
+            recycler.scrollToPosition(documentLibrary.size - 1)
             recycler.setHasFixedSize(true)
         }
 
         binding.btnAddDocument.setOnClickListener {
             viewModel.launchPickPdf()
+        }
+
+        binding.btnDeleteDocuments.setOnLongClickListener {
+            viewModel.deleteAllDocuments()
+            true
         }
     }
 }

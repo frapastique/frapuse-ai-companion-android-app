@@ -13,7 +13,7 @@ import com.back.frapuse.databinding.TextGenRvDocumentOperationStepItemBinding
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import java.io.File
 
-class TextGenRVDocumentOperationAdapterOld(
+/*class TextGenRVDocumentOperationAdapterOld(
     private var dataset: List<TextGenDocumentOperation>,
     private val viewModelTextGen: TextGenViewModel,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -153,4 +153,4 @@ class TextGenRVDocumentOperationAdapterOld(
             }
         }
     }
-}
+}*/

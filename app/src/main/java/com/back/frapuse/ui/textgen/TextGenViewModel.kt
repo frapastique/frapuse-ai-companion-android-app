@@ -30,6 +30,8 @@ import com.back.frapuse.data.textgen.local.getTextGenDatabase
 import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
 import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.models.TextGenHaystackMeta
+import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
+import com.back.frapuse.data.textgen.models.TextGenHaystackQueryResponse
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
@@ -200,6 +202,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
 
             repository.closeWebsocketClient()
+
+            queryHaystack("Who wrote the lecture?")
         }
     }
 
@@ -738,6 +742,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val documentLibrary: LiveData<List<TextGenDocumentOperation>>
         get() = _documentLibrary
 
+    // Haystack query response livedata
+    private val _haystackQueryResponse = MutableLiveData<TextGenHaystackQueryResponse>()
+    val haystackQueryResponse: LiveData<TextGenHaystackQueryResponse>
+        get() = _haystackQueryResponse
+
     // Load file in local and upload to haystack database
     fun uploadFile(file: File) {
         val fileUploadMessage = "File successfully uploaded!"
@@ -784,6 +793,27 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 Log.e(
                     TAG,
                     "Error resetting document operation:\n\t$e"
+                )
+            }
+        }
+    }
+
+    fun queryHaystack(query: String) {
+        viewModelScope.launch {
+            try {
+                _haystackQueryResponse.value = repository.haystackQuery(
+                    TextGenHaystackQueryRequest(
+                        query = query
+                    )
+                )
+                Log.e(
+                    TAG,
+                    "Haystack response:\n\t${_haystackQueryResponse.value.toString()}"
+                )
+            } catch (e: Exception) {
+                Log.d(
+                    TAG,
+                    "Error querying haystack database:\n\t$e"
                 )
             }
         }

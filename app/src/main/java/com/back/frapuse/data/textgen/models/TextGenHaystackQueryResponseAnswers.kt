@@ -5,9 +5,8 @@ data class TextGenHaystackQueryResponseAnswers(
     val type: String,
     val score: Double,
     val context: String,
-    val offsets_in_document: List<String>,
-    val offsets_in_context: List<String>,
-    val document_ids: String,
-    val meta: List<TextGenHaystackMeta>,
-    val documents: List<TextGenHaystackQueryResponseDocuments>
+    val offsets_in_document: List<TextGenHaystackOffset>,
+    val offsets_in_context: List<TextGenHaystackOffset>,
+    val document_ids: List<String>,
+    val meta: TextGenHaystackQueryAnswerMeta
 )

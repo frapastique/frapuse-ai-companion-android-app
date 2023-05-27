@@ -77,7 +77,6 @@ class TextGenFragment : Fragment() {
             }
             // Set the state and visibility of buttons according to prompt value
             if (prompt.isEmpty()) {
-                binding.btnAttachment.visibility = View.VISIBLE
                 binding.btnSend.isClickable = false
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -90,7 +89,6 @@ class TextGenFragment : Fragment() {
                     R.drawable.bolt_trianglebadge_exclamationmark_white
                 )
             } else {
-                binding.btnAttachment.visibility = View.GONE
                 binding.btnSend.isClickable = true
                 binding.btnSend.backgroundTintList =
                     ColorStateList.valueOf(
@@ -111,7 +109,6 @@ class TextGenFragment : Fragment() {
             }
             viewModel.setHumanContext(prompt, filePath)
             binding.etPrompt.setText("")
-            binding.btnAttachment.visibility = View.VISIBLE
             filePath = ""
             viewModel.resetPdfPath()
         }

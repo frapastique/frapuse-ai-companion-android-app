@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/btn_settings"
-            android:icon="@drawable/settings_icon"
-            android:title="@string/settings"
-            android:contentDescription="@string/settings_button"
-            android:iconTint="@color/white"
-            app:showAsAction="always" />
+        android:id="@+id/btn_settings"
+        android:contentDescription="@string/settings_button"
+        android:icon="@drawable/settings_icon"
+        android:iconTint="@color/white"
+        android:title="@string/settings"
+        app:showAsAction="always" />
 
 </menu>

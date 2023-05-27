@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="4dp">
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_current_operation_step"
@@ -38,8 +38,8 @@
             android:id="@+id/siv_operation_done"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:src="@drawable/checkmark_seal_white"
             android:layout_marginStart="8dp"
+            android:src="@drawable/checkmark_seal_white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tv_current_operation_step"
             app:layout_constraintStart_toStartOf="parent"

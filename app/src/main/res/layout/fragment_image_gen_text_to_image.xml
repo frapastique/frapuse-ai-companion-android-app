@@ -1,311 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".ui.imagegen.ImageGenTextToImageFragment">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.imagegen.ImageGenTextToImageFragment">
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_prompt"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:text="@string/prompt">
+            android:id="@+id/ti_prompt"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/prompt">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt"
+                android:imeOptions="actionDone" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_negative_prompt"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ti_prompt"
-                app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
-                tools:text="@string/negative_prompt">
+            android:id="@+id/ti_negative_prompt"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/ti_prompt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ti_prompt"
+            tools:text="@string/negative_prompt">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_negative_prompt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/negative_prompt"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_negative_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/negative_prompt"
+                android:imeOptions="actionDone" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_steps"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/steps"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
-                app:layout_constraintEnd_toStartOf="@+id/dropdown_menu_model">
+            android:id="@+id/ti_steps"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:hint="@string/steps"
+            app:layout_constraintEnd_toStartOf="@+id/dropdown_menu_model"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_steps"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/steps_value"
-                    android:textAlignment="center"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_steps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:text="@string/steps_value"
+                android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dropdown_menu_model"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_height="53dp"
-                android:hint="@string/model"
-                android:layout_marginStart="4dp"
-                app:layout_constraintEnd_toEndOf="@+id/ti_negative_prompt"
-                app:layout_constraintStart_toEndOf="@+id/ti_steps"
-                app:layout_constraintTop_toTopOf="@+id/ti_steps">
+            android:id="@+id/dropdown_menu_model"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="4dp"
+            android:hint="@string/model"
+            app:layout_constraintEnd_toEndOf="@+id/ti_negative_prompt"
+            app:layout_constraintStart_toEndOf="@+id/ti_steps"
+            app:layout_constraintTop_toTopOf="@+id/ti_steps">
 
             <AutoCompleteTextView
-                    android:id="@+id/actv_model"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="none"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:imeOptions="actionNone"
-                    tools:text="@string/model" />
+                android:id="@+id/actv_model"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:imeOptions="actionNone"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="@string/model" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_cfg_scale"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/cfg"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/ti_height"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_model"
-                app:layout_constraintStart_toStartOf="parent">
+            android:id="@+id/ti_cfg_scale"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:hint="@string/cfg"
+            app:layout_constraintEnd_toStartOf="@+id/ti_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_model">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_cfg_scale"
-                    android:inputType="numberDecimal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cfg_value"
-                    android:textAlignment="center"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_cfg_scale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal"
+                android:text="@string/cfg_value"
+                android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_height"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="77dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/height"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                app:layout_constraintEnd_toStartOf="@+id/ti_width"
-                app:layout_constraintStart_toEndOf="@id/ti_cfg_scale"
-                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
+            android:id="@+id/ti_height"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="77dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:hint="@string/height"
+            app:layout_constraintEnd_toStartOf="@+id/ti_width"
+            app:layout_constraintStart_toEndOf="@id/ti_cfg_scale"
+            app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_height"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/height_width_value"
-                    android:textAlignment="center"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_height"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:text="@string/height_width_value"
+                android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_width"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="77dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/width"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@+id/ti_height"
-                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
+            android:id="@+id/ti_width"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="77dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:hint="@string/width"
+            app:layout_constraintStart_toEndOf="@+id/ti_height"
+            app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_width"
-                    android:text="@string/height_width_value"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:text="@string/height_width_value"
+                android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_seed"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/seed"
-                android:layout_marginStart="8dp"
-                app:layout_constraintStart_toEndOf="@+id/ti_width"
-                app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale"
-                app:layout_constraintEnd_toEndOf="@+id/dropdown_menu_model">
+            android:id="@+id/ti_seed"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:hint="@string/seed"
+            app:layout_constraintEnd_toEndOf="@+id/dropdown_menu_model"
+            app:layout_constraintStart_toEndOf="@+id/ti_width"
+            app:layout_constraintTop_toTopOf="@+id/ti_cfg_scale">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_seed"
-                    android:text="@string/seed_value"
-                    android:inputType="numberSigned"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:imeOptions="actionDone" />
+                android:id="@+id/et_seed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="numberSigned"
+                android:text="@string/seed_value"
+                android:textAlignment="center" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dropdown_menu_sampler_index"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-                android:layout_marginTop="4dp"
-                android:layout_width="0dp"
-                android:layout_height="53dp"
-                android:hint="@string/sampler"
-                app:layout_constraintStart_toStartOf="@+id/ti_cfg_scale"
-                app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale"
-                app:layout_constraintEnd_toEndOf="@+id/ti_width">
+            android:id="@+id/dropdown_menu_sampler_index"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="4dp"
+            android:hint="@string/sampler"
+            app:layout_constraintEnd_toEndOf="@+id/ti_width"
+            app:layout_constraintStart_toStartOf="@+id/ti_cfg_scale"
+            app:layout_constraintTop_toBottomOf="@+id/ti_cfg_scale">
 
             <AutoCompleteTextView
-                    android:id="@+id/actv_sampler_index"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="none"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:text="@string/sampler_value"
-                    android:imeOptions="actionNone" />
+                android:id="@+id/actv_sampler_index"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:imeOptions="actionNone"
+                android:inputType="none"
+                android:singleLine="true"
+                android:text="@string/sampler_value" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_get_to_rv_fragment"
-                android:text="@string/nav_to_rv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="300dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:id="@+id/tv_get_to_rv_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:text="@string/nav_to_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index" />
 
         <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_text_to_image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCorners"
-                tools:src="@tools:sample/avatars" />
+            android:id="@+id/iv_text_to_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
+            app:shapeAppearanceOverlay="@style/roundedCorners"
+            tools:src="@tools:sample/avatars" />
 
         <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/iv_text_to_image"
-                app:layout_constraintEnd_toEndOf="@+id/iv_text_to_image"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/iv_text_to_image"
+            app:layout_constraintStart_toStartOf="@+id/iv_text_to_image" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btn_generate"
-                android:src="@drawable/bolt_trianglebadge_exclamationmark_white"
-                android:contentDescription="@string/generate_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="64dp"
-                app:fabSize="mini"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:id="@+id/btn_generate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="64dp"
+            android:clickable="false"
+            android:contentDescription="@string/generate_button"
+            android:src="@drawable/bolt_trianglebadge_exclamationmark_white"
+            app:backgroundTint="@color/cardview_dark_background"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btn_save"
-                android:src="@drawable/square_and_arrow_down_white"
-                android:contentDescription="@string/save_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:layout_marginStart="24dp"
-                android:layout_marginBottom="64dp"
-                app:fabSize="mini"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="64dp"
+            android:clickable="false"
+            android:contentDescription="@string/save_button"
+            android:src="@drawable/square_and_arrow_down_white"
+            app:backgroundTint="@color/cardview_dark_background"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-                android:id="@+id/btn_reset"
-                android:text="@string/reset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:clickable="false"
-                app:backgroundTint="@color/cardview_dark_background"
-                app:layout_constraintEnd_toEndOf="@+id/ti_seed"
-                app:layout_constraintTop_toTopOf="@+id/dropdown_menu_sampler_index"
-                app:layout_constraintBottom_toBottomOf="@+id/dropdown_menu_sampler_index"
-                app:layout_constraintStart_toStartOf="@+id/ti_seed" />
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:clickable="false"
+            android:text="@string/reset"
+            app:backgroundTint="@color/cardview_dark_background"
+            app:layout_constraintBottom_toBottomOf="@+id/dropdown_menu_sampler_index"
+            app:layout_constraintEnd_toEndOf="@+id/ti_seed"
+            app:layout_constraintStart_toStartOf="@+id/ti_seed"
+            app:layout_constraintTop_toTopOf="@+id/dropdown_menu_sampler_index" />
 
         <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tv_debug_image_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="300dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:id="@+id/tv_debug_image_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dropdown_menu_sampler_index" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

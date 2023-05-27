@@ -1,94 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/nav_graph"
-        app:startDestination="@id/homeFragment">
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
 
     <fragment
-            android:id="@+id/homeFragment"
-            android:name="com.back.frapuse.ui.home.HomeFragment"
-            android:label="HomeFragment"
-            tools:layout="@layout/fragment_home">
+        android:id="@+id/homeFragment"
+        android:name="com.back.frapuse.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
         <action
-                android:id="@+id/action_homeFragment_to_imageGenTextToImageFragment"
-                app:destination="@id/imageGenTextToImageFragment" />
+            android:id="@+id/action_homeFragment_to_imageGenTextToImageFragment"
+            app:destination="@id/imageGenTextToImageFragment" />
         <action
-                android:id="@+id/action_homeFragment_to_textGenFragment"
-                app:destination="@id/textGenFragment" />
+            android:id="@+id/action_homeFragment_to_textGenFragment"
+            app:destination="@id/textGenFragment" />
         <action
             android:id="@+id/action_homeFragment_to_textGenDocumentOperationFragment"
             app:destination="@id/textGenDocumentOperationFragment" />
     </fragment>
     <fragment
-            android:id="@+id/imageGenTextToImageFragment"
-            android:name="com.back.frapuse.ui.imagegen.ImageGenTextToImageFragment"
-            android:label="TextToImageFragment"
-            tools:layout="@layout/fragment_image_gen_text_to_image" >
+        android:id="@+id/imageGenTextToImageFragment"
+        android:name="com.back.frapuse.ui.imagegen.ImageGenTextToImageFragment"
+        android:label="TextToImageFragment"
+        tools:layout="@layout/fragment_image_gen_text_to_image">
         <action
-                android:id="@+id/action_imageGenTextToImageFragment_to_homeFragment"
-                app:destination="@id/homeFragment" />
+            android:id="@+id/action_imageGenTextToImageFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
         <action
-                android:id="@+id/action_imageGenTextToImageFragment_to_imageGenRVSmallFragment"
-                app:destination="@id/imageGenRVSmallFragment" />
+            android:id="@+id/action_imageGenTextToImageFragment_to_imageGenRVSmallFragment"
+            app:destination="@id/imageGenRVSmallFragment" />
     </fragment>
     <fragment
-            android:id="@+id/imageGenRVSmallFragment"
-            android:name="com.back.frapuse.ui.imagegen.ImageGenRVSmallFragment"
-            android:label="ImageGenRecyclerViewFragment"
-            tools:layout="@layout/fragment_image_gen_rv_small" >
+        android:id="@+id/imageGenRVSmallFragment"
+        android:name="com.back.frapuse.ui.imagegen.ImageGenRVSmallFragment"
+        android:label="ImageGenRecyclerViewFragment"
+        tools:layout="@layout/fragment_image_gen_rv_small">
         <action
-                android:id="@+id/action_imageGenRVSmallFragment_to_imageGenRVDetailFragment"
-                app:destination="@id/imageGenRVDetailFragment" />
+            android:id="@+id/action_imageGenRVSmallFragment_to_imageGenRVDetailFragment"
+            app:destination="@id/imageGenRVDetailFragment" />
         <action
-                android:id="@+id/action_imageGenRVSmallFragment_to_imageGenTextToImageFragment"
-                app:destination="@id/imageGenTextToImageFragment" />
+            android:id="@+id/action_imageGenRVSmallFragment_to_imageGenTextToImageFragment"
+            app:destination="@id/imageGenTextToImageFragment" />
     </fragment>
     <fragment
-            android:id="@+id/imageGenRVDetailFragment"
-            android:name="com.back.frapuse.ui.imagegen.ImageGenRVDetailFragment"
-            android:label="ImageGenDetailFragment"
-            tools:layout="@layout/fragment_image_gen_rv_detail">
+        android:id="@+id/imageGenRVDetailFragment"
+        android:name="com.back.frapuse.ui.imagegen.ImageGenRVDetailFragment"
+        android:label="ImageGenDetailFragment"
+        tools:layout="@layout/fragment_image_gen_rv_detail">
         <action
-                android:id="@+id/action_imageGenRVDetailFragment_to_imageGenTextToImageFragment"
-                app:destination="@id/imageGenTextToImageFragment" />
+            android:id="@+id/action_imageGenRVDetailFragment_to_imageGenTextToImageFragment"
+            app:destination="@id/imageGenTextToImageFragment" />
         <action
-                android:id="@+id/action_imageGenRVDetailFragment_to_imageGenRVSmallFragment"
-                app:destination="@id/imageGenRVSmallFragment" />
+            android:id="@+id/action_imageGenRVDetailFragment_to_imageGenRVSmallFragment"
+            app:destination="@id/imageGenRVSmallFragment" />
     </fragment>
     <fragment
-            android:id="@+id/textGenFragment"
-            android:name="com.back.frapuse.ui.textgen.TextGenFragment"
-            android:label="TextGenFragment"
-            tools:layout="@layout/fragment_text_gen" >
+        android:id="@+id/textGenFragment"
+        android:name="com.back.frapuse.ui.textgen.TextGenFragment"
+        android:label="TextGenFragment"
+        tools:layout="@layout/fragment_text_gen">
         <action
-                android:id="@+id/action_textGenFragment_to_homeFragment"
-                app:destination="@id/homeFragment" />
+            android:id="@+id/action_textGenFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
         <action
-                android:id="@+id/action_textGenFragment_to_textGenSettingsFragment"
-                app:destination="@id/textGenSettingsFragment" />
+            android:id="@+id/action_textGenFragment_to_textGenSettingsFragment"
+            app:destination="@id/textGenSettingsFragment" />
         <action
-                android:id="@+id/action_textGenFragment_to_textGenAttachmentChatFragment"
-                app:destination="@id/textGenAttachmentDetailFragment" />
+            android:id="@+id/action_textGenFragment_to_textGenAttachmentChatFragment"
+            app:destination="@id/textGenAttachmentDetailFragment" />
     </fragment>
     <fragment
-            android:id="@+id/textGenSettingsFragment"
-            android:name="com.back.frapuse.ui.textgen.TextGenSettingsFragment"
-            android:label="TextGenSettingsFragment"
-            tools:layout="@layout/fragment_text_gen_settings">
+        android:id="@+id/textGenSettingsFragment"
+        android:name="com.back.frapuse.ui.textgen.TextGenSettingsFragment"
+        android:label="TextGenSettingsFragment"
+        tools:layout="@layout/fragment_text_gen_settings">
         <action
-                android:id="@+id/action_textGenSettingsFragment_to_textGenFragment"
-                app:destination="@id/textGenFragment" />
+            android:id="@+id/action_textGenSettingsFragment_to_textGenFragment"
+            app:destination="@id/textGenFragment" />
     </fragment>
     <fragment
-            android:id="@+id/textGenAttachmentDetailFragment"
-            android:name="com.back.frapuse.ui.textgen.TextGenAttachmentDetailFragment"
-            android:label="TextGenAttachmentChatFragment"
-            tools:layout="@layout/fragment_text_gen_attachment_detail" >
+        android:id="@+id/textGenAttachmentDetailFragment"
+        android:name="com.back.frapuse.ui.textgen.TextGenAttachmentDetailFragment"
+        android:label="TextGenAttachmentChatFragment"
+        tools:layout="@layout/fragment_text_gen_attachment_detail">
         <action
-                android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenFragment"
-                app:destination="@id/textGenFragment" />
+            android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenFragment"
+            app:destination="@id/textGenFragment" />
     </fragment>
     <fragment
         android:id="@+id/textGenDocumentOperationFragment"

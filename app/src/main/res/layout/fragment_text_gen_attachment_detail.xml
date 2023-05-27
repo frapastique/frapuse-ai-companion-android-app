@@ -1,92 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        tools:context=".ui.textgen.TextGenAttachmentDetailFragment">
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_chat_instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_chat_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                tools:context=".ui.textgen.TextGenAttachmentDetailFragment">
+                android:clipToPadding="false"
+                app:cardCornerRadius="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_constraintStart_toStartOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_chat_instructions"
-                    android:visibility="visible"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_chat_item_message"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/purple_1200"
+                    android:padding="8dp">
 
-                <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/mcv_chat_instructions"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_message_name"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        app:cardCornerRadius="16dp"
+                        android:visibility="visible"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:text="@string/chat_human" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_message_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
-                        tools:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintStart_toStartOf="parent">
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_message_name"
+                        tools:text="@string/app_description" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/cl_chat_item_message"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="8dp"
-                            android:background="@color/purple_1200">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_message_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/grey"
+                        android:textSize="7sp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_message_text"
+                        tools:ignore="SmallSp"
+                        tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42" />
 
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_message_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:visibility="visible"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="@string/chat_human" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_message_text"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tv_message_name"
-                                tools:text="@string/app_description" />
-
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_message_info"
-                                android:visibility="visible"
-                                android:textSize="7sp"
-                                android:textColor="@color/grey"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/tv_message_text"
-                                tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42"
-                                tools:ignore="SmallSp" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_attachment_preview"
-                    android:visibility="visible"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cl_chat_instructions"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:itemCount="1"
-                    tools:listitem="@layout/text_gen_rv_attachment_detail_item" />
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_attachment_preview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_chat_instructions"
+            tools:itemCount="1"
+            tools:listitem="@layout/text_gen_rv_attachment_detail_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

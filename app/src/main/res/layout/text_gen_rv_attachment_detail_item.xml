@@ -31,9 +31,9 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_page_count"
-                android:textColor="@color/dark_grey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="@+id/siv_attachment_preview"
                 app:layout_constraintTop_toTopOf="@+id/siv_attachment_preview"
                 tools:text="page count" />
@@ -42,18 +42,18 @@
                 android:id="@+id/tv_extracted_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_extracted_text_token_count"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="@string/app_description"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/siv_attachment_preview"
-                app:layout_constraintBottom_toTopOf="@+id/tv_extracted_text_token_count" />
+                tools:text="@string/app_description" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_extracted_text_token_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="@string/tokens" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

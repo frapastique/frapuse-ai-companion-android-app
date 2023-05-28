@@ -31,7 +31,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/black"
                     app:layout_scrollFlags="scroll|enterAlways|snap"
-                    app:menu="@menu/top_app_bar"
+                    app:layout_scrollEffect="compress"
                     app:navigationIcon="@drawable/back_icon"
                     app:title="@string/app_name" />
 
@@ -44,12 +44,11 @@
                 android:layout_alignParentBottom="true"
                 android:clipToPadding="false"
                 android:fadeScrollbars="true"
-                android:paddingTop="56dp"
-                android:paddingBottom="2dp"
                 android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
                 android:scrollbarSize="2dp"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical"
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 app:flow_horizontalAlign="center"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@id/rv_attachment_preview"
@@ -92,6 +91,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_send"
@@ -118,6 +118,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_attachment"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"

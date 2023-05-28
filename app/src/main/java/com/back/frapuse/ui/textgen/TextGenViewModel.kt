@@ -101,6 +101,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Instructions prompt, tells the AI who it is and how to behave
     private val _instructionsContext = MutableLiveData<String>()
+    val instructionsContext: LiveData<String>
+        get() = _instructionsContext
+
     private val _instructionContextTokenCount = MutableLiveData<String>()
 
     // Previous chat messages from human, gets inserted between instructions and next prompt
@@ -202,15 +205,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
 
             repository.closeWebsocketClient()
-
-            queryHaystack("Who wrote the lecture?")
         }
     }
 
 
     /* _______ Generation Parameters ___________________________________________________ */
 
-    private fun setInstructionsContext(instruction: String) {
+    fun setInstructionsContext(instruction: String) {
         _instructionsContext.value = "$instruction "
         _prompt.value = TextGenPrompt(
             prompt = _instructionsContext.value!!

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.back.frapuse.R
 import com.back.frapuse.data.textgen.models.llm.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenBinding
@@ -49,8 +50,10 @@ class TextGenFragment : Fragment() {
         // Parse activityResultRegistry to viewModel for the pdf contract
         viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
 
+        binding.topAppBar.inflateMenu(R.menu.top_app_bar)
         // Navigate to home
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
+            Log.e(TAG, "TopAppBar clicked:\n\tbtnBack")
             btnBack.findNavController().navigate(TextGenFragmentDirections
                 .actionTextGenFragmentToHomeFragment()
             )
@@ -59,9 +62,10 @@ class TextGenFragment : Fragment() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.btn_settings -> {
-                    /*findNavController().navigate(TextGenFragmentDirections
+                    Log.e(TAG, "TopAppBar clicked:\n\tbtnSettings")
+                    findNavController().navigate(TextGenFragmentDirections
                         .actionTextGenFragmentToTextGenSettingsFragment()
-                    )*/
+                    )
                     true
                 }
                 else -> false

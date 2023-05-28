@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.back.frapuse.data.textgen.models.TextGenChatLibrary
+import com.back.frapuse.data.textgen.models.llm.TextGenChatLibrary
 
 /**
  * TextGenDatabase as RoomDatabase for storing image metadata

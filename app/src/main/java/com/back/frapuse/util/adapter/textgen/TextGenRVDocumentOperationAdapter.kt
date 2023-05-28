@@ -7,7 +7,7 @@ import android.os.ParcelFileDescriptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.llm.TextGenDocumentOperation
 import com.back.frapuse.databinding.TextGenRvDocumentPreviewGalleryMediumItemBinding
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import java.io.File

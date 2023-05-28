@@ -1,9 +1,9 @@
 package com.back.frapuse.data.textgen.remote
 
-import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsRequest
-import com.back.frapuse.data.textgen.models.TextGenHaystackFilterDocumentsResponse
-import com.back.frapuse.data.textgen.models.TextGenHaystackQueryRequest
-import com.back.frapuse.data.textgen.models.TextGenHaystackQueryResponse
+import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackFilterDocumentsRequest
+import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackFilterDocumentsResponse
+import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackQueryRequest
+import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackQueryResponse
 import com.back.frapuse.util.Companions.Companion.moshi
 import com.back.frapuse.util.Companions.Companion.okHttpClient
 import okhttp3.MultipartBody

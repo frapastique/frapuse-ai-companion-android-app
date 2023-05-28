@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models
+package com.back.frapuse.data.textgen.models.llm
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

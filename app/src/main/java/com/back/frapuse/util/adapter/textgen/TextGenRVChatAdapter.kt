@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
-import com.back.frapuse.data.textgen.models.TextGenChatLibrary
+import com.back.frapuse.data.textgen.models.llm.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatAiAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding

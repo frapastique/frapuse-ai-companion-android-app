@@ -1,10 +1,10 @@
 package com.back.frapuse.data.textgen.remote
 
-import com.back.frapuse.data.textgen.models.TextGenGenerateRequest
-import com.back.frapuse.data.textgen.models.TextGenGenerateResponse
-import com.back.frapuse.data.textgen.models.TextGenModelResponse
-import com.back.frapuse.data.textgen.models.TextGenPrompt
-import com.back.frapuse.data.textgen.models.TextGenTokenCountResponse
+import com.back.frapuse.data.textgen.models.llm.TextGenGenerateRequest
+import com.back.frapuse.data.textgen.models.llm.TextGenGenerateResponse
+import com.back.frapuse.data.textgen.models.llm.TextGenModelResponse
+import com.back.frapuse.data.textgen.models.llm.TextGenPrompt
+import com.back.frapuse.data.textgen.models.llm.TextGenTokenCountResponse
 import com.back.frapuse.util.Companions.Companion.moshi
 import com.back.frapuse.util.Companions.Companion.okHttpClient
 import retrofit2.Retrofit

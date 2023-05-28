@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models
+package com.back.frapuse.data.textgen.models.haystack
 
 data class TextGenHaystackQueryDocumentsMeta(
     val _split_id: String,

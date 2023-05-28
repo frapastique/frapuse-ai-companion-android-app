@@ -1,18 +1,5 @@
 package com.back.frapuse.util.adapter.textgen
 
-import android.annotation.SuppressLint
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
-import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
-import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
-import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
-import com.back.frapuse.databinding.TextGenRvDocumentOperationStepItemBinding
-import com.back.frapuse.ui.textgen.TextGenViewModel
-import java.io.File
-
 /*class TextGenRVDocumentOperationAdapterOld(
     private var dataset: List<TextGenDocumentOperation>,
     private val viewModelTextGen: TextGenViewModel,

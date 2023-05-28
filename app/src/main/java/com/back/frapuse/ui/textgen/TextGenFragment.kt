@@ -12,7 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.back.frapuse.R
-import com.back.frapuse.data.textgen.models.TextGenAttachments
+import com.back.frapuse.data.textgen.models.llm.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenBinding
 import com.back.frapuse.util.AppStatus
 import com.back.frapuse.util.adapter.textgen.TextGenRVAttachmentAdapter

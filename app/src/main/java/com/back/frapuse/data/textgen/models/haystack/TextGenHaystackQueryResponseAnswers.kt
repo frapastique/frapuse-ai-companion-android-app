@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models
+package com.back.frapuse.data.textgen.models.haystack
 
 data class TextGenHaystackQueryResponseAnswers(
     val answer: String,

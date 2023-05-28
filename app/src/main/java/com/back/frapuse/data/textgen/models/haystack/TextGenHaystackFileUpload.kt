@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models
+package com.back.frapuse.data.textgen.models.haystack
 
 import com.squareup.moshi.JsonClass
 import java.io.File

@@ -195,24 +195,16 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } else {
                 _instructionsContext.value = _chatLibrary.value!!.first().message
                 _instructionContextTokenCount.value = _chatLibrary.value!!.first().tokens
-                try {
-                    createFinalPrompt()
-                } catch (e: Exception) {
-                    Log.e(
-                        TAG,
-                        "Error creating final prompt:\n\t$e"
-                    )
-                }
             }
             checkTokensCount()
 
             if (repository.getOperationCount() > 0) {
                 _documentLibrary.value = repository.getAllOperations()
-                /*_documentDataset.value = emptyList<TextGenAttachments>().toMutableList()*/
             } else {
                 _documentLibrary.value = emptyList()
             }
 
+            setAgentHaystackPrompt()
             repository.closeWebsocketClient()
         }
     }
@@ -255,7 +247,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
             )
 
-            _chatLibrary.value = repository.getAllChats()
+            getAllChats()
         }
     }
 
@@ -288,7 +280,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
             )
 
-            _chatLibrary.value = repository.getAllChats()
+            getAllChats()
         }
     }
 
@@ -314,7 +306,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 TextGenChatLibrary(
                     conversationID = 0,
                     dateTime = getDateTime(),
-                    modelName = "",
                     tokens = tokens,
                     type = "Human",
                     message = message,
@@ -324,10 +315,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     finalContext = _humanContext.value!!
                 )
             )
-
-            _chatLibrary.value = repository.getAllChats()
-            createFinalPrompt()
-            _createPromptStatus.value = AppStatus.DONE
+            getAllChats()
+            if (extensionHaystack.value == true) {
+                queryHaystack(message)
+            }
         }
     }
 
@@ -338,7 +329,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     TextGenChatLibrary(
                         conversationID = 0,
                         dateTime = getDateTime(),
-                        modelName = "",
                         tokens = _count.value!!,
                         type = "Human Attachment",
                         message = "",
@@ -355,7 +345,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     "Error saving Attachment:\n\t$e"
                 )
             }
-
         }
     }
 
@@ -364,11 +353,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Final prompt creator
-    private fun createFinalPrompt() {
+    fun createFinalPrompt() {
         var prevPrompt = _instructionsContext.value!!
         var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
         val currentChatLibrary = _chatLibrary.value!!.toMutableList()
-            .filter { it.type == "Human" || it.type == "AI" }
+            .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent"}
 
         // Take name, message and if file is provided also the extracted text and construct the prompt
         for (message in currentChatLibrary) {
@@ -391,6 +380,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             prompt = prevPrompt + "ASSISTANT:"
         )
         checkTokensCount()
+        _createPromptStatus.value = AppStatus.DONE
     }
 
     // Get the name of loaded AI model from API
@@ -413,9 +403,55 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    private fun insertOperationStep(step: String) {
+        viewModelScope.launch {
+            try {
+                repository.insertChat(
+                    TextGenChatLibrary(
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        type = "Operation",
+                        message = step
+                    )
+                )
+                getAllChats()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error inserting operation in chat library:\r\t$e"
+                )
+            }
+        }
+    }
+
+    private fun updateOperationStep(id: Long, step: String) {
+        viewModelScope.launch {
+            try {
+                repository.insertChat(
+                    TextGenChatLibrary(
+                        ID = id,
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        type = "Operation",
+                        status = true,
+                        message = step
+                    )
+                )
+                getAllChats()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error updating operation in chat library:\r\t$e"
+                )
+            }
+        }
+    }
+
     fun generateStream() {
         _apiStatus.value = AppStatus.LOADING
         _createPromptStatus.value = AppStatus.WAITING
+
+        insertOperationStep("Generating answer...")
 
         viewModelScope.launch {
             repository.insertChat(
@@ -456,7 +492,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 stopping_strings = listOf()
             )
 
-            _chatLibrary.value = repository.getAllChats()
             repository.openWebsocketClient()
             repository.sendMessageToWebSocket(_genRequestBody.value!!)
 
@@ -472,13 +507,20 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         _finalStreamResponse.value += stream.text
                     }
                     "stream_end" -> {
-                        updateChat(
+                        updateAIChat(
                             _chatLibrary.value!!.last().ID,
                             _finalStreamResponse.value!!
                         )
                         resetStream()
                         repository.closeWebsocketClient()
                         _finalStreamResponse.value = ""
+
+                        updateOperationStep(
+                            _chatLibrary.value!!.reversed()
+                                .find { it.message == "Generating answer..." }!!.ID,
+                            "Generating answer..."
+                        )
+
                         this.cancel()
                     }
                     "waiting" -> {
@@ -489,18 +531,21 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun resetStream() {
+    private fun resetStream() {
         repository.resetStreamResponseMessage()
         _apiStatus.value = AppStatus.DONE
     }
 
-    fun updateChat(messageID: Long, message: String) {
+    private fun updateAIChat(messageID: Long, message: String) {
         Log.e(TAG, "Latest response:\n\t$message")
-        _aiContext.value = "ASSISTANT: ${message.drop(1)} "
+        setAIContext("ASSISTANT: ${message.drop(1)}")
+
         viewModelScope.launch {
             val tokens = repository.getTokenCount(
                 TextGenPrompt(message.drop(1))
-            ).results.first().tokens
+            )
+                .results.first().tokens
+
             repository.updateChat(
                 TextGenChatLibrary(
                     ID = messageID,
@@ -509,6 +554,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     modelName = _model.value!!.result,
                     tokens = tokens,
                     type = "AI",
+                    status = true,
                     message = message.drop(1),
                     sentImage = "",
                     sentDocument = "",
@@ -516,7 +562,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     finalContext = _aiContext.value!!
                 )
             )
-            _chatLibrary.value = repository.getAllChats()
+            getAllChats()
             _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
         }
     }
@@ -526,6 +572,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun generateBlock() {
         _apiStatus.value = AppStatus.LOADING
         _createPromptStatus.value = AppStatus.WAITING
+
+        insertOperationStep("Generating answer...")
+
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = _prompt.value!!.prompt,
@@ -561,9 +610,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _genResponseText.value = _genResponseHolder.value!!.results.first()
                 val tokens = repository.getTokenCount(
                     TextGenPrompt(
-                    _genResponseText.value!!.text.drop(1)
+                        _genResponseText.value!!.text.drop(1)
+                    )
                 )
-                ).results.first().tokens
+                    .results.first().tokens
+
                 repository.insertChat(
                     TextGenChatLibrary(
                         conversationID = 0,
@@ -578,13 +629,15 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         finalContext = ""
                     )
                 )
-                _chatLibrary.value = repository.getAllChats()
-                _tokenCount.value = calculateTokens(_tokenCount.value!!, repository.getTokenCount(
-                    TextGenPrompt(
-                        "AI:" + _genResponseText.value!!.text
-                    )
-                ).results.first().tokens)
+                getAllChats()
+                _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
+
                 _apiStatus.value = AppStatus.DONE
+                updateOperationStep(
+                    _chatLibrary.value!!.reversed()
+                        .find { it.message == "Generating answer..." }!!.ID,
+                    "Generating answer..."
+                )
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -756,9 +809,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Method to get token count dedicated for extracted text
-    fun getTokenCount(text: String) {
+    private fun getTokenCount(text: String) {
         viewModelScope.launch {
-            _count.value = repository.getTokenCount(TextGenPrompt(prompt = text)).results.first().tokens
+            _count.value = repository.getTokenCount(
+                TextGenPrompt(prompt = text)
+            )
+                .results.first().tokens
         }
     }
 
@@ -852,15 +908,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun queryHaystack(query: String) {
         viewModelScope.launch {
             try {
+                insertOperationStep("Querying database...")
                 _haystackQueryResponse.value = repository.haystackQuery(
                     TextGenHaystackQueryRequest(
                         query = query
                     )
                 )
-                Log.e(
-                    TAG,
-                    "Haystack response:\n\t${_haystackQueryResponse.value.toString()}"
+                updateOperationStep(
+                    _chatLibrary.value!!.reversed()
+                        .find { it.message == "Querying database..." }!!.ID,
+                    "Querying database..."
                 )
+                agentHaystack()
             } catch (e: Exception) {
                 Log.d(
                     TAG,
@@ -870,399 +929,124 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    /* _______ Agent ___________________________________________________________________ */
 
+    private val _agentHaystackPrompt = MutableLiveData<String>()
+    val agentHaystackPrompt: LiveData<String>
+        get() = _agentHaystackPrompt
+    val agentHaystackStandardPrompt = "You have the following constraints:\n" +
+            "No user assistance!\n\n" +
+            "You are a reasoning AI assistant. In the following you received " +
+            "a query with a possible answer, score, context, document name " +
+            "and a document passage. Your Task is to answer the question correctly and " +
+            "has to include the document name! "
 
+    private val _agentHaystackResponse = MutableLiveData<String>()
+    val agentHaystackResponse: LiveData<String>
+        get() = _agentHaystackResponse
 
-
-    /*// Operation instruction
-    private val operationInstruction =
-        "A chat between a curious user and an artificial intelligence " +
-                "assistant. The assistant gives helpful, detailed, and " +
-                "polite answers to the user's questions. " +
-                "User: Write a concise summery of the following context!"
-
-    // Document id LiveData
-    private val _documentID = MutableLiveData<Long>(0)
-    val documentID: LiveData<Long>
-        get() = _documentID
-
-    // List of document paths
-    private var _documentDataset = MutableLiveData<MutableList<TextGenAttachments>>()
-    val documentDataset: LiveData<MutableList<TextGenAttachments>>
-        get() = _documentDataset
-
-    // File path of current document
-    private val _currentDocumentPath = MutableLiveData<String>()
-    val currentDocumentPath: LiveData<String>
-        get() = _currentDocumentPath
-
-    // Page count of current document
-    private val _currentPageCount = MutableLiveData<Int>(0)
-    val currentPageCount: LiveData<Int>
-        get() = _currentPageCount
-
-    // Current page number
-    private val _currentPage = MutableLiveData<Int>()
-    val currentPage: LiveData<Int>
-        get() = _currentPage
-
-    // Current document page LiveData
-    private val _currentPageBitmap = MutableLiveData<Bitmap>()
-    val currentPageBitmap: LiveData<Bitmap>
-        get() = _currentPageBitmap
-
-    // Current extraction LiveData
-    private val _currentExtraction = MutableLiveData<Text>()
-    val currentExtraction: LiveData<Text>
-        get() = _currentExtraction
-
-    fun setDocumentID() {
-        _documentID.value = _documentID.value!! + 1
+    fun setAgentHaystackPrompt() {
+        _agentHaystackPrompt.value = agentHaystackStandardPrompt
     }
 
-    private fun addDocumentToDataset(attachment: TextGenAttachments) {
-        val newDataset = _documentDataset.value?.toMutableList() ?: mutableListOf()
-        newDataset.add(attachment)
-        _documentDataset.value = newDataset
+    fun updateAgentHaystackPrompt(prompt: String) {
+        _agentHaystackPrompt.value = prompt
     }
 
-    fun setCurrentDocument(attachment: TextGenAttachments) {
-        _currentPageCount.value = attachment.pageCount
-        _currentDocumentPath.value = attachment.path
-        _documentID.value = attachment.id
-    }
+    fun agentHaystack() {
+        insertOperationStep("Database Agent reasoning...")
+        val haystackResponse = _haystackQueryResponse.value
+        if (haystackResponse != null) {
+            val query = haystackResponse.query
+            val firstPossibleAnswer = haystackResponse.answers.first().answer
+            val firstPossibleScore = haystackResponse.answers.first().score
+            val firstPossibleContext = haystackResponse.answers.first().context
+            val firstPossibleDocName = haystackResponse.answers.first().meta.name
+            val firstPossibleDocument = haystackResponse.documents.first().content
 
-    fun insertOperationDocument() {
-        viewModelScope.launch {
-            delay(1000)
-            val tokens = repository.getTokenCount(
-                TextGenPrompt(
-                    operationInstruction
+            val databaseAgentPrompt = _agentHaystackPrompt.value +
+                    "Query: $query\n" +
+                    "Possible Answer: $firstPossibleAnswer\n" +
+                    "Score: $firstPossibleScore\n" +
+                    "context: $firstPossibleContext\n" +
+                    "Document name: $firstPossibleDocName\n" +
+                    "Document passage: $firstPossibleDocument "
+
+            viewModelScope.launch {
+                val tokens = repository.getTokenCount(
+                    TextGenPrompt(databaseAgentPrompt)
                 )
-            )
-                .results.first().tokens
+                    .results.first().tokens
 
-            repository.insertOperation(
-                TextGenDocumentOperation(
-                    documentID = _documentID.value!!,
-                    modelName = _model.value!!.result,
-                    dateTime = getDateTime(),
-                    tokens = tokens,
-                    type = "Document",
-                    message = operationInstruction,
-                    status = "Done",
-                    pageCount = 0,
-                    currentPage = 0,
-                    path = _currentDocumentPath.value!!,
-                    context = ""
-                )
-            )
-            _operationLibrary.value = repository.getAllOperations()
-            _currentPage.value = 0
-            this.cancel()
-        }
-    }
-
-    fun insertOperationStep(step: String) {
-        viewModelScope.launch {
-            delay(1000)
-            try {
-                repository.insertOperation(
-                    TextGenDocumentOperation(
-                        documentID = _documentID.value!!,
-                        modelName = "",
+                repository.insertChat(
+                    TextGenChatLibrary(
+                        conversationID = 0,
                         dateTime = getDateTime(),
-                        tokens = "",
-                        type = "Operation",
-                        message = step,
-                        status = "Loading",
-                        pageCount = _currentPageCount.value!!,
-                        currentPage = _currentPage.value!!,
-                        path = _currentDocumentPath.value!!,
-                        context = ""
+                        tokens = tokens,
+                        type = "Database Agent",
+                        message = databaseAgentPrompt
                     )
                 )
-                _operationLibrary.value = repository.getAllOperations()
-            } catch (e: Exception) {
+
+                getAllChats()
+
+                _genRequestBody.value = TextGenGenerateRequest(
+                    prompt = databaseAgentPrompt,
+                    max_new_tokes = 500,
+                    do_sample = true,
+                    temperature = 1.3,
+                    top_p = 0.1,
+                    typical_p = 1.0,
+                    repetition_penalty = 1.18,
+                    top_k = 40,
+                    min_length = 0,
+                    no_repeat_ngram_size = 0,
+                    num_beams = 1,
+                    penalty_alpha = 0.0,
+                    length_penalty = 1.0,
+                    early_stopping = false,
+                    seed = -1,
+                    add_bos_token = true,
+                    truncation_length = 2048,
+                    ban_eos_token = false,
+                    skip_special_tokens = true,
+                    stopping_strings = listOf()
+                )
+
+                _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
+                _agentHaystackResponse.value = _genResponseHolder.value!!.results.first().text
+
+                val tokensResponse = repository.getTokenCount(
+                    TextGenPrompt(_agentHaystackResponse.value!!)
+                )
+                    .results.first().tokens
+
+                repository.updateChat(
+                    TextGenChatLibrary(
+                        ID = _chatLibrary.value!!.reversed()
+                            .find { it.type == "Database Agent" }!!.ID,
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        tokens = tokensResponse,
+                        type = "Database Agent",
+                        status = true,
+                        message = _agentHaystackResponse.value!!
+                    )
+                )
+
                 Log.e(
                     TAG,
-                    "Error inserting operation:\r\t$e"
+                    "Haystack database agent response:" +
+                            "\n\t${_genResponseHolder.value?.results?.first()?.text.toString()}"
                 )
-            }
-            this.cancel()
-        }
-    }
 
-    private fun updateOperationStep(id: Long, step: String, context: String) {
-        viewModelScope.launch {
-            delay(1000)
-            repository.updateOperation(
-                TextGenDocumentOperation(
-                    id = id,
-                    documentID = _documentID.value!!,
-                    modelName = _model.value!!.result,
-                    dateTime = getDateTime(),
-                    tokens = "",
-                    type = "Operation",
-                    message = step,
-                    status = "Done",
-                    pageCount = _currentPageCount.value!!,
-                    currentPage = _currentPage.value!!,
-                    path = _currentDocumentPath.value!!,
-                    context = context
+                updateOperationStep(
+                    _chatLibrary.value!!.reversed()
+                        .find { it.message == "Database Agent reasoning..." }!!.ID,
+                    "Database Agent reasoning..."
                 )
-            )
-            _operationLibrary.value = repository.getAllOperations()
-            this.cancel()
-        }
-    }
-
-    fun convertDocument(stepID: Long) {
-        viewModelScope.launch {
-            delay(1000)
-            try {
-            // Create a file with attachment file
-            val file = File(_currentDocumentPath.value!!)
-
-            // Create a PdfRenderer from the file
-            val parcelFileDescriptor = ParcelFileDescriptor.open(
-                file,
-                ParcelFileDescriptor.MODE_READ_ONLY
-            )
-            val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-
-            // Get the first page of the PDF file
-            val pdfPage = pdfRenderer.openPage(_currentPage.value!!)
-
-            // Create a bitmap with the same size and config as the page
-            val bitmap = Bitmap.createBitmap(
-                pdfPage.width,
-                pdfPage.height,
-                Bitmap.Config.ARGB_8888
-            )
-            bitmap.eraseColor(Color.WHITE)
-
-            // Render the page content to the bitmap
-            pdfPage.render(
-                bitmap,
-                null,
-                null,
-                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-            )
-
-            _currentPageCount.value = pdfRenderer.pageCount
-
-            _currentPageBitmap.value = bitmap
-
-            // Close pdf page and renderer
-            pdfPage.close()
-            pdfRenderer.close()
-
-            // Update current operation
-            updateOperationStep(stepID, "Convert page...", "")
-
-            // Start new operation
-            insertOperationStep("Extract text...")
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "Error converting document:\n\t$e"
-                )
-            }
-            this.cancel()
-        }
-    }
-
-    // Method to extract the text from a bitmap. Process the text block and get token count on success
-    fun extractDocumentText(stepID: Long) {
-        viewModelScope.launch {
-            delay(1000)
-            try {
-                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                val image = InputImage.fromBitmap(_currentPageBitmap.value!!, 0)
-
-                recognizer.process(image)
-                    .addOnSuccessListener { extractedText ->
-                        _currentExtraction.value = extractedText
-                        updateOperationStep(stepID, "Extract text...", "")
-                        insertOperationStep("Process text...")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(
-                            TAG,
-                            "Error extracting text:\n\t$e"
-                        )
-                    }
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "Error extracting text with ocr:\n\t$e"
-                )
-            }
-            this.cancel()
-        }
-    }
-
-    // Process extracted document text, build a string and return text
-    fun processDocumentText(stepID: Long) {
-        viewModelScope.launch {
-            delay(1000)
-            try {
-                val textBlocks = _currentExtraction.value!!.textBlocks
-                if (textBlocks.size == 0) {
-                    _textOut.value = "No text found"
-                }
-                val stringBuilder = StringBuilder()
-                for (block in textBlocks) {
-                    stringBuilder.append("\n\n")
-                    val lines = block.lines
-                    for (line in lines) {
-                        val elements = line.elements
-                        for (element in elements) {
-                            val elementText = element.text
-                            stringBuilder.append("$elementText ")
-                        }
-                    }
-                }
-                updateOperationStep(stepID, "Process text...", stringBuilder.toString())
-                insertAIResponseOperation(stringBuilder.toString())
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "Error processing document text:\n\t$e"
-                )
-            }
-            this.cancel()
-        }
-    }
-
-    // Insert AI response operation
-    private fun insertAIResponseOperation(extractedText: String) {
-        viewModelScope.launch {
-            delay(1000)
-            repository.insertOperation(
-                TextGenDocumentOperation(
-                    documentID = _documentID.value!!,
-                    modelName = _model.value!!.result,
-                    dateTime = getDateTime(),
-                    tokens = "",
-                    type = "AI",
-                    message = "",
-                    status = "Loading",
-                    pageCount = _currentPageCount.value!!,
-                    currentPage = _currentPage.value!!,
-                    path = _currentDocumentPath.value!!,
-                    context = ""
-                )
-            )
-            _operationLibrary.value = repository.getAllOperations()
-
-            val summaryPrompt: String = operationInstruction + extractedText + "Assistant:"
-            _genRequestBody.value = TextGenGenerateRequest(
-                prompt = summaryPrompt,
-                max_new_tokes = 250,
-                do_sample = true,
-                temperature = 1.3,
-                top_p = 0.1,
-                typical_p = 1.0,
-                repetition_penalty = 1.18,
-                top_k = 40,
-                min_length = 0,
-                no_repeat_ngram_size = 0,
-                num_beams = 1,
-                penalty_alpha = 0.0,
-                length_penalty = 1.0,
-                early_stopping = false,
-                seed = -1,
-                add_bos_token = true,
-                truncation_length = 2048,
-                ban_eos_token = false,
-                skip_special_tokens = true,
-                stopping_strings = listOf()
-            )
-
-            repository.openWebsocketClient()
-            repository.sendMessageToWebSocket(_genRequestBody.value!!)
-
-            streamResponseMessage.asFlow().collect { stream ->
-                when (stream.event) {
-                    "text_stream" -> {
-                        _finalStreamResponse.value += stream.text
-                    }
-                    "stream_end" -> {
-                        repository.closeWebsocketClient()
-                        updateAIResponseOperation(
-                            operationLibrary.value!!.last().id,
-                            _finalStreamResponse.value!!.drop(1)
-                        )
-                        this.cancel()
-                    }
-                    "waiting" -> {
-
-                    }
-                }
+                createFinalPrompt()
             }
         }
     }
-
-    // Update AI response operation
-    fun updateAIResponseOperation(id: Long, aiMessage: String) {
-        resetStream()
-        _finalStreamResponse.value = ""
-
-        viewModelScope.launch {
-            delay(1000)
-            val tokensCountMessage = repository.getTokenCount(
-                TextGenPrompt(aiMessage)
-            )
-                .results.first().tokens
-            repository.updateOperation(
-                TextGenDocumentOperation(
-                    id = id,
-                    documentID = _documentID.value!!,
-                    modelName = _model.value!!.result,
-                    dateTime = getDateTime(),
-                    tokens = tokensCountMessage,
-                    type = "AI",
-                    message = aiMessage,
-                    status = "Done",
-                    pageCount = _currentPageCount.value!!,
-                    currentPage = _currentPage.value!!,
-                    path = _currentDocumentPath.value!!,
-                    context = ""
-                )
-            )
-            _operationLibrary.value = repository.getAllOperations()
-            if (_currentPage.value!! < _currentPageCount.value!!-1) {
-                _currentPage.value = _currentPage.value!! + 1
-            } else if (_documentDataset.value!!.size > 1) {
-                val nextDocument = _documentDataset.value!!
-                    .getOrNull(_documentDataset.value!!
-                        .indexOfFirst { it.id == _documentID.value!! } + 1)
-                if (nextDocument != null) {
-                    setCurrentDocument(nextDocument)
-                    insertOperationDocument()
-                }
-            }
-            repository.closeWebsocketClient()
-            this.cancel()
-        }
-    }
-
-    // Reset operation library
-    fun deleteOperationLibrary() {
-        viewModelScope.launch {
-            try {
-                repository.deleteAllOperations()
-                deleteAllPdf(app)
-                /*_documentDataset.value = emptyList<TextGenAttachments>().toMutableList()*/
-                _documentLibrary.value = repository.getAllOperations()
-                /*_documentID.value = 0*/
-            } catch (e: Exception) {
-                Log.e(TAG, "Error resetting document operation:\n\t$e")
-            }
-        }
-    }*/
-
-    /* _______ TextGen Haystack ________________________________________________________ */
 }

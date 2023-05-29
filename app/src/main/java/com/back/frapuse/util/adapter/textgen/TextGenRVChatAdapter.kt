@@ -11,6 +11,7 @@ import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatAiAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
+import com.back.frapuse.databinding.TextGenRvChatEmptyItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanItemBinding
 import com.back.frapuse.databinding.TextGenRvChatInstructionItemBinding
@@ -31,6 +32,7 @@ class TextGenRVChatAdapter(
         private const val TYPE_AI_MESSAGE = 3
         private const val TYPE_AI_ATTACHMENT = 4
         private const val TYPE_OPERATION_STEP = 5
+        private const val TYPE_DATABASE_AGENT = 6
     }
 
     inner class TextGenRVChatInstructionViewHolder(
@@ -55,6 +57,10 @@ class TextGenRVChatAdapter(
 
     inner class TextGenRVChatOperationStepViewHolder(
         internal val binding: TextGenRvChatOperationStepItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatEmptyViewHolder(
+        internal val binding: TextGenRvChatEmptyItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -108,6 +114,14 @@ class TextGenRVChatAdapter(
                 )
                 TextGenRVChatOperationStepViewHolder(binding)
             }
+            TYPE_DATABASE_AGENT -> {
+                val binding = TextGenRvChatEmptyItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatEmptyViewHolder(binding)
+            }
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -149,8 +163,8 @@ class TextGenRVChatAdapter(
             }
 
             is TextGenRVChatAIViewHolder -> {
-                when {
-                    chat.message.isEmpty() -> {
+                when(chat.status) {
+                    false -> {
                         viewModelTextGen.finalStreamResponse.observe(
                             holder.itemView.context as LifecycleOwner
                         ) { finalStreamResponse ->
@@ -163,7 +177,7 @@ class TextGenRVChatAdapter(
                                         chat.dateTime
                         }
                     }
-                    else -> {
+                    true -> {
                         holder.binding.tvMessageTextAi.text = chat.message
                         holder.binding.tvMessageInfoAi.text =
                             viewModelTextGen.model.value!!.result +
@@ -192,6 +206,8 @@ class TextGenRVChatAdapter(
                     }
                 }
             }
+
+            is TextGenRVChatEmptyViewHolder -> {  } // Prevents spawning of agents response
         }
     }
 
@@ -213,8 +229,11 @@ class TextGenRVChatAdapter(
             "AI Attachment" -> { // AI attachment
                 TYPE_AI_ATTACHMENT
             }
-            else -> { // Current operation
+            "Operation" -> { // Current operation
                 TYPE_OPERATION_STEP
+            }
+            else -> { // Database Agent
+                TYPE_DATABASE_AGENT
             }
         }
     }

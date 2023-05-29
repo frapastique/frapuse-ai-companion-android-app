@@ -57,7 +57,6 @@ class TextGenSettingsFragment : Fragment() {
             viewModel.extensionToggle("haystack")
         }
 
-
         // Set custom instructions && adjust end icon of text input layout
         var newInstructionsContext: String
         binding.etInstructions.addTextChangedListener { newInstruction ->
@@ -73,6 +72,9 @@ class TextGenSettingsFragment : Fragment() {
             }
         }
 
+        // Load current instructions into edit text field
+        binding.etInstructionsAgentHaystack.setText(viewModel.agentHaystackPrompt.value)
+
         // Compare instructions and set instructions end icon state
         viewModel.instructionsContext.observe(viewLifecycleOwner) { currentInstructions ->
             when {
@@ -85,6 +87,43 @@ class TextGenSettingsFragment : Fragment() {
                         viewModel.updateInstructionsContext(viewModel.standardInstruction)
                         binding.etInstructions.setText(viewModel.instructionsContext.value)
                         binding.tiInstructions.endIconMode = END_ICON_NONE
+                    }
+                }
+                else -> {
+                    binding.tiInstructions.endIconMode = END_ICON_NONE
+                }
+            }
+        }
+
+        // Set custom agent haystack instructions && adjust end icon of text input layout
+        var newInstructionsAgentDocSearch: String
+        binding.etInstructionsAgentHaystack.addTextChangedListener { newInstruction ->
+            if (!newInstruction.isNullOrEmpty()) {
+                newInstructionsAgentDocSearch = newInstruction.toString()
+                binding.tiInstructionsAgentHaystack.setEndIconDrawable(
+                    R.drawable.apply_icon
+                )
+                binding.tiInstructionsAgentHaystack.endIconMode = END_ICON_CUSTOM
+                binding.tiInstructionsAgentHaystack.setEndIconOnClickListener {
+                    viewModel.updateAgentHaystackPrompt(newInstructionsAgentDocSearch)
+                }
+            }
+        }
+
+        // Compare agent haystack instructions and set instructions end icon state
+        viewModel.agentHaystackPrompt.observe(viewLifecycleOwner) { currentInstructions ->
+            when {
+                currentInstructions != viewModel.agentHaystackStandardPrompt -> {
+                    binding.tiInstructionsAgentHaystack.setEndIconDrawable(
+                        R.drawable.reset_icon
+                    )
+                    binding.tiInstructionsAgentHaystack.endIconMode = END_ICON_CUSTOM
+                    binding.tiInstructionsAgentHaystack.setEndIconOnClickListener {
+                        viewModel.updateAgentHaystackPrompt(viewModel.agentHaystackStandardPrompt)
+                        binding.etInstructionsAgentHaystack.setText(
+                            viewModel.agentHaystackPrompt.value
+                        )
+                        binding.tiInstructionsAgentHaystack.endIconMode = END_ICON_NONE
                     }
                 }
                 else -> {

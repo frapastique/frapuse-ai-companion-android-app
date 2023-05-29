@@ -79,7 +79,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Stream"
+                            android:text="@string/response_stream"
                             android:textSize="20sp"
                             app:layout_constraintBottom_toTopOf="@+id/mtv_block"
                             app:layout_constraintStart_toStartOf="parent"
@@ -90,9 +90,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Block"
+                            android:text="@string/response_block"
                             android:textSize="20sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/rg_responses"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/mtv_stream" />
 
@@ -195,7 +195,7 @@
                         android:layout_marginTop="8dp"
                         app:endIconContentDescription="Reset"
                         app:endIconDrawable="@drawable/reset_icon"
-                        app:endIconMode="custom"
+                        app:endIconMode="none"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/mtv_parameters"
@@ -206,31 +206,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/instruction"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:paddingBottom="8dp" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/ti_max_new_tokens"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:endIconContentDescription="Reset"
-                        app:endIconDrawable="@drawable/reset_icon"
-                        app:endIconMode="custom"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/ti_instructions"
-                        tools:text="@string/response_size">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_max_new_tokens"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/response_size"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"
                             android:paddingBottom="8dp" />

@@ -97,12 +97,25 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val finalStreamResponse: LiveData<String>
         get() = _finalStreamResponse
 
+    /* _______ Extensions ______________________________________________________________ */
+
+    // Haystack (document search) extension on/off holder
+    private val _extensionHaystack = MutableLiveData<Boolean>(true)
+    val extensionHaystack: LiveData<Boolean>
+        get() = _extensionHaystack
+
+
     /* _______ Prompts _________________________________________________________________ */
 
     // Instructions prompt, tells the AI who it is and how to behave
     private val _instructionsContext = MutableLiveData<String>()
     val instructionsContext: LiveData<String>
         get() = _instructionsContext
+
+    // Standard instructions prompt
+    val standardInstruction = "A chat between a curious user and an artificial intelligence" +
+            " assistant. The assistant gives helpful, detailed, and " +
+            "polite answers to the user's questions."
 
     private val _instructionContextTokenCount = MutableLiveData<String>()
 
@@ -178,11 +191,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             getModel()
             _chatLibrary.value = repository.getAllChats()
             if (repository.getChatCount() == 0) {
-                setInstructionsContext(
-                    "A chat between a curious user and an artificial intelligence" +
-                            " assistant. The assistant gives helpful, detailed, and " +
-                            "polite answers to the user's questions."
-                )
+                setInstructionsContext(standardInstruction)
             } else {
                 _instructionsContext.value = _chatLibrary.value!!.first().message
                 _instructionContextTokenCount.value = _chatLibrary.value!!.first().tokens
@@ -208,11 +217,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    /* _______ Extensions ______________________________________________________________ */
+
+    fun extensionToggle(extension: String) {
+        if (extension == "haystack") {
+            _extensionHaystack.value = _extensionHaystack.value != true
+        }
+    }
 
     /* _______ Generation Parameters ___________________________________________________ */
 
-    fun setInstructionsContext(instruction: String) {
-        _instructionsContext.value = "$instruction "
+    private fun setInstructionsContext(instructions: String) {
+        _instructionsContext.value = instructions
         _prompt.value = TextGenPrompt(
             prompt = _instructionsContext.value!!
         )
@@ -226,6 +242,39 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             repository.insertChat(
                 TextGenChatLibrary(
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    modelName = "",
+                    tokens = _instructionContextTokenCount.value!!,
+                    type = "Instructions",
+                    message = instructions,
+                    sentImage = "",
+                    sentDocument = "",
+                    documentText = "",
+                    finalContext = _instructionsContext.value!!
+                )
+            )
+
+            _chatLibrary.value = repository.getAllChats()
+        }
+    }
+
+    fun updateInstructionsContext(instruction: String) {
+        _instructionsContext.value = instruction
+        _prompt.value = TextGenPrompt(
+            prompt = _instructionsContext.value!!
+        )
+        viewModelScope.launch {
+            _instructionContextTokenCount.value = repository.getTokenCount(
+                TextGenPrompt(
+                    _instructionsContext.value!!
+                )
+            )
+                .results.first().tokens
+
+            repository.updateChat(
+                TextGenChatLibrary(
+                    ID = _chatLibrary.value!!.first().ID,
                     conversationID = 0,
                     dateTime = getDateTime(),
                     modelName = "",
@@ -569,13 +618,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Method to clear chat library and populate with base entries
     fun deleteChatLibrary() {
+        val instruction: String = if (_instructionsContext.value.isNullOrEmpty()) {
+            standardInstruction
+        } else {
+            _instructionsContext.value!!
+        }
         viewModelScope.launch {
             repository.deleteAllChats()
-            setInstructionsContext(
-                "A chat between a curious user and an artificial intelligence" +
-                        " assistant. The assistant gives helpful, detailed, and " +
-                        "polite answers to the user's questions."
-            )
+            setInstructionsContext(instruction)
             _chatLibrary.value = repository.getAllChats()
         }
     }

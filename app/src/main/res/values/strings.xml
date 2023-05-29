@@ -58,6 +58,8 @@
     <string name="parameters">Parameters:</string>
     <string name="response_size">RESPONSE SIZE</string>
     <string name="responses">Responses:</string>
+    <string name="response_block">Block</string>
+    <string name="response_stream">Stream</string>
 
 
 </resources>

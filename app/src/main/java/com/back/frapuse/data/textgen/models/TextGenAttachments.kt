@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models.llm
+package com.back.frapuse.data.textgen.models
 
 data class TextGenAttachments(
     val id: Long,

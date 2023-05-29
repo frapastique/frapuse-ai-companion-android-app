@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
-import com.back.frapuse.data.textgen.models.llm.TextGenAttachments
+import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.TextGenRvAttachmentFooterBinding
 import com.back.frapuse.databinding.TextGenRvAttachmentItemBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

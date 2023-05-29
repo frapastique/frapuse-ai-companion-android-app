@@ -45,7 +45,7 @@ class HomeFragment : Fragment() {
 
         binding.btnChat.setOnClickListener { btnChat ->
             btnChat.findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToTextGenFragment()
+                HomeFragmentDirections.actionHomeFragmentToTextGenChatFragment()
             )
         }
 

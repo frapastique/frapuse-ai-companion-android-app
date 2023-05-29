@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5649c90796c05706f509fc8b43e80109",
+    "identityHash": "bbbf5181ad14e143cc5a8451184ce640",
     "entities": [
       {
         "tableName": "textGenChatLibrary_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `conversationID` INTEGER NOT NULL, `modelName` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `type` TEXT NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL, `documentText` TEXT NOT NULL, `finalContext` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `conversationID` INTEGER NOT NULL, `modelName` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `tokens` TEXT NOT NULL, `type` TEXT NOT NULL, `status` INTEGER NOT NULL, `message` TEXT NOT NULL, `sentImage` TEXT NOT NULL, `sentDocument` TEXT NOT NULL, `documentText` TEXT NOT NULL, `finalContext` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "ID",
@@ -42,6 +42,12 @@
             "fieldPath": "type",
             "columnName": "type",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -88,7 +94,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5649c90796c05706f509fc8b43e80109')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bbbf5181ad14e143cc5a8451184ce640')"
     ]
   }
 }

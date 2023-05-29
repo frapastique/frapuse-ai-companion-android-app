@@ -47,7 +47,7 @@ class TextGenSettingsFragment : Fragment() {
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
             Log.e(TAG, "TopAppBar clicked:\n\tbtnBack")
             btnBack.findNavController().navigate(TextGenSettingsFragmentDirections
-                .actionTextGenSettingsFragmentToTextGenFragment()
+                .actionTextGenSettingsFragmentToTextGenChatFragment()
             )
         }
 

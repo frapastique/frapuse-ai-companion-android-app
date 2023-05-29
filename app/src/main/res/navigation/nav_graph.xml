@@ -14,8 +14,8 @@
             android:id="@+id/action_homeFragment_to_imageGenTextToImageFragment"
             app:destination="@id/imageGenTextToImageFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_textGenFragment"
-            app:destination="@id/textGenFragment" />
+            android:id="@+id/action_homeFragment_to_textGenChatFragment"
+            app:destination="@id/textGenChatFragment" />
         <action
             android:id="@+id/action_homeFragment_to_textGenDocumentOperationFragment"
             app:destination="@id/textGenDocumentOperationFragment" />
@@ -57,18 +57,18 @@
             app:destination="@id/imageGenRVSmallFragment" />
     </fragment>
     <fragment
-        android:id="@+id/textGenFragment"
-        android:name="com.back.frapuse.ui.textgen.TextGenFragment"
+        android:id="@+id/textGenChatFragment"
+        android:name="com.back.frapuse.ui.textgen.TextGenChatFragment"
         android:label="TextGenFragment"
-        tools:layout="@layout/fragment_text_gen">
+        tools:layout="@layout/fragment_text_gen_chat">
         <action
-            android:id="@+id/action_textGenFragment_to_homeFragment"
+            android:id="@+id/action_textGenChatFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
         <action
-            android:id="@+id/action_textGenFragment_to_textGenSettingsFragment"
+            android:id="@+id/action_textGenChatFragment_to_textGenSettingsFragment"
             app:destination="@id/textGenSettingsFragment" />
         <action
-            android:id="@+id/action_textGenFragment_to_textGenAttachmentChatFragment"
+            android:id="@+id/action_textGenChatFragment_to_textGenAttachmentChatFragment"
             app:destination="@id/textGenAttachmentDetailFragment" />
     </fragment>
     <fragment
@@ -77,8 +77,8 @@
         android:label="TextGenSettingsFragment"
         tools:layout="@layout/fragment_text_gen_settings">
         <action
-            android:id="@+id/action_textGenSettingsFragment_to_textGenFragment"
-            app:destination="@id/textGenFragment" />
+            android:id="@+id/action_textGenSettingsFragment_to_textGenChatFragment"
+            app:destination="@id/textGenChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/textGenAttachmentDetailFragment"
@@ -86,8 +86,8 @@
         android:label="TextGenAttachmentChatFragment"
         tools:layout="@layout/fragment_text_gen_attachment_detail">
         <action
-            android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenFragment"
-            app:destination="@id/textGenFragment" />
+            android:id="@+id/action_textGenAttachmentDetailFragment_to_textGenChatFragment"
+            app:destination="@id/textGenChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/textGenDocumentOperationFragment"

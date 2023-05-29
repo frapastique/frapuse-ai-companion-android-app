@@ -20,7 +20,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.textgen.TextGenRepository
-import com.back.frapuse.data.textgen.models.llm.TextGenChatLibrary
+import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateRequest
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateResponse
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateResponseText
@@ -28,7 +28,7 @@ import com.back.frapuse.data.textgen.models.llm.TextGenModelResponse
 import com.back.frapuse.data.textgen.models.llm.TextGenPrompt
 import com.back.frapuse.data.textgen.local.getTextGenDatabase
 import com.back.frapuse.data.textgen.local.getTextGenDocumentOperationDatabase
-import com.back.frapuse.data.textgen.models.llm.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackMeta
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackQueryRequest
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackQueryResponse

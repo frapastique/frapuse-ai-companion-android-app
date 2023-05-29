@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.back.frapuse.data.textgen.models.llm.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 
 @Dao
 interface TextGenDocumentOperationDao {

@@ -1,4 +1,4 @@
-package com.back.frapuse.data.textgen.models.llm
+package com.back.frapuse.data.textgen.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,6 +12,7 @@ data class TextGenChatLibrary(
     val dateTime: String,
     val tokens: String,
     val type: String,
+    var status: Boolean = false,
     val message: String,
     val sentImage: String,
     val sentDocument: String,

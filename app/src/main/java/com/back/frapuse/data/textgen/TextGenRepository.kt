@@ -3,7 +3,7 @@ package com.back.frapuse.data.textgen
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.back.frapuse.data.textgen.models.llm.TextGenChatLibrary
+import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateRequest
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateResponse
 import com.back.frapuse.data.textgen.models.llm.TextGenGenerateResponseText
@@ -13,7 +13,7 @@ import com.back.frapuse.data.textgen.models.llm.TextGenTokenCountBody
 import com.back.frapuse.data.textgen.models.llm.TextGenTokenCountResponse
 import com.back.frapuse.data.textgen.local.TextGenChatLibraryDatabase
 import com.back.frapuse.data.textgen.local.TextGenDocumentOperationDatabase
-import com.back.frapuse.data.textgen.models.llm.TextGenDocumentOperation
+import com.back.frapuse.data.textgen.models.TextGenDocumentOperation
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackFilterDocumentsRequest
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackFilterDocumentsResponse
 import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackMeta

@@ -13,8 +13,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.back.frapuse.R
-import com.back.frapuse.data.textgen.models.llm.TextGenAttachments
-import com.back.frapuse.databinding.FragmentTextGenBinding
+import com.back.frapuse.data.textgen.models.TextGenAttachments
+import com.back.frapuse.databinding.FragmentTextGenChatBinding
 import com.back.frapuse.util.AppStatus
 import com.back.frapuse.util.adapter.textgen.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.adapter.textgen.TextGenRVChatAdapter
@@ -22,11 +22,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 private const val TAG = "TextGenFragment"
 
-class TextGenFragment : Fragment() {
+class TextGenChatFragment : Fragment() {
     // Get the viewModel into the logic
     private val viewModel: TextGenViewModel by activityViewModels()
     // Declaration of binding
-    private lateinit var binding: FragmentTextGenBinding
+    private lateinit var binding: FragmentTextGenChatBinding
 
     /**
      * Lifecycle Function onCreateView
@@ -38,7 +38,7 @@ class TextGenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel.getAllChats()
-        binding = FragmentTextGenBinding.inflate(inflater, container, false)
+        binding = FragmentTextGenChatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,8 +54,8 @@ class TextGenFragment : Fragment() {
         // Navigate to home
         binding.topAppBar.setNavigationOnClickListener { btnBack ->
             Log.e(TAG, "TopAppBar clicked:\n\tbtnBack")
-            btnBack.findNavController().navigate(TextGenFragmentDirections
-                .actionTextGenFragmentToHomeFragment()
+            btnBack.findNavController().navigate(TextGenChatFragmentDirections
+                .actionTextGenChatFragmentToHomeFragment()
             )
         }
         // Menu item click listener for topAppBar
@@ -63,8 +63,8 @@ class TextGenFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.btn_settings -> {
                     Log.e(TAG, "TopAppBar clicked:\n\tbtnSettings")
-                    findNavController().navigate(TextGenFragmentDirections
-                        .actionTextGenFragmentToTextGenSettingsFragment()
+                    findNavController().navigate(TextGenChatFragmentDirections
+                        .actionTextGenChatFragmentToTextGenSettingsFragment()
                     )
                     true
                 }

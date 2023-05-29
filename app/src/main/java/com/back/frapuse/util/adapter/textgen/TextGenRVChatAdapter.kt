@@ -8,13 +8,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
-import com.back.frapuse.data.textgen.models.llm.TextGenChatLibrary
+import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatAiAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanItemBinding
 import com.back.frapuse.databinding.TextGenRvChatInstructionItemBinding
-import com.back.frapuse.ui.textgen.TextGenFragmentDirections
+import com.back.frapuse.databinding.TextGenRvChatOperationStepItemBinding
+import com.back.frapuse.ui.textgen.TextGenChatFragmentDirections
 import java.io.File
 
 class TextGenRVChatAdapter(
@@ -29,6 +30,7 @@ class TextGenRVChatAdapter(
         private const val TYPE_HUMAN_ATTACHMENT = 2
         private const val TYPE_AI_MESSAGE = 3
         private const val TYPE_AI_ATTACHMENT = 4
+        private const val TYPE_OPERATION_STEP = 5
     }
 
     inner class TextGenRVChatInstructionViewHolder(
@@ -49,6 +51,10 @@ class TextGenRVChatAdapter(
 
     inner class TextGenRVChatAIAttachmentViewHolder(
         internal val binding: TextGenRvChatAiAttachmentItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatOperationStepViewHolder(
+        internal val binding: TextGenRvChatOperationStepItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -94,6 +100,14 @@ class TextGenRVChatAdapter(
                 )
                 TextGenRVChatAIAttachmentViewHolder(binding)
             }
+            TYPE_OPERATION_STEP -> {
+                val binding = TextGenRvChatOperationStepItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatOperationStepViewHolder(binding)
+            }
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -127,8 +141,8 @@ class TextGenRVChatAdapter(
                 // Long click listener on attachment for navigation to attachment fragment
                 holder.binding.clChatHumanAttachmentWholeItem.setOnLongClickListener { item ->
                     viewModelTextGen.setCurrentChatMessage(chat.ID)
-                    item.findNavController().navigate(TextGenFragmentDirections
-                        .actionTextGenFragmentToTextGenAttachmentChatFragment()
+                    item.findNavController().navigate(TextGenChatFragmentDirections
+                        .actionTextGenChatFragmentToTextGenAttachmentChatFragment()
                     )
                     true
                 }
@@ -164,6 +178,20 @@ class TextGenRVChatAdapter(
             is TextGenRVChatAIAttachmentViewHolder -> {
                 TODO()
             }
+
+            is TextGenRVChatOperationStepViewHolder -> {
+                holder.binding.tvCurrentOperationStep.text = chat.message
+                when(chat.status) {
+                    false -> {
+                        holder.binding.pbOperationRunning.visibility = View.VISIBLE
+                        holder.binding.sivOperationDone.visibility = View.GONE
+                    }
+                    true -> {
+                        holder.binding.pbOperationRunning.visibility = View.GONE
+                        holder.binding.sivOperationDone.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 
@@ -182,8 +210,11 @@ class TextGenRVChatAdapter(
             "AI" -> { // AI message text
                 TYPE_AI_MESSAGE
             }
-            else -> { // AI attachment
+            "AI Attachment" -> { // AI attachment
                 TYPE_AI_ATTACHMENT
+            }
+            else -> { // Current operation
+                TYPE_OPERATION_STEP
             }
         }
     }

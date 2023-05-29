@@ -6,7 +6,6 @@
         android:id="@+id/btn_settings"
         android:contentDescription="@string/settings_button"
         android:icon="@drawable/settings_icon"
-        android:iconTint="@color/white"
         android:title="@string/settings"
         app:showAsAction="always" />
 

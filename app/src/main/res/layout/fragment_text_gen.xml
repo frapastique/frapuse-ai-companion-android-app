@@ -30,6 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/black"
+                    app:titleTextColor="@color/white"
                     app:layout_scrollFlags="scroll|enterAlways|snap"
                     app:layout_scrollEffect="compress"
                     app:navigationIcon="@drawable/back_icon"

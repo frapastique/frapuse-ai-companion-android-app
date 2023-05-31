@@ -357,33 +357,35 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Final prompt creator
     fun createFinalPrompt() {
-        var prevPrompt = _instructionsContext.value!!
-        var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
-        val currentChatLibrary = _chatLibrary.value!!.toMutableList()
-            .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent"}
+        viewModelScope.launch {
+            var prevPrompt = _instructionsContext.value!!
+            var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
+            val currentChatLibrary = repository.getAllChats().toMutableList()
+                .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent" }
 
-        // Take name, message and if file is provided also the extracted text and construct the prompt
-        for (message in currentChatLibrary) {
-            tokenCountCurrent += message.tokens.toInt()
-            if (tokenCountCurrent > 1700) {
-                Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
-                do {
-                    tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
-                    currentChatLibrary.drop(1)
-                    Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
-                } while (tokenCountCurrent > 1700)
+            // Take name, message and if file is provided also the extracted text and construct the prompt
+            for (message in currentChatLibrary) {
+                tokenCountCurrent += message.tokens.toInt()
+                if (tokenCountCurrent > 1700) {
+                    Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
+                    do {
+                        tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
+                        currentChatLibrary.drop(1)
+                        Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
+                    } while (tokenCountCurrent > 1700)
+                }
             }
-        }
 
-        for (message in currentChatLibrary)  {
-            prevPrompt += message.finalContext
-        }
+            for (message in currentChatLibrary) {
+                prevPrompt += message.finalContext
+            }
 
-        _prompt.value = TextGenPrompt(
-            prompt = prevPrompt + "ASSISTANT:"
-        )
-        checkTokensCount()
-        _createPromptStatus.value = AppStatus.DONE
+            _prompt.value = TextGenPrompt(
+                prompt = prevPrompt + "ASSISTANT:"
+            )
+            checkTokensCount()
+            _createPromptStatus.value = AppStatus.DONE
+        }
     }
 
     // Get the name of loaded AI model from API

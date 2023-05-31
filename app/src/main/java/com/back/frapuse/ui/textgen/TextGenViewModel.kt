@@ -319,6 +319,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             getAllChats()
             if (extensionHaystack.value == true) {
                 queryHaystack(message)
+            } else {
+                createFinalPrompt()
             }
         }
     }
@@ -449,6 +451,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun generateStream() {
+        _finalStreamResponse.value = ""
         _apiStatus.value = AppStatus.LOADING
         _createPromptStatus.value = AppStatus.WAITING
 
@@ -519,12 +522,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                             "Generating answer..."
                         )
                         repository.closeWebsocketClient()
-                        _finalStreamResponse.value = ""
                         this.cancel()
                     }
-                    "waiting" -> {
-
-                    }
+                    "waiting" -> {  }
                 }
             }
         }
@@ -938,10 +938,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val agentHaystackPrompt: LiveData<String>
         get() = _agentHaystackPrompt
     val agentHaystackStandardPrompt = "You have the following constraints:\n" +
-            "No user assistance!\n\n" +
-            "You are a database AI agent. In the following you received " +
-            "a query with the answer, score, context, document name " +
-            "and a document passage. Your Task is to answer the question correctly!"
+            "No user assistance! You are a database AI agent. In the following you received " +
+            "a query from a curious user with a document name and document passage. " +
+            "Your task is to extract the answer and write a concise summary of the passage!\n"
 
     private val _agentHaystackResponse = MutableLiveData<String>()
     val agentHaystackResponse: LiveData<String>
@@ -964,6 +963,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         val haystackResponse = _haystackQueryResponse.value
         if (haystackResponse != null) {
             val query = haystackResponse.query
+            Log.e(
+                TAG,
+                "Query:\n\t$query"
+            )
             val documentContent = haystackResponse.documents.first().content
             val documentName = haystackResponse.documents.first().meta.name
             Log.e(
@@ -1000,7 +1003,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
                 _genRequestBody.value = TextGenGenerateRequest(
                     prompt = databaseAgentPrompt,
-                    max_new_tokes = 500,
+                    max_new_tokes = 700,
                     do_sample = true,
                     temperature = 1.3,
                     top_p = 0.1,
@@ -1044,7 +1047,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 Log.e(
                     TAG,
                     "Haystack database agent response:" +
-                            "\n\t${_genResponseHolder.value?.results?.first()?.text.toString()}"
+                            "\n\t${(databaseAgentPrompt +
+                                    _genResponseHolder.value?.results?.first()?.text.toString())}"
                 )
 
                 updateOperationStep(

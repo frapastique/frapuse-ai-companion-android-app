@@ -43,13 +43,17 @@ class TextGenRVDocumentOperationAdapter(
         val file = File(document.path)
 
         // Set file name
-        holder.binding.mtvFileName.text = file.name
-        // Set file name to scroll horizontally
+        holder.binding.mtvFileName.text = file.nameWithoutExtension
+
+        // Set file name to scroll horizontally if it doesn't fit in one line
         holder.binding.mtvFileName.isSelected = true
         holder.binding.mtvFileName.requestFocus()
 
         // Create a PdfRenderer from the file
-        val parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+        val parcelFileDescriptor = ParcelFileDescriptor.open(
+            file,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        )
         val pdfRenderer = PdfRenderer(parcelFileDescriptor)
 
         // Get the first page of the PDF file

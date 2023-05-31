@@ -195,8 +195,12 @@ class TextGenRVChatAdapter(
             is TextGenRVChatAIAttachmentFileViewHolder -> {
                 if (chat.sentDocument.isNotEmpty()) {
                     holder.binding.mcvFile.visibility = View.VISIBLE
-                    holder.binding.tvFileName.text = File(chat.sentDocument).name.toString()
+                    holder.binding.tvFileName.text = File(chat.sentDocument).nameWithoutExtension
                     holder.binding.mtvFileInfoAi.text = chat.dateTime
+
+                    // Set file name to scroll horizontally if it doesn't fit in one line
+                    holder.binding.tvFileName.isSelected = true
+                    holder.binding.tvFileName.requestFocus()
                 }
 
                 // Long click listener on attachment for navigation to attachment fragment
@@ -224,7 +228,7 @@ class TextGenRVChatAdapter(
                 }
             }
 
-            is TextGenRVChatEmptyViewHolder -> {  } // Prevents spawning of agents response
+            is TextGenRVChatEmptyViewHolder -> {  } // Prevents spawning agents response
         }
     }
 

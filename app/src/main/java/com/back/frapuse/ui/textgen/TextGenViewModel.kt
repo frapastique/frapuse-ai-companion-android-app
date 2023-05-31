@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.os.Environment
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
@@ -738,23 +739,25 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
 
         // get the app-specific internal storage directory
-        val dir = context.filesDir
-        // create a subdirectory for PDF files
-        val pdfDir = File(dir, "pdf")
-        pdfDir.mkdirs()
+        val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+
         // create a file with a unique name
-        val file = File(pdfDir, fileName.toString())
+        val file = File(dir, fileName.toString())
+
         // copy the content of the URI to the file
         val inputStream = context.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         inputStream?.copyTo(outputStream)
+
         // close the streams
         inputStream?.close()
         outputStream.close()
+
         // Upload the file to haystack
         uploadFile(file)
-        // get and return the file path
-        return file.path
+
+        // get and return the absolute file path
+        return file.absolutePath
     }
 
     // Clear out file path

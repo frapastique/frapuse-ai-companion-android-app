@@ -494,7 +494,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             repository.openWebsocketClient()
             repository.sendMessageToWebSocket(_genRequestBody.value!!)
-
+            getAllChats()
             updateFinalResponse()
         }
     }
@@ -512,15 +512,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                             _finalStreamResponse.value!!
                         )
                         resetStream()
-                        repository.closeWebsocketClient()
-                        _finalStreamResponse.value = ""
-
                         updateOperationStep(
                             _chatLibrary.value!!.reversed()
                                 .find { it.message == "Generating answer..." }!!.ID,
                             "Generating answer..."
                         )
-
+                        repository.closeWebsocketClient()
+                        _finalStreamResponse.value = ""
                         this.cancel()
                     }
                     "waiting" -> {
@@ -541,6 +539,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         setAIContext("ASSISTANT: ${message.drop(1)}")
 
         viewModelScope.launch {
+            getAllChats()
             val tokens = repository.getTokenCount(
                 TextGenPrompt(message.drop(1))
             )
@@ -562,6 +561,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     finalContext = _aiContext.value!!
                 )
             )
+            insertAIAttachmentFile()
             getAllChats()
             _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
         }
@@ -698,13 +698,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 val filePath = createLocalPdfFile(uri, app.applicationContext)
                 // update the LiveData variable with the file path
                 _pdfPath.value = filePath
-                /*addDocumentToDataset(
-                    TextGenAttachments(
-                        id = _documentID.value!!,
-                        path = filePath,
-                        pageCount = 0
-                    )
-                )*/
             }
         }
     }
@@ -872,6 +865,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 repository.insertOperation(
                     TextGenDocumentOperation(
                         dateTime = getDateTime(),
+                        documentName = file.name,
                         path = file.path
                     )
                 )
@@ -885,6 +879,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     "Error uploading documents:\n\t$e"
                 )
             }
+        }
+    }
+
+    fun getDocumentLibrary() {
+        viewModelScope.launch {
+            _documentLibrary.value = repository.getAllOperations()
         }
     }
 
@@ -936,10 +936,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         get() = _agentHaystackPrompt
     val agentHaystackStandardPrompt = "You have the following constraints:\n" +
             "No user assistance!\n\n" +
-            "You are a reasoning AI assistant. In the following you received " +
-            "a query with a possible answer, score, context, document name " +
-            "and a document passage. Your Task is to answer the question correctly and " +
-            "has to include the document name! "
+            "You are a database AI agent. In the following you received " +
+            "a query with the answer, score, context, document name " +
+            "and a document passage. Your Task is to answer the question correctly!"
 
     private val _agentHaystackResponse = MutableLiveData<String>()
     val agentHaystackResponse: LiveData<String>
@@ -953,24 +952,30 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         _agentHaystackPrompt.value = prompt
     }
 
+    private val _relevantDocumentName = MutableLiveData<String>()
+    val relevantDocumentName: LiveData<String>
+        get() = _relevantDocumentName
+
     fun agentHaystack() {
         insertOperationStep("Database Agent reasoning...")
         val haystackResponse = _haystackQueryResponse.value
         if (haystackResponse != null) {
             val query = haystackResponse.query
-            val firstPossibleAnswer = haystackResponse.answers.first().answer
-            val firstPossibleScore = haystackResponse.answers.first().score
-            val firstPossibleContext = haystackResponse.answers.first().context
-            val firstPossibleDocName = haystackResponse.answers.first().meta.name
-            val firstPossibleDocument = haystackResponse.documents.first().content
+            val documentContent = haystackResponse.documents.first().content
+            val documentName = haystackResponse.documents.first().meta.name
+            Log.e(
+                TAG,
+                "Document Content:\n\t$documentContent"
+            )
+
+            _relevantDocumentName.value = documentName
 
             val databaseAgentPrompt = _agentHaystackPrompt.value +
-                    "Query: $query\n" +
-                    "Possible Answer: $firstPossibleAnswer\n" +
-                    "Score: $firstPossibleScore\n" +
-                    "context: $firstPossibleContext\n" +
-                    "Document name: $firstPossibleDocName\n" +
-                    "Document passage: $firstPossibleDocument "
+                    "User: $query\n" +
+                    "Context:\n" +
+                    "Document name: $documentName\n" +
+                    "Document passage: $documentContent\n" +
+                    "Assistant:"
 
             viewModelScope.launch {
                 val tokens = repository.getTokenCount(
@@ -1017,7 +1022,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _agentHaystackResponse.value = _genResponseHolder.value!!.results.first().text
 
                 val tokensResponse = repository.getTokenCount(
-                    TextGenPrompt(_agentHaystackResponse.value!!)
+                    TextGenPrompt(databaseAgentPrompt + _agentHaystackResponse.value!!)
                 )
                     .results.first().tokens
 
@@ -1030,10 +1035,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         tokens = tokensResponse,
                         type = "Database Agent",
                         status = true,
-                        message = _agentHaystackResponse.value!!
+                        message = (databaseAgentPrompt + _agentHaystackResponse.value!!)
                     )
                 )
-
                 Log.e(
                     TAG,
                     "Haystack database agent response:" +
@@ -1045,7 +1049,26 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         .find { it.message == "Database Agent reasoning..." }!!.ID,
                     "Database Agent reasoning..."
                 )
+                getAllChats()
                 createFinalPrompt()
+            }
+        }
+    }
+
+    fun insertAIAttachmentFile() {
+        if (!_relevantDocumentName.value.isNullOrEmpty()) {
+            val documentPath = _documentLibrary.value!!.find { it.documentName == _relevantDocumentName.value }!!.path
+            viewModelScope.launch {
+                repository.insertChat(
+                    TextGenChatLibrary(
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        type = "AI Attachment",
+                        message = _relevantDocumentName.value!!,
+                        sentDocument = documentPath
+                    )
+                )
+                getAllChats()
             }
         }
     }

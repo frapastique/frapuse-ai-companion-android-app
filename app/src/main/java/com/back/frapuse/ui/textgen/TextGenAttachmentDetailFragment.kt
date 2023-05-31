@@ -41,6 +41,8 @@ class TextGenAttachmentDetailFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.getDocumentLibrary()
+
         // Grab current chat message
         viewModel.currentChatMessage.observe(viewLifecycleOwner) { currentChatMessage ->
             binding.tvMessageName.text = "Attachment:"
@@ -66,14 +68,11 @@ class TextGenAttachmentDetailFragment : Fragment() {
 
             binding.rvAttachmentPreview.layoutManager = LinearLayoutManager(
                 requireContext(),
-                LinearLayoutManager.HORIZONTAL,
+                LinearLayoutManager.VERTICAL,
                 false
             )
 
             binding.rvAttachmentPreview.setHasFixedSize(true)
-
-            val helper: SnapHelper = PagerSnapHelper()
-            helper.attachToRecyclerView(binding.rvAttachmentPreview)
 
             // Close pdf renderer
             pdfRenderer.close()

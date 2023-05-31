@@ -10,6 +10,7 @@ data class TextGenDocumentOperation(
     var haystackReferences: String = "",
     var meta: String = "",
     var dateTime: String = "",
+    var documentName: String = "",
     var pageCount: Int = 0,
     var path: String = "",
 )

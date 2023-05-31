@@ -33,10 +33,9 @@ class TextGenDocumentOperationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Parse activityResultRegistry to viewModel for the pdf contract
-        viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
-
         val recycler = binding.rvDocumentPreview
+
+        viewModel.getDocumentLibrary()
 
         viewModel.documentLibrary.observe(viewLifecycleOwner) { documentLibrary ->
             recycler.adapter = TextGenRVDocumentOperationAdapter(

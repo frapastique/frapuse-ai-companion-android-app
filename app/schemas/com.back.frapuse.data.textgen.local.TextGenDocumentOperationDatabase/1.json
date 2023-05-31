@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "12f7f932d98eac968ff0dd751a358ca1",
+    "identityHash": "a4aa33d5da0c6ccd4629081ac59fb457",
     "entities": [
       {
         "tableName": "textGenDocumentOperation_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `haystackReferences` TEXT NOT NULL, `meta` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `pageCount` INTEGER NOT NULL, `path` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `haystackReferences` TEXT NOT NULL, `meta` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `documentName` TEXT NOT NULL, `pageCount` INTEGER NOT NULL, `path` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -29,6 +29,12 @@
           {
             "fieldPath": "dateTime",
             "columnName": "dateTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "documentName",
+            "columnName": "documentName",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -58,7 +64,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '12f7f932d98eac968ff0dd751a358ca1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a4aa33d5da0c6ccd4629081ac59fb457')"
     ]
   }
 }

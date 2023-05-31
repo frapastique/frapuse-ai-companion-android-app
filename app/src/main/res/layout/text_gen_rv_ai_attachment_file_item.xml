@@ -8,7 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_chat_human_attachment_whole_item"
+        android:id="@+id/cl_chat_ai_attachment_whole_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
@@ -17,21 +17,21 @@
         android:visibility="visible">
 
         <Space
-            android:id="@+id/spacer_left"
+            android:id="@+id/spacer_right"
             android:layout_width="40dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/dark_grey"
+            android:background="@color/transparent"
             android:backgroundTint="@color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/spacer_left"
+            app:layout_constraintEnd_toStartOf="@id/spacer_right"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.card.MaterialCardView
@@ -39,20 +39,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:visibility="visible"
                 app:cardCornerRadius="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/purple_1000">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/dark_grey"
+                        android:background="@color/transparent"
                         android:padding="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -78,13 +78,13 @@
                             android:marqueeRepeatLimit="@integer/google_play_services_version"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
-                            app:layout_constraintBottom_toTopOf="@+id/tv_file_info_human"
+                            app:layout_constraintBottom_toTopOf="@+id/mtv_file_info_ai"
                             app:layout_constraintStart_toEndOf="@id/siv_file_type_icon"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="@string/app_name" />
 
                         <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tv_file_info_human"
+                            android:id="@+id/mtv_file_info_ai"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/grey"
@@ -97,21 +97,6 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/siv_sent_content"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCorners"
-                tools:src="@tools:sample/avatars" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

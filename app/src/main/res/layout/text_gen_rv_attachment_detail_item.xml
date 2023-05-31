@@ -40,6 +40,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_extracted_text"
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/tv_extracted_text_token_count"
@@ -50,6 +51,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_extracted_text_token_count"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

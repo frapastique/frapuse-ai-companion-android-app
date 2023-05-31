@@ -9,7 +9,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
-import com.back.frapuse.databinding.TextGenRvChatAiAttachmentItemBinding
+import com.back.frapuse.databinding.TextGenRvAiAttachmentFileItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
 import com.back.frapuse.databinding.TextGenRvChatEmptyItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
@@ -30,7 +30,7 @@ class TextGenRVChatAdapter(
         private const val TYPE_HUMAN_MESSAGE = 1
         private const val TYPE_HUMAN_ATTACHMENT = 2
         private const val TYPE_AI_MESSAGE = 3
-        private const val TYPE_AI_ATTACHMENT = 4
+        private const val TYPE_AI_ATTACHMENT_FILE = 4
         private const val TYPE_OPERATION_STEP = 5
         private const val TYPE_DATABASE_AGENT = 6
     }
@@ -51,8 +51,8 @@ class TextGenRVChatAdapter(
         internal val binding: TextGenRvChatAiItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    inner class TextGenRVChatAIAttachmentViewHolder(
-        internal val binding: TextGenRvChatAiAttachmentItemBinding
+    inner class TextGenRVChatAIAttachmentFileViewHolder(
+        internal val binding: TextGenRvAiAttachmentFileItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class TextGenRVChatOperationStepViewHolder(
@@ -98,13 +98,13 @@ class TextGenRVChatAdapter(
                 )
                 TextGenRVChatAIViewHolder(binding)
             }
-            TYPE_AI_ATTACHMENT -> {
-                val binding = TextGenRvChatAiAttachmentItemBinding.inflate(
+            TYPE_AI_ATTACHMENT_FILE -> {
+                val binding = TextGenRvAiAttachmentFileItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                TextGenRVChatAIAttachmentViewHolder(binding)
+                TextGenRVChatAIAttachmentFileViewHolder(binding)
             }
             TYPE_OPERATION_STEP -> {
                 val binding = TextGenRvChatOperationStepItemBinding.inflate(
@@ -155,8 +155,9 @@ class TextGenRVChatAdapter(
                 // Long click listener on attachment for navigation to attachment fragment
                 holder.binding.clChatHumanAttachmentWholeItem.setOnLongClickListener { item ->
                     viewModelTextGen.setCurrentChatMessage(chat.ID)
-                    item.findNavController().navigate(TextGenChatFragmentDirections
-                        .actionTextGenChatFragmentToTextGenAttachmentChatFragment()
+                    item.findNavController().navigate(
+                        TextGenChatFragmentDirections
+                            .actionTextGenChatFragmentToTextGenAttachmentChatFragment()
                     )
                     true
                 }
@@ -172,7 +173,9 @@ class TextGenRVChatAdapter(
                             holder.binding.tvMessageInfoAi.text =
                                 viewModelTextGen.model.value!!.result +
                                         " - " +
-                                        viewModelTextGen.streamResponseMessage.value?.message_num?.plus(1) +
+                                        viewModelTextGen
+                                            .streamResponseMessage.value
+                                            ?.message_num?.plus(1) +
                                         " - " +
                                         chat.dateTime
                         }
@@ -189,8 +192,22 @@ class TextGenRVChatAdapter(
                 }
             }
 
-            is TextGenRVChatAIAttachmentViewHolder -> {
-                TODO()
+            is TextGenRVChatAIAttachmentFileViewHolder -> {
+                if (chat.sentDocument.isNotEmpty()) {
+                    holder.binding.mcvFile.visibility = View.VISIBLE
+                    holder.binding.tvFileName.text = File(chat.sentDocument).name.toString()
+                    holder.binding.mtvFileInfoAi.text = chat.dateTime
+                }
+
+                // Long click listener on attachment for navigation to attachment fragment
+                holder.binding.clChatAiAttachmentWholeItem.setOnLongClickListener { item ->
+                    viewModelTextGen.setCurrentChatMessage(chat.ID)
+                    item.findNavController().navigate(
+                        TextGenChatFragmentDirections
+                            .actionTextGenChatFragmentToTextGenAttachmentChatFragment()
+                    )
+                    true
+                }
             }
 
             is TextGenRVChatOperationStepViewHolder -> {
@@ -227,7 +244,7 @@ class TextGenRVChatAdapter(
                 TYPE_AI_MESSAGE
             }
             "AI Attachment" -> { // AI attachment
-                TYPE_AI_ATTACHMENT
+                TYPE_AI_ATTACHMENT_FILE
             }
             "Operation" -> { // Current operation
                 TYPE_OPERATION_STEP

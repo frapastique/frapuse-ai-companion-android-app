@@ -49,6 +49,7 @@ class TextGenChatFragment : Fragment() {
         var filePath = ""
         // Parse activityResultRegistry to viewModel for the pdf contract
         viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
+        viewModel.getDocumentLibrary()
 
         binding.topAppBar.inflateMenu(R.menu.top_app_bar)
         // Navigate to home

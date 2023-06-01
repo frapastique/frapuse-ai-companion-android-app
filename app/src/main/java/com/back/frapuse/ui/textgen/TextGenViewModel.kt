@@ -42,6 +42,7 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -237,13 +238,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 TextGenChatLibrary(
                     conversationID = 0,
                     dateTime = getDateTime(),
-                    modelName = "",
                     tokens = _instructionContextTokenCount.value!!,
                     type = "Instructions",
                     message = instructions,
-                    sentImage = "",
-                    sentDocument = "",
-                    documentText = "",
+                    status = true,
                     finalContext = _instructionsContext.value!!
                 )
             )
@@ -274,9 +272,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     tokens = _instructionContextTokenCount.value!!,
                     type = "Instructions",
                     message = instruction,
-                    sentImage = "",
-                    sentDocument = "",
-                    documentText = "",
+                    status = true,
                     finalContext = _instructionsContext.value!!
                 )
             )
@@ -290,9 +286,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         _createPromptStatus.value = AppStatus.LOADING
 
         if (filePath.isEmpty()) {
-            _humanContext.value = "USER: $message "
+            _humanContext.value = "USER: $message"
         } else {
-            _humanContext.value = "USER: ${message}Context: ${_textOut.value.toString()} "
+            _humanContext.value = "USER: ${message}\nContext: ${_textOut.value.toString()}"
         }
 
         viewModelScope.launch {
@@ -309,6 +305,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     dateTime = getDateTime(),
                     tokens = tokens,
                     type = "Human",
+                    status = true,
                     message = message,
                     sentImage = "",
                     sentDocument = filePath,
@@ -358,7 +355,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     // Final prompt creator
     fun createFinalPrompt() {
         viewModelScope.launch {
-            var prevPrompt = _instructionsContext.value!!
+            var prevPrompt = _instructionsContext.value!! + "\n"
             var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
             val currentChatLibrary = repository.getAllChats().toMutableList()
                 .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent" }
@@ -377,11 +374,15 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             }
 
             for (message in currentChatLibrary) {
-                prevPrompt += message.finalContext
+                prevPrompt += message.finalContext + "\n"
             }
 
             _prompt.value = TextGenPrompt(
                 prompt = prevPrompt + "ASSISTANT:"
+            )
+            Log.e(
+                TAG,
+                "Final Prompt:\n\t${_prompt.value!!.prompt}"
             )
             checkTokensCount()
             _createPromptStatus.value = AppStatus.DONE
@@ -856,15 +857,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     fun uploadFile(file: File) {
         val fileUploadMessage = "File successfully uploaded!"
 
-        val meta = TextGenHaystackMeta(
-            author = "Alan Watts",
-            summary = "",
-            topic = emptyList(),
-            title = file.nameWithoutExtension,
-            type = "",
-            name = file.name
-        )
-
         viewModelScope.launch {
             try {
                 repository.insertOperation(
@@ -874,6 +866,20 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         path = file.path
                     )
                 )
+
+                val currentDocumentID: Long = repository.getAllOperations()
+                    .find { it.documentName == file.name }!!.id
+
+                val meta = TextGenHaystackMeta(
+                    localID = currentDocumentID,
+                    author = "Alan Watts",
+                    summary = "",
+                    topic = emptyList(),
+                    title = file.nameWithoutExtension,
+                    type = "",
+                    name = file.name
+                )
+
                 _documentLibrary.value = repository.getAllOperations()
                 repository.haystackUploadFile(file, meta)
                 Toast.makeText(app.applicationContext, fileUploadMessage, Toast.LENGTH_SHORT)
@@ -939,10 +945,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val _agentHaystackPrompt = MutableLiveData<String>()
     val agentHaystackPrompt: LiveData<String>
         get() = _agentHaystackPrompt
-    val agentHaystackStandardPrompt = "You have the following constraints:\n" +
-            "No user assistance! You are a database AI agent. In the following you received " +
-            "a query from a curious user with a document name and document passage. " +
-            "Your task is to extract the answer and write a concise summary of the passage!\n"
+    val agentHaystackStandardPrompt = "You get no user assistance! You are a database AI" +
+            "assistant. In the following you received a question from a curious user. The " +
+            "Database provided you context with a document name, the author and document " +
+            "content. Your task is to extract the answer and write a concise summary of the passage!\n"
 
     private val _agentHaystackResponse = MutableLiveData<String>()
     val agentHaystackResponse: LiveData<String>
@@ -969,8 +975,17 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 TAG,
                 "Query:\n\t$query"
             )
-            val documentContent = haystackResponse.documents.first().content
             val documentName = haystackResponse.documents.first().meta.name
+            Log.e(
+                TAG,
+                "Document Name:\n\t$documentName"
+            )
+            val documentAuthor = haystackResponse.documents.first().meta.author
+            Log.e(
+                TAG,
+                "Document Author:\n\t$documentAuthor"
+            )
+            val documentContent = haystackResponse.documents.first().content
             Log.e(
                 TAG,
                 "Document Content:\n\t$documentContent"
@@ -982,7 +997,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     "User: $query\n" +
                     "Context:\n" +
                     "Document name: $documentName\n" +
-                    "Document passage: $documentContent\n" +
+                    "Author: $documentAuthor\n" +
+                    "Document content: $documentContent\n" +
                     "Assistant:"
 
             viewModelScope.launch {
@@ -1001,7 +1017,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     )
                 )
 
-                getAllChats()
+                _chatLibrary.value = repository.getAllChats()
 
                 _genRequestBody.value = TextGenGenerateRequest(
                     prompt = databaseAgentPrompt,
@@ -1029,8 +1045,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
                 _agentHaystackResponse.value = _genResponseHolder.value!!.results.first().text
 
+                val finalContext: String = "Additional Instructions: " +
+                        "The following context was obtained from a document database and" +
+                        "preprocessed by a database agent! Your task is to provide the User the " +
+                        "final answer to his question! If the Agents answer is sufficient use " +
+                        "it! Include the authors and document name in your response!\n" +
+                        "Context:" +
+                        "\nAuthor: $documentAuthor" +
+                        "\nDocument Name: $documentName" +
+                        "\nAgent:${_agentHaystackResponse.value}"
+
                 val tokensResponse = repository.getTokenCount(
-                    TextGenPrompt(databaseAgentPrompt + _agentHaystackResponse.value!!)
+                    TextGenPrompt(finalContext)
                 )
                     .results.first().tokens
 
@@ -1043,7 +1069,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         tokens = tokensResponse,
                         type = "Database Agent",
                         status = true,
-                        message = (databaseAgentPrompt + _agentHaystackResponse.value!!)
+                        message = (databaseAgentPrompt + _agentHaystackResponse.value!!),
+                        finalContext = finalContext
                     )
                 )
                 Log.e(
@@ -1058,7 +1085,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         .find { it.message == "Database Agent reasoning..." }!!.ID,
                     "Database Agent reasoning..."
                 )
-                getAllChats()
+                _chatLibrary.value = repository.getAllChats()
                 createFinalPrompt()
             }
         }
@@ -1066,18 +1093,21 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     fun insertAIAttachmentFile() {
         if (!_relevantDocumentName.value.isNullOrEmpty()) {
-            val documentPath = _documentLibrary.value!!.find { it.documentName == _relevantDocumentName.value }!!.path
+            val documentPath = _documentLibrary.value!!
+                .find { it.documentName == _relevantDocumentName.value }!!.path
             viewModelScope.launch {
                 repository.insertChat(
                     TextGenChatLibrary(
                         conversationID = 0,
                         dateTime = getDateTime(),
                         type = "AI Attachment",
+                        status = true,
                         message = _relevantDocumentName.value!!,
                         sentDocument = documentPath
                     )
                 )
                 getAllChats()
+                _relevantDocumentName.value = ""
             }
         }
     }

@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class TextGenHaystackMeta(
+    val localID: Long,
     val author: String,
     val summary: String,
     val topic: List<String>,

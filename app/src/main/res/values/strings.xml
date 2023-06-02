@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">frapuse</string>
-    <string name="app_description">In this application you can create images, chat and interact with documents using an AI.</string>
+    <string name="app_description">In this application you can create images, chat and interact with documents using AI</string>
 
     <string name="text_to_image">Text To Image</string>
     <string name="text_to_text">Text To Text</string>

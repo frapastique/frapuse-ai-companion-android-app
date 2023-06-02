@@ -30,7 +30,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt"
-                android:imeOptions="actionDone" />
+                android:imeOptions="actionDone"
+                android:maxLines="4"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
+                android:scrollbarSize="2dp"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbarThumbVertical="@color/purple_1000" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -51,7 +58,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/negative_prompt"
-                android:imeOptions="actionDone" />
+                android:imeOptions="actionDone"
+                android:maxLines="4"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:scrollbarDefaultDelayBeforeFade="@integer/material_motion_duration_short_1"
+                android:scrollbarSize="2dp"
+                android:scrollbarStyle="outsideOverlay" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,6 +87,8 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="number"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/steps_value"
                 android:textAlignment="center" />
 
@@ -97,6 +112,8 @@
                 android:ellipsize="end"
                 android:imeOptions="actionNone"
                 android:inputType="none"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:singleLine="true"
                 tools:text="@string/model" />
 
@@ -121,6 +138,8 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/cfg_value"
                 android:textAlignment="center" />
 
@@ -144,6 +163,8 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="number"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/height_width_value"
                 android:textAlignment="center" />
 
@@ -165,6 +186,8 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="number"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/height_width_value"
                 android:textAlignment="center" />
 
@@ -187,6 +210,8 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="numberSigned"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/seed_value"
                 android:textAlignment="center" />
 
@@ -210,6 +235,8 @@
                 android:ellipsize="end"
                 android:imeOptions="actionNone"
                 android:inputType="none"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:singleLine="true"
                 android:text="@string/sampler_value" />
 

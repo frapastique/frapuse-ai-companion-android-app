@@ -35,11 +35,11 @@ class ImageGenRVSmallFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        val imageAdapter = ImageGenRVSmallAdapter(
+            viewModel = viewModel,
+            dataset = emptyList()
+        )
         viewModel.imageLibrary.observe(viewLifecycleOwner) { imageLibrary ->
-            val imageAdapter = ImageGenRVSmallAdapter(
-                viewModel = viewModel,
-                dataset = imageLibrary
-            )
             binding.rvImageLibrary.adapter = imageAdapter
             imageAdapter.submitList(imageLibrary)
             binding.rvImageLibrary.setHasFixedSize(true)

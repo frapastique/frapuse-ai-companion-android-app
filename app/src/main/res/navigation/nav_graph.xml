@@ -55,6 +55,9 @@
         <action
             android:id="@+id/action_imageGenRVDetailFragment_to_imageGenRVSmallFragment"
             app:destination="@id/imageGenRVSmallFragment" />
+        <argument
+            android:name="imagePosition"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/textGenChatFragment"

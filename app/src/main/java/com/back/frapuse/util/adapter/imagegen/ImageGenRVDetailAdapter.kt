@@ -14,8 +14,6 @@ import com.back.frapuse.ui.imagegen.ImageGenRVDetailFragmentDirections
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ImageGenRVDetailAdapter(
-    // Prepare an imageID
-    private var imageID: Int,
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data

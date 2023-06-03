@@ -567,7 +567,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             insertAIAttachmentFile()
             getAllChats()
             _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
-            deleteAgentStep()
+            if (extensionHaystack.value == true) {
+                deleteAgentStep()
+            }
         }
     }
 

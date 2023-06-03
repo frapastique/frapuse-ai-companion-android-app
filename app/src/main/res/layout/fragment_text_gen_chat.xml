@@ -34,7 +34,7 @@
                     app:layout_scrollFlags="scroll|enterAlways|snap"
                     app:layout_scrollEffect="compress"
                     app:navigationIcon="@drawable/back_icon"
-                    app:title="@string/app_name" />
+                    app:title="Chat" />
 
             </com.google.android.material.appbar.AppBarLayout>
 

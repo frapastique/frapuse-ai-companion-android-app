@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import com.back.frapuse.databinding.FragmentTextGenDocumentOperationBinding
 import com.back.frapuse.util.adapter.textgen.TextGenRVDocumentOperationAdapter
 
@@ -37,6 +38,13 @@ class TextGenDocumentOperationFragment : Fragment() {
         viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
 
         viewModel.getDocumentLibrary()
+
+        // Navigate to home
+        binding.topAppBar.setNavigationOnClickListener { btnBack ->
+            btnBack.findNavController().navigate(TextGenDocumentOperationFragmentDirections
+                .actionTextGenDocumentOperationFragmentToHomeFragment()
+            )
+        }
 
         val recycler = binding.rvDocumentPreview
 

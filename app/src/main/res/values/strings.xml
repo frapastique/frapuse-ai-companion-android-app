@@ -16,7 +16,7 @@
     <string name="settings_button">settings button</string>
 
     <string name="info">Info…</string>
-    <string name="instruction">INSTRUCTION</string>
+    <string name="instruction_chat">INSTRUCTION CHAT</string>
     <string name="settings">Settings</string>
 
     <string name="prompt">PROMPT</string>
@@ -41,7 +41,7 @@
     <string name="seed">SEED</string>
     <string name="seed_value">-1</string>
 
-    <string name="nav_to_rv">Tap and hold to navigate to the image library!</string>
+    <string name="nav_to_rv">Tap and hold to open\nthe image library!</string>
 
     <string name="text_to_text_block">block</string>
     <string name="text_to_text_stream">stream</string>
@@ -49,8 +49,7 @@
     <string name="chat_human">Human:</string>
     <string name="instructions">Instructions:</string>
     <string name="tokens">Tokens:</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="start_operation">Start Operation</string>
     <string name="document_operation">Document Operation</string>
     <string name="document_search">Document Search</string>
@@ -60,7 +59,8 @@
     <string name="responses">Responses:</string>
     <string name="response_block">Block</string>
     <string name="response_stream">Stream</string>
-    <string name="instruction_agent_document_search">INSTRUCTION AGENT DOCUMENT SEARCH</string>
+    <string name="instruction_db_agent">INSTRUCTION DB AGENT</string>
+    <string name="instructions_after_db_agent">INSTRUCTION AFTER DB AGENT</string>
 
 
 </resources>

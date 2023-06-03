@@ -1,10 +1,13 @@
 package com.back.frapuse.ui.textgen
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -49,6 +52,14 @@ class TextGenSettingsFragment : Fragment() {
             btnBack.findNavController().navigate(TextGenSettingsFragmentDirections
                 .actionTextGenSettingsFragmentToTextGenChatFragment()
             )
+        }
+
+        binding.ibExtensions.setOnCheckedChangeListener { _, isChecked ->
+            adjustVisibleSettings(binding.clExtensionToggles, isChecked)
+        }
+
+        binding.ibInstructions.setOnCheckedChangeListener { _, isChecked ->
+            adjustVisibleSettings(binding.clInstructions, isChecked)
         }
 
         // Enable/disable haystack document search extension
@@ -127,9 +138,71 @@ class TextGenSettingsFragment : Fragment() {
                     }
                 }
                 else -> {
-                    binding.tiInstructions.endIconMode = END_ICON_NONE
+                    binding.tiInstructionsAgentHaystack.endIconMode = END_ICON_NONE
                 }
             }
         }
+
+        // Load current additional instructions after haystack into edit text field
+        binding.etInstructionsAfterAgentHaystack.setText(
+            viewModel.instructionsAfterHaystack.value
+        )
+
+        // Set custom additional instructions after haystack && adjust end icon of text input layout
+        var newInstructionsAfterAgentDocSearch: String
+        binding.etInstructionsAfterAgentHaystack.addTextChangedListener { newInstruction ->
+            if (!newInstruction.isNullOrEmpty()) {
+                newInstructionsAfterAgentDocSearch = newInstruction.toString()
+                binding.tiInstructionsAfterAgentHaystack.setEndIconDrawable(
+                    R.drawable.apply_icon
+                )
+                binding.tiInstructionsAfterAgentHaystack.endIconMode = END_ICON_CUSTOM
+                binding.tiInstructionsAfterAgentHaystack.setEndIconOnClickListener {
+                    viewModel.updateInstructionsAfterHaystack(
+                        newInstructionsAfterAgentDocSearch
+                    )
+                }
+            }
+        }
+
+        // Compare additional instructions after haystack and set instructions end icon state
+        viewModel.instructionsAfterHaystack.observe(viewLifecycleOwner) { currentInstructions ->
+            when {
+                currentInstructions != viewModel.instructionsAfterHaystackStandard -> {
+                    binding.tiInstructionsAfterAgentHaystack.setEndIconDrawable(
+                        R.drawable.reset_icon
+                    )
+                    binding.tiInstructionsAfterAgentHaystack.endIconMode = END_ICON_CUSTOM
+                    binding.tiInstructionsAfterAgentHaystack.setEndIconOnClickListener {
+                        viewModel.updateInstructionsAfterHaystack(
+                            viewModel.instructionsAfterHaystackStandard
+                        )
+                        binding.etInstructionsAfterAgentHaystack.setText(
+                            viewModel.instructionsAfterHaystack.value
+                        )
+                        binding.tiInstructionsAfterAgentHaystack.endIconMode = END_ICON_NONE
+                    }
+                }
+                else -> {
+                    binding.tiInstructionsAfterAgentHaystack.endIconMode = END_ICON_NONE
+                }
+            }
+        }
+    }
+
+    private fun adjustVisibleSettings(constraintLayout: ConstraintLayout, state: Boolean) {
+        val lp = constraintLayout.layoutParams as ConstraintLayout.LayoutParams
+        if (state) {
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            constraintLayout.layoutParams = lp
+        } else {
+            lp.height = 50.dpToPx()
+            constraintLayout.layoutParams = lp
+        }
+    }
+
+    private fun Int.dpToPx(): Int {
+        val density = Resources.getSystem().displayMetrics.density
+        return (this * density + 0.5f).toInt()
     }
 }

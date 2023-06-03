@@ -9,7 +9,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
-import com.back.frapuse.databinding.TextGenRvAiAttachmentFileItemBinding
+import com.back.frapuse.databinding.TextGenRvChatAiAttachmentFileItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
 import com.back.frapuse.databinding.TextGenRvChatEmptyItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
@@ -52,7 +52,7 @@ class TextGenRVChatAdapter(
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class TextGenRVChatAIAttachmentFileViewHolder(
-        internal val binding: TextGenRvAiAttachmentFileItemBinding
+        internal val binding: TextGenRvChatAiAttachmentFileItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class TextGenRVChatOperationStepViewHolder(
@@ -99,7 +99,7 @@ class TextGenRVChatAdapter(
                 TextGenRVChatAIViewHolder(binding)
             }
             TYPE_AI_ATTACHMENT_FILE -> {
-                val binding = TextGenRvAiAttachmentFileItemBinding.inflate(
+                val binding = TextGenRvChatAiAttachmentFileItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false

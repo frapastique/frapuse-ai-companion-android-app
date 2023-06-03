@@ -31,7 +31,6 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/black"
                     app:layout_scrollFlags="scroll|enterAlways|snap"
-                    app:menu="@menu/top_app_bar"
                     app:navigationIcon="@drawable/back_icon"
                     app:title="Document Operation" />
 

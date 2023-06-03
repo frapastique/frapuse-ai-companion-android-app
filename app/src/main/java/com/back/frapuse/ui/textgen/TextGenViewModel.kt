@@ -42,7 +42,6 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -95,14 +94,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val streamResponseMessage = repository.streamResponseMessage
 
     // LiveData of final response string
-    private val _finalStreamResponse = MutableLiveData<String>("")
+    private val _finalStreamResponse = MutableLiveData("")
     val finalStreamResponse: LiveData<String>
         get() = _finalStreamResponse
 
     /* _______ Extensions ______________________________________________________________ */
 
     // Haystack (document search) extension on/off holder
-    private val _extensionHaystack = MutableLiveData<Boolean>(true)
+    private val _extensionHaystack = MutableLiveData(true)
     val extensionHaystack: LiveData<Boolean>
         get() = _extensionHaystack
 
@@ -353,7 +352,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     // Final prompt creator
-    fun createFinalPrompt() {
+    private fun createFinalPrompt() {
         viewModelScope.launch {
             var prevPrompt = _instructionsContext.value!! + "\n"
             var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
@@ -568,6 +567,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             insertAIAttachmentFile()
             getAllChats()
             _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
+            deleteAgentStep()
         }
     }
 
@@ -658,14 +658,6 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // Method to calculate token count dedicated to createFinalPrompt method
-    private fun calculateTokens(pre: String, add: String): String {
-        val preInt = pre.toInt()
-        val addInt = add.toInt()
-        val new = preInt + addInt
-        return new.toString()
-    }
-
     // Method to get current message from chat library
     fun setCurrentChatMessage(messageID: Long) {
         viewModelScope.launch {
@@ -723,12 +715,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 null,
                 null
             )
-            try {
+            cursor.use {
                 if (cursor != null && cursor.moveToFirst()) {
                     fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 }
-            } finally {
-                cursor?.close()
             }
         }
         if (fileName == null) {
@@ -850,11 +840,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Haystack query response livedata
     private val _haystackQueryResponse = MutableLiveData<TextGenHaystackQueryResponse>()
-    val haystackQueryResponse: LiveData<TextGenHaystackQueryResponse>
-        get() = _haystackQueryResponse
 
     // Load file in local and upload to haystack database
-    fun uploadFile(file: File) {
+    private fun uploadFile(file: File) {
         val fileUploadMessage = "File successfully uploaded!"
 
         viewModelScope.launch {
@@ -916,7 +904,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun queryHaystack(query: String) {
+    private fun queryHaystack(query: String) {
         viewModelScope.launch {
             try {
                 insertOperationStep("Querying database...")
@@ -945,28 +933,38 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val _agentHaystackPrompt = MutableLiveData<String>()
     val agentHaystackPrompt: LiveData<String>
         get() = _agentHaystackPrompt
-    val agentHaystackStandardPrompt = "You get no user assistance! You are a database AI" +
-            "assistant. In the following you received a question from a curious user. The " +
-            "Database provided you context with a document name, the author and document " +
-            "content. Your task is to extract the answer and write a concise summary of the passage!\n"
+    val agentHaystackStandardPrompt = "You get no user assistance! You are a database AI " +
+            "assistant. In the following you received a question from a curious user and the " +
+            "database provided you some text from a pdf file. Your task is to extract the answer " +
+            "and write a concise summary of the passage!"
 
     private val _agentHaystackResponse = MutableLiveData<String>()
-    val agentHaystackResponse: LiveData<String>
-        get() = _agentHaystackResponse
 
-    fun setAgentHaystackPrompt() {
+    private val _instructionsAfterHaystack = MutableLiveData<String>()
+    val instructionsAfterHaystack: LiveData<String>
+        get() = _instructionsAfterHaystack
+    val instructionsAfterHaystackStandard = "Additional Instructions: The following context was " +
+            "obtained from a document database and an Agent provided an answer to " +
+            "the question! Your task is to provide the User a final answer to its " +
+            "question! Use your own words, make the response rich and engaging! " +
+            "Include the authors name and the title of the document in your response!"
+
+    private fun setAgentHaystackPrompt() {
         _agentHaystackPrompt.value = agentHaystackStandardPrompt
+        _instructionsAfterHaystack.value = instructionsAfterHaystackStandard
     }
 
     fun updateAgentHaystackPrompt(prompt: String) {
         _agentHaystackPrompt.value = prompt
     }
 
-    private val _relevantDocumentName = MutableLiveData<String>()
-    val relevantDocumentName: LiveData<String>
-        get() = _relevantDocumentName
+    fun updateInstructionsAfterHaystack(prompt: String) {
+        _instructionsAfterHaystack.value = prompt
+    }
 
-    fun agentHaystack() {
+    private val _relevantDocumentName = MutableLiveData<String>()
+
+    private fun agentHaystack() {
         insertOperationStep("Database Agent reasoning...")
         val haystackResponse = _haystackQueryResponse.value
         if (haystackResponse != null) {
@@ -993,7 +991,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             _relevantDocumentName.value = documentName
 
-            val databaseAgentPrompt = _agentHaystackPrompt.value +
+            val databaseAgentPrompt = _agentHaystackPrompt.value + "\n" +
                     "User: $query\n" +
                     "Context:\n" +
                     "Document name: $documentName\n" +
@@ -1045,14 +1043,10 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
                 _agentHaystackResponse.value = _genResponseHolder.value!!.results.first().text
 
-                val finalContext: String = "Additional Instructions: " +
-                        "The following context was obtained from a document database and" +
-                        "preprocessed by a database agent! Your task is to provide the User the " +
-                        "final answer to his question! If the Agents answer is sufficient use " +
-                        "it! Include the authors and document name in your response!\n" +
+                val finalContext: String = _instructionsAfterHaystack.value + "\n" +
                         "Context:" +
                         "\nAuthor: $documentAuthor" +
-                        "\nDocument Name: $documentName" +
+                        "\nScript Title: $documentName" +
                         "\nAgent:${_agentHaystackResponse.value}"
 
                 val tokensResponse = repository.getTokenCount(
@@ -1091,7 +1085,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun insertAIAttachmentFile() {
+    private fun insertAIAttachmentFile() {
         if (!_relevantDocumentName.value.isNullOrEmpty()) {
             val documentPath = _documentLibrary.value!!
                 .find { it.documentName == _relevantDocumentName.value }!!.path
@@ -1109,6 +1103,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 getAllChats()
                 _relevantDocumentName.value = ""
             }
+        }
+    }
+
+    private fun deleteAgentStep() {
+        viewModelScope.launch {
+            repository.deleteChat(_chatLibrary.value!!.find { it.type == "Database Agent" }!!)
         }
     }
 }

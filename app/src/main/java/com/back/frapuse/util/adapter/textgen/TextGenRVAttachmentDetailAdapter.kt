@@ -72,9 +72,5 @@ class TextGenRVAttachmentDetailAdapter(
 
         // Set bitmap into ImageView
         holder.binding.sivAttachmentPreview.setImageBitmap(bitmap)
-
-        // Close pdf page and renderer
-        pdfPage.close()
-        pdfRenderer.close()
     }
 }

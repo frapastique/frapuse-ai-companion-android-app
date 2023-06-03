@@ -81,7 +81,7 @@
                             app:layout_constraintBottom_toTopOf="@+id/mtv_file_info_ai"
                             app:layout_constraintStart_toEndOf="@id/siv_file_type_icon"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="@string/app_name" />
+                            tools:text="@string/app_description" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/mtv_file_info_ai"
@@ -89,7 +89,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/grey"
                             android:textSize="7sp"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/siv_file_type_icon"
                             app:layout_constraintTop_toBottomOf="@+id/siv_file_type_icon"
                             tools:ignore="SmallSp"
                             tools:text="Tokens: 16 - Date: 04.05.23 - Time: 16:20:42" />

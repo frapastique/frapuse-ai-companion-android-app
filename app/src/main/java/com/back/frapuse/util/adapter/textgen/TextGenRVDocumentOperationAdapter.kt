@@ -77,9 +77,5 @@ class TextGenRVDocumentOperationAdapter(
 
         // Set the bitmap to the ImageView
         holder.binding.sivPreview.setImageBitmap(bitmap)
-
-        // Close pdf page and renderer
-        pdfPage.close()
-        pdfRenderer.close()
     }
 }

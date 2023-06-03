@@ -248,6 +248,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="300dp"
             android:text="@string/nav_to_rv"
+            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

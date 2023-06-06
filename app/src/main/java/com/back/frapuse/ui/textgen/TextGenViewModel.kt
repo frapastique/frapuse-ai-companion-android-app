@@ -101,7 +101,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     /* _______ Extensions ______________________________________________________________ */
 
     // Haystack (document search) extension on/off holder
-    private val _extensionHaystack = MutableLiveData(true)
+    private val _extensionHaystack = MutableLiveData(false)
     val extensionHaystack: LiveData<Boolean>
         get() = _extensionHaystack
 
@@ -356,20 +356,21 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             var prevPrompt = _instructionsContext.value!! + "\n"
             var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
-            val currentChatLibrary = repository.getAllChats().toMutableList()
+            var currentChatLibrary = repository.getAllChats().toMutableList()
                 .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent" }
+                .toMutableList()
 
             // Take name, message and if file is provided also the extracted text and construct the prompt
             for (message in currentChatLibrary) {
                 tokenCountCurrent += message.tokens.toInt()
-                if (tokenCountCurrent > 1700) {
-                    Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
-                    do {
-                        tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
-                        currentChatLibrary.drop(1)
-                        Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
-                    } while (tokenCountCurrent > 1700)
-                }
+            }
+            if (tokenCountCurrent > 1700) {
+                Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
+                do {
+                    tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
+                    currentChatLibrary.removeFirst()
+                    Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
+                } while (tokenCountCurrent > 1700)
             }
 
             for (message in currentChatLibrary) {

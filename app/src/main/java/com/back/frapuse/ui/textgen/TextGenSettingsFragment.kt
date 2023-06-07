@@ -68,6 +68,12 @@ class TextGenSettingsFragment : Fragment() {
             viewModel.extensionToggle("haystack")
         }
 
+        // Enable/disable image generation extension
+        binding.mcbImageGeneration.isChecked = viewModel.extensionImageGen.value!!
+        binding.mcbImageGeneration.setOnClickListener {
+            viewModel.extensionToggle("imageGen")
+        }
+
         // Set custom instructions && adjust end icon of text input layout
         var newInstructionsContext: String
         binding.etInstructions.addTextChangedListener { newInstruction ->

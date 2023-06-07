@@ -15,16 +15,20 @@ import androidx.navigation.fragment.findNavController
 import com.back.frapuse.R
 import com.back.frapuse.data.textgen.models.TextGenAttachments
 import com.back.frapuse.databinding.FragmentTextGenChatBinding
+import com.back.frapuse.ui.imagegen.ImageGenViewModel
 import com.back.frapuse.util.AppStatus
 import com.back.frapuse.util.adapter.textgen.TextGenRVAttachmentAdapter
 import com.back.frapuse.util.adapter.textgen.TextGenRVChatAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
 
 private const val TAG = "TextGenFragment"
 
 class TextGenChatFragment : Fragment() {
-    // Get the viewModel into the logic
-    private val viewModel: TextGenViewModel by activityViewModels()
+    // Get the text gen viewModel into the logic
+    private val viewModelTextGen: TextGenViewModel by activityViewModels()
+    // Get the image gen viewModel into the logic
+    private val viewModelImageGen: ImageGenViewModel by activityViewModels()
     // Declaration of binding
     private lateinit var binding: FragmentTextGenChatBinding
 
@@ -37,7 +41,8 @@ class TextGenChatFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.getAllChats()
+        viewModelTextGen.setImageGenViewModel(viewModelImageGen)
+        viewModelTextGen.getAllChats()
         binding = FragmentTextGenChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -48,8 +53,8 @@ class TextGenChatFragment : Fragment() {
         // Introduce local filePath variable
         var filePath = ""
         // Parse activityResultRegistry to viewModel for the pdf contract
-        viewModel.registerPickPdfContract(requireActivity().activityResultRegistry)
-        viewModel.getDocumentLibrary()
+        viewModelTextGen.registerPickPdfContract(requireActivity().activityResultRegistry)
+        viewModelTextGen.getDocumentLibrary()
 
         binding.topAppBar.inflateMenu(R.menu.top_app_bar)
         // Navigate to home
@@ -110,20 +115,20 @@ class TextGenChatFragment : Fragment() {
         binding.btnSend.setOnClickListener {
             binding.rvAttachmentPreview.visibility = View.GONE
             if (filePath.isNotEmpty()) {
-                viewModel.saveAttachment(filePath)
+                viewModelTextGen.saveAttachment(filePath)
             }
-            viewModel.setHumanContext(prompt, filePath)
+            viewModelTextGen.setHumanContext(prompt, filePath)
             binding.etPrompt.setText("")
             filePath = ""
-            viewModel.resetPdfPath()
+            viewModelTextGen.resetPdfPath()
         }
 
         // Execute generate block when promptStatus is done
-        viewModel.createPromptStatus.observe(viewLifecycleOwner) { promptStatus ->
+        viewModelTextGen.createPromptStatus.observe(viewLifecycleOwner) { promptStatus ->
             when (promptStatus) {
                 AppStatus.DONE -> {
                     // viewModel.generateBlock()
-                    viewModel.generateStream()
+                    viewModelTextGen.generateStream()
                 }
                 else -> Log.e(TAG, "Prompt status:\n\t$promptStatus")
             }
@@ -131,42 +136,43 @@ class TextGenChatFragment : Fragment() {
 
         // Empty chat history and pdf file cache
         binding.btnSend.setOnLongClickListener {
-            viewModel.deleteChatLibrary()
-            viewModel.deleteAllPdf(requireContext())
+            viewModelTextGen.deleteChatLibrary()
+            viewModelTextGen.deleteAllPdf(requireContext())
             true
         }
 
         // Set chat library on RecyclerView
-        viewModel.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
+        viewModelTextGen.chatLibrary.observe(viewLifecycleOwner) { chatLibrary ->
             binding.rvChatLibrary.adapter = TextGenRVChatAdapter(
                 dataset = chatLibrary,
-                viewModelTextGen = viewModel
+                viewModelTextGen = viewModelTextGen,
+                viewModelImageGen = viewModelImageGen
             )
             binding.rvChatLibrary.scrollToPosition(chatLibrary.size-1)
             binding.rvChatLibrary.setHasFixedSize(true)
         }
 
         // Observe final stream response and adjust recyclerview position
-        viewModel.finalStreamResponse.observe(viewLifecycleOwner) {
+        viewModelTextGen.finalStreamResponse.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.rvChatLibrary.smoothScrollToPosition(
-                    viewModel.chatLibrary.value!!.size
+                    viewModelTextGen.chatLibrary.value!!.size
                 )
             }
         }
 
         // Apply token count for current prompt context
-        viewModel.tokenCount.observe(viewLifecycleOwner) { count ->
+        viewModelTextGen.tokenCount.observe(viewLifecycleOwner) { count ->
             binding.tvTokens.text = count
         }
 
         // Scroll to the latest chat message when clicking to type next message
         binding.tiPrompt.setOnClickListener {
-            binding.rvChatLibrary.smoothScrollToPosition(viewModel.chatLibrary.value!!.size)
+            binding.rvChatLibrary.smoothScrollToPosition(viewModelTextGen.chatLibrary.value!!.size)
         }
 
         // Set state and visibility of elements according to API status
-        viewModel.apiStatus.observe(viewLifecycleOwner) { status ->
+        viewModelTextGen.apiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 AppStatus.LOADING -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -204,8 +210,8 @@ class TextGenChatFragment : Fragment() {
                 .setNeutralButton("Cancel") { _, _ -> }
                 .setNegativeButton("Document") { _, _ ->
                     // Create attachment preview in a RecyclerView
-                    viewModel.launchPickPdf()
-                    viewModel.pdfPath.observe(viewLifecycleOwner) { newFilePath ->
+                    viewModelTextGen.launchPickPdf()
+                    viewModelTextGen.pdfPath.observe(viewLifecycleOwner) { newFilePath ->
                         if (newFilePath.isNotEmpty()) {
                             filePath = newFilePath
                             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
@@ -216,13 +222,13 @@ class TextGenChatFragment : Fragment() {
                                         pageCount = 0
                                     )
                                 ),
-                                viewModel = viewModel
+                                viewModel = viewModelTextGen
                             )
                             binding.rvAttachmentPreview.visibility = View.VISIBLE
                         } else {
                             binding.rvAttachmentPreview.adapter = TextGenRVAttachmentAdapter(
                                 dataset = emptyList(),
-                                viewModel
+                                viewModelTextGen
                             )
                             binding.rvAttachmentPreview.visibility = View.GONE
                         }
@@ -232,6 +238,31 @@ class TextGenChatFragment : Fragment() {
                     // Respond to positive button press
                 }
                 .show()
+        }
+
+        // Observer of api generation status
+        viewModelImageGen.apiStatusTextToImg.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                AppStatus.LOADING ->  {
+                    // Start load progress
+                    viewModelImageGen.loadProgress()
+                    // Set maximum progressBar percentage
+                    binding.progressBar.max = 100
+                    // Set visibility of ProgressBar
+                    binding.progressBar.visibility = View.VISIBLE
+                    // Update progressBar whenever the progress LiveData changes
+                    viewModelImageGen.progress.observe(viewLifecycleOwner) {
+                        // Update progressbar according the current progress
+                        binding.progressBar.progress =
+                            (viewModelImageGen.progress.value!!.progress.times(100)).toInt()
+                    }
+                }
+                AppStatus.DONE -> {
+                    // Remove ProgressBar when generation is done
+                    binding.progressBar.visibility = View.GONE
+                }
+                else -> {}
+            }
         }
     }
 }

@@ -369,7 +369,14 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                 progress = 0.0,
                 current_image = null
             )
-            _progressImageBase64.value = _finalImageBase64.value!!.images.first()
+            try {
+                _progressImageBase64.value = _finalImageBase64.value!!.images.first()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error setting progress image:\n\t$e"
+                )
+            }
             cancel()
         }
     }
@@ -507,6 +514,28 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     fun getAllImages() {
         viewModelScope.launch {
             _imageLibrary.value = repository.getAllImages()
+        }
+    }
+
+
+    /* _______ TextGen Image Generation ________________________________________________ */
+
+    fun textGenRequest(prompt: String){
+        viewModelScope.launch {
+            _finalImageBase64.value = repository.startTextToImage(
+                TextToImageRequest(
+                    prompt = prompt,
+                    seed = -1,
+                    sampler_name = "DPM++ 2S a Karras",
+                    cfg_scale = 7.0,
+                    steps = 25,
+                    width = 512,
+                    height = 512,
+                    negative_prompt = "(worst quality, low quality: 1.3), ((disfigured)), " +
+                            "((bad art)), ((deformed)), ((poorly drawn)), ((extra limbs)), " +
+                            "((b&w)), weird colors, blurry"
+                )
+            )
         }
     }
 }

@@ -10,18 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.textgen.TextGenViewModel
 import com.back.frapuse.data.textgen.models.TextGenChatLibrary
 import com.back.frapuse.databinding.TextGenRvChatAiAttachmentFileItemBinding
+import com.back.frapuse.databinding.TextGenRvChatAiAttachmentImageItemBinding
 import com.back.frapuse.databinding.TextGenRvChatAiItemBinding
 import com.back.frapuse.databinding.TextGenRvChatEmptyItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanAttachmentItemBinding
 import com.back.frapuse.databinding.TextGenRvChatHumanItemBinding
 import com.back.frapuse.databinding.TextGenRvChatInstructionItemBinding
 import com.back.frapuse.databinding.TextGenRvChatOperationStepItemBinding
+import com.back.frapuse.ui.imagegen.ImageGenViewModel
 import com.back.frapuse.ui.textgen.TextGenChatFragmentDirections
 import java.io.File
 
 class TextGenRVChatAdapter(
     private var dataset: List<TextGenChatLibrary>,
     private val viewModelTextGen: TextGenViewModel,
+    private val viewModelImageGen: ImageGenViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     // Companion object defines type of item in dataset
@@ -31,8 +34,9 @@ class TextGenRVChatAdapter(
         private const val TYPE_HUMAN_ATTACHMENT = 2
         private const val TYPE_AI_MESSAGE = 3
         private const val TYPE_AI_ATTACHMENT_FILE = 4
-        private const val TYPE_OPERATION_STEP = 5
-        private const val TYPE_DATABASE_AGENT = 6
+        private const val TYPE_AI_ATTACHMENT_IMAGE = 5
+        private const val TYPE_OPERATION_STEP = 6
+        private const val TYPE_DATABASE_AGENT = 7
     }
 
     inner class TextGenRVChatInstructionViewHolder(
@@ -53,6 +57,10 @@ class TextGenRVChatAdapter(
 
     inner class TextGenRVChatAIAttachmentFileViewHolder(
         internal val binding: TextGenRvChatAiAttachmentFileItemBinding
+    ) : RecyclerView.ViewHolder(binding.root)
+
+    inner class TextGenRVChatAIAttachmentImageViewHolder(
+        internal val binding: TextGenRvChatAiAttachmentImageItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class TextGenRVChatOperationStepViewHolder(
@@ -105,6 +113,14 @@ class TextGenRVChatAdapter(
                     false
                 )
                 TextGenRVChatAIAttachmentFileViewHolder(binding)
+            }
+            TYPE_AI_ATTACHMENT_IMAGE -> {
+                val binding = TextGenRvChatAiAttachmentImageItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TextGenRVChatAIAttachmentImageViewHolder(binding)
             }
             TYPE_OPERATION_STEP -> {
                 val binding = TextGenRvChatOperationStepItemBinding.inflate(
@@ -214,6 +230,21 @@ class TextGenRVChatAdapter(
                 }
             }
 
+            is TextGenRVChatAIAttachmentImageViewHolder -> {
+                if (chat.sentImage.isEmpty()) {
+                    // Load image when finalImageBase64 gets updated
+                    viewModelImageGen.finalImageBase64.observe(
+                        holder.itemView.context as LifecycleOwner
+                    ) { genData ->
+                        viewModelTextGen.setImageBase64(genData.images.first())
+                    }
+                } else {
+                    holder.binding.sivAiSentImage.setImageBitmap(
+                        viewModelImageGen.decodeImage(chat.sentImage)
+                    )
+                }
+            }
+
             is TextGenRVChatOperationStepViewHolder -> {
                 holder.binding.tvCurrentOperationStep.text = chat.message
                 when(chat.status) {
@@ -247,8 +278,11 @@ class TextGenRVChatAdapter(
             "AI" -> { // AI message text
                 TYPE_AI_MESSAGE
             }
-            "AI Attachment" -> { // AI attachment
+            "AI Attachment File" -> { // AI attachment File
                 TYPE_AI_ATTACHMENT_FILE
+            }
+            "AI Attachment Image" -> { // AI AttachmentImage
+                TYPE_AI_ATTACHMENT_IMAGE
             }
             "Operation" -> { // Current operation
                 TYPE_OPERATION_STEP

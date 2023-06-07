@@ -36,6 +36,7 @@ import com.back.frapuse.data.textgen.models.haystack.TextGenHaystackQueryRespons
 import com.back.frapuse.data.textgen.remote.TextGenBlockAPI
 import com.back.frapuse.data.textgen.remote.TextGenHaystackAPI
 import com.back.frapuse.data.textgen.remote.TextGenStreamWebSocketClient
+import com.back.frapuse.ui.imagegen.ImageGenViewModel
 import com.back.frapuse.util.AppStatus
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -104,6 +105,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     private val _extensionHaystack = MutableLiveData(false)
     val extensionHaystack: LiveData<Boolean>
         get() = _extensionHaystack
+
+    // Image generation extension on/off holder
+    private val _extensionImageGen = MutableLiveData(false)
+    val extensionImageGen: LiveData<Boolean>
+        get() = _extensionImageGen
 
 
     /* _______ Prompts _________________________________________________________________ */
@@ -213,8 +219,13 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     /* _______ Extensions ______________________________________________________________ */
 
     fun extensionToggle(extension: String) {
-        if (extension == "haystack") {
-            _extensionHaystack.value = _extensionHaystack.value != true
+        when (extension) {
+            "haystack" -> {
+                _extensionHaystack.value = _extensionHaystack.value != true
+            }
+            "imageGen" -> {
+                _extensionImageGen.value = _extensionImageGen.value != true
+            }
         }
     }
 
@@ -315,6 +326,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             getAllChats()
             if (extensionHaystack.value == true) {
                 queryHaystack(message)
+            } else if (extensionImageGen.value == true) {
+                agentImageGen(message)
             } else {
                 createFinalPrompt()
             }
@@ -357,7 +370,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             var prevPrompt = _instructionsContext.value!! + "\n"
             var tokenCountCurrent = _instructionContextTokenCount.value!!.toInt()
             var currentChatLibrary = repository.getAllChats().toMutableList()
-                .filter { it.type == "Human" || it.type == "AI" || it.type == "Database Agent" }
+                .filter {
+                    it.type == "Human" ||
+                            it.type == "AI" ||
+                            it.type == "Database Agent" ||
+                            it.type == "Image Generation Agent"
+                }
                 .toMutableList()
 
             // Take name, message and if file is provided also the extracted text and construct the prompt
@@ -565,11 +583,18 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     finalContext = _aiContext.value!!
                 )
             )
-            insertAIAttachmentFile()
+            if (_extensionHaystack.value == true) {
+                insertAIAttachmentFile()
+            } else if (_extensionImageGen.value == true) {
+                genImage(_genResponseHolder.value!!.results.first().text)
+                insertAIAttachmentImage()
+            }
             getAllChats()
             _tokenCount.value = (_tokenCount.value!!.toInt() + tokens.toInt()).toString()
             if (extensionHaystack.value == true) {
-                deleteAgentStep()
+                deleteAgentChat("Database Agent")
+            } else if (extensionImageGen.value == true) {
+                deleteAgentChat("Image Generation Agent")
             }
         }
     }
@@ -931,7 +956,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    /* _______ Agent ___________________________________________________________________ */
+    /* _______ Haystack Agent _________________________________________________________ */
 
     private val _agentHaystackPrompt = MutableLiveData<String>()
     val agentHaystackPrompt: LiveData<String>
@@ -1097,7 +1122,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                     TextGenChatLibrary(
                         conversationID = 0,
                         dateTime = getDateTime(),
-                        type = "AI Attachment",
+                        type = "AI Attachment File",
                         status = true,
                         message = _relevantDocumentName.value!!,
                         sentDocument = documentPath
@@ -1109,9 +1134,218 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private fun deleteAgentStep() {
+    /* _______ Agent Image Generation __________________________________________________ */
+
+    private lateinit var viewModelImageGen: ImageGenViewModel
+    fun setImageGenViewModel(viewModel: ImageGenViewModel) {
+        viewModelImageGen = viewModel
+    }
+
+    private val _imageGenAgentInstructions = "A chat between a curious user and an artificial " +
+            "intelligence image generation prompt generator assistant. The assistant gives a " +
+            "prompt adjusted to users wishes as shown in the following examples!\n" +
+            "USER: Generate an image of a dog\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, cute golden retriever " +
+            "sitting on a grassy field with its head tilted up towards the sun, wildlife " +
+            "photography, photograph, high quality, wildlife, f 1.8, soft focus, 8k, national " +
+            "geographic, award - winning photograph by nick nichols\n" +
+            "USER: Show me an image of a room interior\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, a cozy living room " +
+            "with plush armchairs arranged around a fireplace, a bookshelf filled with colorful " +
+            "books, a large window overlooking a serene garden, by James McDonald and Joarc " +
+            "Architects, home, interior, octane render, deviantart, cinematic, key art, " +
+            "hyperrealism, sun light, sunrays, canon eos c 300, ƒ 1.8, 35 mm, 8k, medium - " +
+            "format print\n" +
+            "USER: Create a cute racoon as a kids cartoon character\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, racoon, anthro, very " +
+            "cute kid's film character, disney pixar zootopia character concept artwork, 3d " +
+            "concept, detailed fur, high detail iconic character for upcoming film, trending " +
+            "on artstation, character design, 3d artistic render, highly detailed, octane, " +
+            "blender, cartoon, shadows, lighting\n" +
+            "USER: Create a portrait image of a female cyberpunk character\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, portrait image of a " +
+            "female, cyberpunk, in heavy raining futuristic tokyo rooftop cyberpunk night, " +
+            "sci-fi, fantasy, intricate, very very beautiful, elegant, neon light, highly " +
+            "detailed, digital painting, artstation, concept art, soft light, hdri, smooth, " +
+            "sharp focus, illustration, art by tian zi and craig mullins and wlop and alphonse " +
+            "much\n" +
+            "USER: I want to see digital jungle alien landscape art with purple accents\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, jungle alien " +
+            "landscape, epic concept art by barlowe wayne, ruan jia, light effect, volumetric " +
+            "light, 3d, ultra clear detailed, octane render, 8k, dark green, purple colour " +
+            "scheme, purple accents\n" +
+            "USER: Can you make a portrait photo of an old man?\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, portrait photo of " +
+            "old man, photograph, highly detailed face, depth of field, moody light, golden " +
+            "hour, style by Dan Winters, Russell James, Steve McCurry, centered, extremely " +
+            "detailed, Nikon D850, award winning photography\n" +
+            "USER: What about an image of a steampunk wolf?\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, wolf, steampunk " +
+            "cybernetic biomechanical, 3d model, very coherent symmetrical artwork, unreal " +
+            "engine realistic render, 8k, micro detail, intricate, elegant, highly detailed, " +
+            "centered, digital painting, artstation, smooth, sharp focus, illustration, artgerm, " +
+            "Caio Fantini, wlop\n" +
+            "USER: Create video game gem sprites\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, sprite of video games " +
+            "gem stones icons, 2d icons, rpg skills icons, world of warcraft, league of legends, " +
+            "ability icon, fantasy, potions, spells, objects, flowers, gems, swords, axe, hammer" +
+            ", fire, ice, arcane, shiny object, graphic design, high contrast, artstation\n" +
+            "USER: Create a landscape photo with a waterfall\n" +
+            "ASSISTANT: (Masterpiece:1.1), detailed, intricate, colorful, landscape, birds in " +
+            "the sky, waterfall close shot 35 mm, realism, octane render, 8 k, exploration, " +
+            "cinematic, trending on artstation, 35 mm camera, unreal engine, hyper detailed, " +
+            "photo - realistic maximum detail, volumetric light, moody cinematic epic concept " +
+            "art, realistic matte painting, hyper photorealistic, epic, trending on artstation, " +
+            "movie concept art, cinematic composition, ultra - detailed, realistic"
+
+    private val _generatedImage = MutableLiveData("init")
+
+    private fun agentImageGen(message: String) {
+        val imageGenPrompt = _imageGenAgentInstructions +
+                "USER: $message\n" +
+                "ASSISTANT:"
+
+        insertOperationStep("Image Generation Agent Working...")
         viewModelScope.launch {
-            repository.deleteChat(_chatLibrary.value!!.find { it.type == "Database Agent" }!!)
+            _chatLibrary.value = repository.getAllChats()
+
+            repository.insertChat(
+                TextGenChatLibrary(
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    tokens = "0",
+                    type = "Image Generation Agent",
+                    message = "",
+                )
+            )
+
+            _chatLibrary.value = repository.getAllChats()
+
+            _genRequestBody.value = TextGenGenerateRequest(
+                prompt = imageGenPrompt,
+                max_new_tokes = 300,
+                do_sample = true,
+                temperature = 1.3,
+                top_p = 0.1,
+                typical_p = 1.0,
+                repetition_penalty = 1.18,
+                top_k = 40,
+                min_length = 0,
+                no_repeat_ngram_size = 0,
+                num_beams = 1,
+                penalty_alpha = 0.0,
+                length_penalty = 1.0,
+                early_stopping = false,
+                seed = -1,
+                add_bos_token = true,
+                truncation_length = 2048,
+                ban_eos_token = false,
+                skip_special_tokens = true,
+                stopping_strings = listOf()
+            )
+
+            _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
+
+            updateOperationStep(
+                _chatLibrary.value!!.reversed()
+                    .find { it.message == "Image Generation Agent Working..." }!!.ID,
+                "Image Generation Agent Working..."
+            )
+
+            val finalContext = "Additional Instructions: Your only job is to inform the user " +
+                    "that you are going to generate/create the desired content! Keep your " +
+                    "response short but informative. DO NOT WRITE PLACEHOLDER LIKE THIS: [image] " +
+                    "AND DO NOT WRITE LINKS! For Example: \"Sure, I can generate that for you:\""
+
+            /*val finalContext = "Additional Instructions: The following context was created by an image " +
+                    "generation agent. After your response the image is going to be created with " +
+                    "stable diffusion (an image generation AI). The agent is going to use this " +
+                    "prompt: \"${_genResponseHolder.value!!.results.first().text}\". Your job is " +
+                    "to inform the user that you are going to generate the desired content!" +
+                    "DO NOT WRITE PLACEHOLDER LIKE THIS: [image] AND DON NOT WRITE LINKS! Be " +
+                    "creative with your response, make it rich, engaging and remember this one " +
+                    "time rule!"*/
+
+            _chatLibrary.value = repository.getAllChats()
+
+            val tokensResponse = repository.getTokenCount(
+                TextGenPrompt(finalContext)
+            )
+                .results.first().tokens
+
+            repository.updateChat(
+                TextGenChatLibrary(
+                    ID = _chatLibrary.value!!.reversed()
+                        .find { it.type == "Image Generation Agent" }!!.ID,
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    tokens = tokensResponse,
+                    type = "Image Generation Agent",
+                    status = true,
+                    message = message,
+                    finalContext = finalContext
+                )
+            )
+
+            _chatLibrary.value = repository.getAllChats()
+
+            createFinalPrompt()
+        }
+    }
+
+    private fun genImage(prompt: String) {
+        viewModelScope.launch {
+            insertOperationStep("Generating Image...")
+            viewModelImageGen.textGenRequest(prompt)
+        }
+    }
+
+    private fun insertAIAttachmentImage() {
+        viewModelScope.launch {
+            repository.insertChat(
+                TextGenChatLibrary(
+                    conversationID = 0,
+                    dateTime = getDateTime(),
+                    type = "AI Attachment Image",
+                    status = false,
+                    message = "",
+                    sentImage = ""
+                )
+            )
+            getAllChats()
+        }
+    }
+
+    fun setImageBase64(imgB64: String) {
+        if (imgB64 != _generatedImage.value) {
+            _generatedImage.value = imgB64
+            updateOperationStep(
+                _chatLibrary.value!!.reversed()
+                    .find { it.message == "Generating Image..." }!!.ID,
+                "Generating Image..."
+            )
+
+            viewModelScope.launch {
+                repository.updateChat(
+                    TextGenChatLibrary(
+                        ID = _chatLibrary.value!!.reversed()
+                            .find { it.type == "AI Attachment Image" }!!.ID,
+                        conversationID = 0,
+                        dateTime = getDateTime(),
+                        type = "AI Attachment Image",
+                        status = true,
+                        message = "",
+                        sentImage = _generatedImage.value!!
+                    )
+                )
+                getAllChats()
+            }
+        }
+    }
+
+    private fun deleteAgentChat(type: String) {
+        viewModelScope.launch {
+            repository.deleteChat(_chatLibrary.value!!.find { it.type == type }!!)
         }
     }
 }

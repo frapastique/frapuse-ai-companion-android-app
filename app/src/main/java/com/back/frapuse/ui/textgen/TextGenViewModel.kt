@@ -324,9 +324,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 )
             )
             getAllChats()
+
+            val messageGenCheck = message.split(" ").contains("generate")
+
             if (extensionHaystack.value == true) {
                 queryHaystack(message)
-            } else if (extensionImageGen.value == true) {
+            } else if (extensionImageGen.value == true || messageGenCheck) {
                 agentImageGen(message)
             } else {
                 createFinalPrompt()
@@ -585,7 +588,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             if (_extensionHaystack.value == true) {
                 insertAIAttachmentFile()
-            } else if (_extensionImageGen.value == true) {
+            } else if (_extensionImageGen.value == true || _humanContext.value!!.split(" ").contains("generate")) {
                 genImage(_genResponseHolder.value!!.results.first().text)
                 insertAIAttachmentImage()
             }
@@ -1254,21 +1257,12 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             val finalContext = "Additional Instructions: Your only job is to inform the user " +
                     "that you are going to generate/create the desired content! Keep your " +
-                    "response short but informative. DO NOT WRITE PLACEHOLDER LIKE THIS: [image] " +
-                    "AND DO NOT WRITE LINKS! For Example: \"Sure, I can generate that for you:\""
-
-            /*val finalContext = "Additional Instructions: The following context was created by an image " +
-                    "generation agent. After your response the image is going to be created with " +
-                    "stable diffusion (an image generation AI). The agent is going to use this " +
-                    "prompt: \"${_genResponseHolder.value!!.results.first().text}\". Your job is " +
-                    "to inform the user that you are going to generate the desired content!" +
-                    "DO NOT WRITE PLACEHOLDER LIKE THIS: [image] AND DON NOT WRITE LINKS! Be " +
-                    "creative with your response, make it rich, engaging and remember this one " +
-                    "time rule!"*/
+                    "response short but informative. For Example: \"Sure, I can generate that " +
+                    "for you:\" DO NOT WRITE PLACEHOLDER LIKE THIS: [image] AND DO NOT WRITE LINKS!"
 
             _chatLibrary.value = repository.getAllChats()
 
-            val tokensResponse = repository.getTokenCount(
+            val tokensFinalContext = repository.getTokenCount(
                 TextGenPrompt(finalContext)
             )
                 .results.first().tokens
@@ -1279,7 +1273,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         .find { it.type == "Image Generation Agent" }!!.ID,
                     conversationID = 0,
                     dateTime = getDateTime(),
-                    tokens = tokensResponse,
+                    tokens = tokensFinalContext,
                     type = "Image Generation Agent",
                     status = true,
                     message = message,

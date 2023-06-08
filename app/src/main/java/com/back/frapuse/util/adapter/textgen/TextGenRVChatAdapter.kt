@@ -232,7 +232,7 @@ class TextGenRVChatAdapter(
 
             is TextGenRVChatAIAttachmentImageViewHolder -> {
                 if (chat.sentImage.isEmpty()) {
-                    // Load image when finalImageBase64 gets updated
+                    // Deliver base64 image to text gen viewmodel when finalImageBase64 gets updated
                     viewModelImageGen.finalImageBase64.observe(
                         holder.itemView.context as LifecycleOwner
                     ) { genData ->

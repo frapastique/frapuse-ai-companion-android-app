@@ -533,7 +533,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                     height = 512,
                     negative_prompt = "(worst quality, low quality: 1.3), ((disfigured)), " +
                             "((bad art)), ((deformed)), ((poorly drawn)), ((extra limbs)), " +
-                            "((b&w)), weird colors, blurry"
+                            "weird colors, blurry"
                 )
             )
         }

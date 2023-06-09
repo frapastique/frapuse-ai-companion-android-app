@@ -325,7 +325,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             getAllChats()
 
-            val messageGenCheck = message.split(" ").contains("generate")
+            val messageGenCheck = message.lowercase().split(" ").contains("generate")
 
             if (extensionHaystack.value == true) {
                 queryHaystack(message)
@@ -588,7 +588,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             if (_extensionHaystack.value == true) {
                 insertAIAttachmentFile()
-            } else if (_extensionImageGen.value == true || _humanContext.value!!.split(" ").contains("generate")) {
+            } else if (_extensionImageGen.value == true ||
+                _humanContext.value!!.lowercase().split(" ").contains("generate")) {
                 genImage(_genResponseHolder.value!!.results.first().text)
                 insertAIAttachmentImage()
             }

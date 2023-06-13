@@ -13,15 +13,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.back.frapuse.data.imagegen.ImageGenRepository
-import com.back.frapuse.data.imagegen.models.ImageBase64
-import com.back.frapuse.data.imagegen.models.ImageInfo
-import com.back.frapuse.data.imagegen.models.ImageMetadata
-import com.back.frapuse.data.imagegen.models.Options
-import com.back.frapuse.data.imagegen.models.Progress
-import com.back.frapuse.data.imagegen.models.SDModel
-import com.back.frapuse.data.imagegen.models.Sampler
-import com.back.frapuse.data.imagegen.models.TextToImage
-import com.back.frapuse.data.imagegen.models.TextToImageRequest
+import com.back.frapuse.data.imagegen.models.ImageGenImageBase64
+import com.back.frapuse.data.imagegen.models.ImageGenImageInfo
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenOptions
+import com.back.frapuse.data.imagegen.models.ImageGenProgress
+import com.back.frapuse.data.imagegen.models.ImageGenSDModel
+import com.back.frapuse.data.imagegen.models.ImageGenSampler
+import com.back.frapuse.data.imagegen.models.ImageGenTextToImageResponse
+import com.back.frapuse.data.imagegen.models.ImageGenTextToImageRequest
 import com.back.frapuse.data.imagegen.local.getImageGenDatabase
 import com.back.frapuse.data.imagegen.remote.ImageGenAPI
 import com.back.frapuse.util.AppStatus
@@ -45,28 +45,28 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     /* _______ Values Remote ___________________________________________________________ */
 
     // Current options
-    private val _options = MutableLiveData<Options>()
-    val options: LiveData<Options>
+    private val _options = MutableLiveData<ImageGenOptions>()
+    val options: LiveData<ImageGenOptions>
         get() = _options
 
     // List of models which are loaded on the server
-    private val _models = MutableLiveData<List<SDModel>>()
-    val models: LiveData<List<SDModel>>
+    private val _models = MutableLiveData<List<ImageGenSDModel>>()
+    val models: LiveData<List<ImageGenSDModel>>
         get() = _models
 
     // List of samplers from API
-    private val _samplersList = MutableLiveData<List<Sampler>>()
-    val samplersList: LiveData<List<Sampler>>
+    private val _samplersList = MutableLiveData<List<ImageGenSampler>>()
+    val samplersList: LiveData<List<ImageGenSampler>>
         get() = _samplersList
 
     // Current progress of image generation
-    private var _progress = MutableLiveData<Progress>()
-    val progress: LiveData<Progress>
+    private var _progress = MutableLiveData<ImageGenProgress>()
+    val progress: LiveData<ImageGenProgress>
         get() = _progress
 
     // Holds generation information of the final image
-    private val _imageInfo = MutableLiveData<ImageInfo>()
-    val imageInfo: LiveData<ImageInfo>
+    private val _imageInfo = MutableLiveData<ImageGenImageInfo>()
+    val imageInfo: LiveData<ImageGenImageInfo>
         get() = _imageInfo
 
 
@@ -86,8 +86,8 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     /* _______ Values Local ____________________________________________________________ */
 
     // Holds the library of previously generated images and its metadata
-    private var _imageLibrary = MutableLiveData<List<ImageMetadata>>()
-    val imageLibrary: LiveData<List<ImageMetadata>>
+    private var _imageLibrary = MutableLiveData<List<ImageGenImageMetadata>>()
+    val imageLibrary: LiveData<List<ImageGenImageMetadata>>
         get() = _imageLibrary
 
 
@@ -99,51 +99,52 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
         get() = _prompt
 
     // Applied negative prompt
-    private val _negativePrompt = MutableLiveData<String>()
+    private val _negativePrompt = MutableLiveData(
+        "(worst quality, low quality: 1.3), ((disfigured)), " +
+                "((bad art)), ((deformed)), ((poorly drawn)), ((extra limbs)), " +
+                "weird colors, blurry")
     val negativePrompt: LiveData<String>
         get() = _negativePrompt
 
     // Applied configuration scale
-    private val _cfgScale = MutableLiveData<Double>()
+    private val _cfgScale = MutableLiveData(7.5)
     val cfgScale: LiveData<Double>
         get() = _cfgScale
 
     // Applied step count
-    private var _steps = MutableLiveData<Int>()
+    private var _steps = MutableLiveData(25)
     val steps: LiveData<Int>
         get() = _steps
 
     // Applied image width
-    private var _width = MutableLiveData<Int>()
+    private var _width = MutableLiveData(512)
     val width: LiveData<Int>
         get() = _width
 
     // Applied image height
-    private var _height = MutableLiveData<Int>()
+    private var _height = MutableLiveData(512)
     val height: LiveData<Int>
         get() = _height
 
     // Applied seed
-    private val _seed = MutableLiveData<Long>()
+    private val _seed = MutableLiveData<Long>(-1)
     val seed: LiveData<Long>
         get() = _seed
 
     // Applied sampler
-    private val _sampler = MutableLiveData<Sampler>()
-    val sampler: LiveData<Sampler>
+    private val _sampler = MutableLiveData(ImageGenSampler("DPM++ 2S a Karras"))
+    val sampler: LiveData<ImageGenSampler>
         get() = _sampler
 
     // Formatted text to image request data for api call
-    private var _textToImageRequest = MutableLiveData<TextToImageRequest>()
-    val textToImageRequest: LiveData<TextToImageRequest>
-        get() = _textToImageRequest
+    private var _textToImageRequest = MutableLiveData<ImageGenTextToImageRequest>()
 
 
     /* _______ Image data _______________________________________________________________ */
 
     // Final image in Base64 format
-    private var _finalImageBase64 = MutableLiveData<TextToImage>()
-    val finalImageBase64: LiveData<TextToImage>
+    private var _finalImageBase64 = MutableLiveData<ImageGenTextToImageResponse>()
+    val finalImageBase64: LiveData<ImageGenTextToImageResponse>
         get() = _finalImageBase64
 
     // Live preview image in Base64 format
@@ -157,9 +158,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
         get() = _image
 
     // Holds the metadata of generated image which gets inserted into database
-    private val _imageMetadata = MutableLiveData<ImageMetadata>()
-    val imageMetadata: LiveData<ImageMetadata>
-        get() = _imageMetadata
+    private val _imageMetadata = MutableLiveData<ImageGenImageMetadata>()
 
     // Image saved state
     private val _imageSavedState = MutableLiveData<Boolean>()
@@ -176,8 +175,6 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
 
     // Current status of apply image metadata
     private val _appStatusApplyMetaData = MutableLiveData<AppStatus>()
-    val appStatusApplyMetaData: LiveData<AppStatus>
-        get() = _appStatusApplyMetaData
 
     init {
         viewModelScope.launch {
@@ -243,7 +240,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
 
     // Set current Sampler
     fun setSampler(newSamplerName: String) {
-        _sampler.value = Sampler(
+        _sampler.value = ImageGenSampler(
             name = newSamplerName
         )
     }
@@ -253,7 +250,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
         val setModelMessage = "$modelName model successfully loaded."
         _apiStatusOptions.value = AppStatus.LOADING
         val newModel = _models.value!!.find { it.model_name == modelName }
-        val newOptions = Options(
+        val newOptions = ImageGenOptions(
             sd_model_checkpoint = newModel!!.title
         )
         viewModelScope.launch {
@@ -269,11 +266,23 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     // Set and fill text to image request and update status
     fun setTextToImageRequest() {
         _appStatusSetTextToImageRequest.value = AppStatus.LOADING
-        Log.e(TAG, "TextToImageRequest status: \n\t CHECK")
+        Log.e(
+            TAG,
+            "TextToImageRequest status:" +
+                    "\n\tCHECK"
+        )
         if (!_prompt.value.isNullOrEmpty()) {
-            Log.e(TAG, "TextToImageRequest status: \n\t VALID")
-            Log.e(TAG, "TextToImageRequest status: \n\t SETTING")
-            _textToImageRequest.value = TextToImageRequest(
+            Log.e(
+                TAG,
+                "TextToImageRequest status:" +
+                        "\n\tVALID"
+            )
+            Log.e(
+                TAG,
+                "TextToImageRequest status:" +
+                        "\n\tSETTING"
+            )
+            _textToImageRequest.value = ImageGenTextToImageRequest(
                 prompt = _prompt.value!!,
                 seed = _seed.value!!,
                 cfg_scale = _cfgScale.value!!,
@@ -283,10 +292,18 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                 height = _height.value!!,
                 negative_prompt = _negativePrompt.value!!
             )
-            Log.e(TAG, "TextToImageRequest status: \n\t SET")
+            Log.e(
+                TAG,
+                "TextToImageRequest status:" +
+                        "\n\tSET"
+            )
             _appStatusSetTextToImageRequest.value = AppStatus.DONE
         } else {
-            Log.e(TAG, "TextToImageRequest status: \n\t INVALID")
+            Log.e(
+                TAG,
+                "TextToImageRequest status:" +
+                        "\n\tINVALID"
+            )
             _appStatusSetTextToImageRequest.value = AppStatus.ERROR
         }
     }
@@ -298,9 +315,17 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     private fun loadOptions() {
         _apiStatusOptions.value = AppStatus.LOADING
         viewModelScope.launch {
-            Log.e(TAG, "Option status: \n\t LOADING")
+            Log.e(
+                TAG,
+                "Option status:" +
+                        "\n\tLOADING"
+            )
             _options.value = repository.getOptions()
-            Log.e(TAG, "Option status: \n\t LOADED")
+            Log.e(
+                TAG,
+                "Option status:" +
+                        "\n\tLOADED"
+            )
             _apiStatusOptions.value = AppStatus.DONE
             cancel()
         }
@@ -311,11 +336,23 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             delay(1000)
             try {
-                Log.e(TAG, "Model status: \n\t LOADING")
+                Log.e(
+                    TAG,
+                    "Model status:" +
+                            "\n\tLOADING"
+                )
                 _models.value = repository.getModels()
-                Log.e(TAG, "Model status: \n\t LOADED")
+                Log.e(
+                    TAG,
+                    "Model status:" +
+                            "\n\tLOADED"
+                )
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading models: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error loading models:" +
+                            "\n\t$e"
+                )
             }
             cancel()
         }
@@ -324,9 +361,17 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     // Load all available samplers from server
     private fun loadSamplers() {
         viewModelScope.launch {
-            Log.e(TAG, "Samplers status: \n\t LOADING")
+            Log.e(
+                TAG,
+                "Samplers status:" +
+                        "\n\tLOADING"
+            )
             _samplersList.value = repository.getSamplers()
-            Log.e(TAG, "Samplers status: \n\t LOADED")
+            Log.e(
+                TAG,
+                "Samplers status:" +
+                        "\n\tLOADED"
+            )
         }
     }
 
@@ -356,16 +401,28 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                                 _progressImageBase64.value = _progress.value!!.current_image!!
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "Error loading progress image: \n\t $e")
+                            Log.e(
+                                TAG,
+                                "Error loading progress image:" +
+                                        "\n\t$e"
+                            )
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error loading progress: \n\t $e")
+                        Log.e(
+                            TAG,
+                            "Error loading progress:" +
+                                    "\n\t$e"
+                        )
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading progress loop: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error loading progress loop:" +
+                            "\n\t$e"
+                )
             }
-            _progress.value = Progress(
+            _progress.value = ImageGenProgress(
                 progress = 0.0,
                 current_image = null
             )
@@ -374,7 +431,8 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error setting progress image:\n\t$e"
+                    "Error setting progress image:" +
+                            "\n\t$e"
                 )
             }
             cancel()
@@ -385,7 +443,7 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
     private fun loadImageInfo() {
         viewModelScope.launch {
             _imageInfo.value = repository.getImageInfo(
-                ImageBase64(
+                ImageGenImageBase64(
                     _finalImageBase64.value!!.images[0]
                 )
             )
@@ -417,14 +475,18 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                     .find(_imageInfo.value!!.info)
                     ?.groupValues!![1].toLong()
             } catch (e: Exception) {
-                Log.e(TAG, "Error finding seed: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error finding seed:" +
+                            "\n\t$e"
+                )
             }
         } else {
             lastSeed = _seed.value!!
         }
 
         try {
-            _imageMetadata.value = ImageMetadata(
+            _imageMetadata.value = ImageGenImageMetadata(
                 seed = lastSeed,
                 positivePrompt = _prompt.value!!,
                 negativePrompt = _negativePrompt.value!!,
@@ -439,7 +501,11 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                 info = _imageInfo.value!!.info
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Error applying image metadata: \n\t $e")
+            Log.e(
+                TAG,
+                "Error applying image metadata:" +
+                        "\n\t$e"
+            )
             _appStatusApplyMetaData.value = AppStatus.ERROR
         }
         _appStatusApplyMetaData.value = AppStatus.DONE
@@ -450,14 +516,26 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
         val saveMessage = "Image successfully added to the library!"
         viewModelScope.launch {
             try {
-                Log.e(TAG, "Save image status: \n\t SAVING")
+                Log.e(
+                    TAG,
+                    "Save image status:" +
+                            "\n\tSAVING"
+                )
                 repository.insertImage(_imageMetadata.value!!)
-                Log.e(TAG, "Save image status: \n\t SAVED")
+                Log.e(
+                    TAG,
+                    "Save image status:" +
+                            "\n\tSAVED"
+                )
                 setImageSaved(false)
                 Toast.makeText(app.applicationContext, saveMessage, Toast.LENGTH_SHORT)
                     .show()
             } catch (e: Exception) {
-                Log.e(TAG, "Error saving image in database: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error saving image in database:" +
+                            "\n\t$e"
+                )
             }
             _imageLibrary.value = repository.getAllImages()
             cancel()
@@ -476,10 +554,18 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
                         .show()
                     getAllImages()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error deleting image from database: \n\t $e")
+                    Log.e(
+                        TAG,
+                        "Error deleting image from database:" +
+                                "\n\t$e"
+                    )
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error getting image from database: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error getting image from database:" +
+                            "\n\t$e"
+                )
             }
         }
     }
@@ -490,7 +576,11 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
             try {
                 _imageMetadata.value = repository.getImageMetadata(imageID)
             } catch (e: Exception) {
-                Log.e(TAG, "Error getting image from database: \n\t $e")
+                Log.e(
+                    TAG,
+                    "Error getting image from database:" +
+                            "\n\t$e"
+                )
             }
         }
     }
@@ -520,20 +610,20 @@ class ImageGenViewModel(application: Application) : AndroidViewModel(application
 
     /* _______ TextGen Image Generation ________________________________________________ */
 
-    fun textGenRequest(prompt: String){
+    fun textGenRequest(prompt: String) {
+        setPrompt(prompt)
+
         viewModelScope.launch {
             _finalImageBase64.value = repository.startTextToImage(
-                TextToImageRequest(
+                ImageGenTextToImageRequest(
                     prompt = prompt,
-                    seed = -1,
-                    sampler_name = "DPM++ 2S a Karras",
-                    cfg_scale = 7.0,
-                    steps = 25,
-                    width = 512,
-                    height = 512,
-                    negative_prompt = "(worst quality, low quality: 1.3), ((disfigured)), " +
-                            "((bad art)), ((deformed)), ((poorly drawn)), ((extra limbs)), " +
-                            "weird colors, blurry"
+                    seed = _seed.value!!,
+                    sampler_name = _sampler.value!!.name,
+                    cfg_scale = _cfgScale.value!!,
+                    steps = _steps.value!!,
+                    width = _width.value!!,
+                    height = _height.value!!,
+                    negative_prompt = _negativePrompt.value!!
                 )
             )
         }

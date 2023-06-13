@@ -2,12 +2,11 @@ package com.back.frapuse.util.adapter.imagegen
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.imagegen.ImageGenViewModel
-import com.back.frapuse.data.imagegen.models.ImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
 import com.back.frapuse.databinding.ImageGenRvSmallItemBinding
 import com.back.frapuse.ui.imagegen.ImageGenRVSmallFragmentDirections
 
@@ -15,11 +14,11 @@ class ImageGenRVSmallAdapter(
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data
-    private var dataset: List<ImageMetadata>
+    private var dataset: List<ImageGenImageMetadata>
 ) : RecyclerView.Adapter<ImageGenRVSmallAdapter.ImageGenRVSmallViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<ImageMetadata>) {
+    fun submitList(list: List<ImageGenImageMetadata>) {
         dataset = list
         notifyDataSetChanged()
     }

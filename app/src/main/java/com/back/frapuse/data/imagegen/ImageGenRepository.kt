@@ -1,15 +1,15 @@
 package com.back.frapuse.data.imagegen
 
 import android.util.Log
-import com.back.frapuse.data.imagegen.models.ImageBase64
-import com.back.frapuse.data.imagegen.models.ImageInfo
-import com.back.frapuse.data.imagegen.models.ImageMetadata
-import com.back.frapuse.data.imagegen.models.Options
-import com.back.frapuse.data.imagegen.models.Progress
-import com.back.frapuse.data.imagegen.models.SDModel
-import com.back.frapuse.data.imagegen.models.Sampler
-import com.back.frapuse.data.imagegen.models.TextToImage
-import com.back.frapuse.data.imagegen.models.TextToImageRequest
+import com.back.frapuse.data.imagegen.models.ImageGenImageBase64
+import com.back.frapuse.data.imagegen.models.ImageGenImageInfo
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenOptions
+import com.back.frapuse.data.imagegen.models.ImageGenProgress
+import com.back.frapuse.data.imagegen.models.ImageGenSDModel
+import com.back.frapuse.data.imagegen.models.ImageGenSampler
+import com.back.frapuse.data.imagegen.models.ImageGenTextToImageResponse
+import com.back.frapuse.data.imagegen.models.ImageGenTextToImageRequest
 import com.back.frapuse.data.imagegen.local.ImageGenDatabase
 import com.back.frapuse.data.imagegen.remote.ImageGenAPI
 
@@ -17,90 +17,122 @@ private const val TAG = "ImageGenRepository"
 
 class ImageGenRepository(private val api: ImageGenAPI, private val database: ImageGenDatabase) {
 
-    /* ____________________________________ Methods Remote _____________________________ */
+    /* _______ Methods Remote __________________________________________________________ */
 
-    suspend fun getModels(): List<SDModel> {
+    suspend fun getModels(): List<ImageGenSDModel> {
         return try {
             api.retrofitService.getModels()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading models from API: \n\t $e")
+            Log.e(
+                TAG,
+                "Error loading models from API:" +
+                        "\n\t$e"
+            )
             listOf()
         }
     }
 
-    suspend fun getOptions(): Options {
+    suspend fun getOptions(): ImageGenOptions {
         return try {
             api.retrofitService.getOptions()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading options from API: \n\t $e")
-            Options(
+            Log.e(
+                TAG,
+                "Error loading options from API:" +
+                        "\n\t$e"
+            )
+            ImageGenOptions(
                 sd_model_checkpoint = ""
             )
         }
     }
 
-    suspend fun startTextToImage(textToImageRequest: TextToImageRequest): TextToImage {
+    suspend fun startTextToImage(textToImageRequest: ImageGenTextToImageRequest): ImageGenTextToImageResponse {
         return try {
             api.retrofitService.startTextToImage(textToImageRequest)
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading Data from API: \n\t $e")
-            TextToImage(
+            Log.e(
+                TAG,
+                "Error loading Data from API:" +
+                        "\n\t$e"
+            )
+            ImageGenTextToImageResponse(
                 listOf()
             )
         }
     }
 
-    suspend fun getProgress(): Progress {
+    suspend fun getProgress(): ImageGenProgress {
         return try {
             api.retrofitService.getProgress()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading progress from API: \n\t $e")
-            Progress(
+            Log.e(
+                TAG,
+                "Error loading progress from API:" +
+                        "\n\t$e"
+            )
+            ImageGenProgress(
                 progress = 0.0,
                 current_image = null
             )
         }
     }
 
-    suspend fun setOptions(options: Options) {
+    suspend fun setOptions(options: ImageGenOptions) {
         try {
             api.retrofitService.setOptions(options)
         } catch (e: Exception) {
-            Log.e(TAG, "Error setting options: \n\t $e")
+            Log.e(
+                TAG,
+                "Error setting options:" +
+                        "\n\t$e"
+            )
         }
     }
 
-    suspend fun getImageInfo(imageBase64: ImageBase64): ImageInfo {
+    suspend fun getImageInfo(imageBase64: ImageGenImageBase64): ImageGenImageInfo {
         return try {
             api.retrofitService.getImageMetaData(imageBase64)
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading image info from API: \n\t $e")
-            ImageInfo(
+            Log.e(
+                TAG,
+                "Error loading image info from API:" +
+                        "\n\t$e"
+            )
+            ImageGenImageInfo(
                 info = ""
             )
         }
     }
 
-    suspend fun getSamplers(): List<Sampler> {
+    suspend fun getSamplers(): List<ImageGenSampler> {
         return try {
             api.retrofitService.getSamplers()
         } catch (e: Exception) {
-            Log.e(TAG, "Error loading samplers from API: \n\t $e")
+            Log.e(
+                TAG,
+                "Error loading samplers from API:" +
+                        "\n\t$e"
+            )
             listOf()
         }
     }
 
-    /* ____________________________________ Methods Local ______________________________ */
+    /* _______ Methods Local ___________________________________________________________ */
 
     /**
      * Insert new image metadata
      * @param ImageMetadata Image metadata which gets inserted
      * */
-    suspend fun insertImage(ImageMetadata: ImageMetadata) {
+    suspend fun insertImage(ImageMetadata: ImageGenImageMetadata) {
         try {
             database.imageGenDao.insertImage(ImageMetadata)
         } catch (e: Exception) {
-            Log.e(TAG, "Error inserting image in 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error inserting image in 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
         }
     }
 
@@ -108,11 +140,15 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
      * Delivers all images from the 'imageGenMetadata_table' database
      * @return List -> ImageMetadata
      * */
-    suspend fun getAllImages(): List<ImageMetadata> {
+    suspend fun getAllImages(): List<ImageGenImageMetadata> {
         return try {
             database.imageGenDao.getAllImages()
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting all images from 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error getting all images from 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
             listOf()
         }
     }
@@ -121,11 +157,15 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
      * Update metadata of existing image
      * @param ImageMetadata Image metadata which gets updated
      * */
-    suspend fun updateImage(ImageMetadata: ImageMetadata) {
+    suspend fun updateImage(ImageMetadata: ImageGenImageMetadata) {
         try {
             database.imageGenDao.updateImage(ImageMetadata)
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating image in 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error updating image in 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
         }
     }
 
@@ -137,7 +177,11 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
         return try {
             database.imageGenDao.getImageCount()
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting the size from 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error getting the size from 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
         }
     }
 
@@ -145,11 +189,15 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
      * Delete a selected image metadata from database
      * @param ImageMetadata Image metadata which gets deleted
      * */
-    suspend fun deleteImage(ImageMetadata: ImageMetadata) {
+    suspend fun deleteImage(ImageMetadata: ImageGenImageMetadata) {
         try {
             database.imageGenDao.deleteImage(ImageMetadata)
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting image from 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error deleting image from 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
         }
     }
 
@@ -160,7 +208,11 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
         try {
             database.imageGenDao.deleteAllImages()
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting all images from 'imageGenMetadata_table': \n\t $e")
+            Log.e(
+                TAG,
+                "Error deleting all images from 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
         }
     }
 
@@ -169,12 +221,16 @@ class ImageGenRepository(private val api: ImageGenAPI, private val database: Ima
      * @param imageID ID of the wanted image
      * @return ImageMetadata
      * */
-    suspend fun getImageMetadata(imageID: Long): ImageMetadata {
+    suspend fun getImageMetadata(imageID: Long): ImageGenImageMetadata {
         return try {
             database.imageGenDao.getImageMetadata(imageID)
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching image from 'imageGenMetadata_table': \n\t $e")
-            ImageMetadata(
+            Log.e(
+                TAG,
+                "Error fetching image from 'imageGenMetadata_table':" +
+                        "\n\t$e"
+            )
+            ImageGenImageMetadata(
                 seed = 0,
                 positivePrompt = "",
                 negativePrompt = "",

@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.back.frapuse.data.imagegen.models.ImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
 
 @Dao
 interface ImageGenDao {
@@ -15,21 +15,21 @@ interface ImageGenDao {
      * @param ImageMetadata Image metadata which gets inserted
      * */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImage(ImageMetadata: ImageMetadata)
+    suspend fun insertImage(ImageMetadata: ImageGenImageMetadata)
 
     /**
      * Method to load all elements from the 'imageGenMetadata_table' database
      * @return List -> ImageMetadata
      * */
     @Query("SELECT * FROM imageGenMetadata_table")
-    suspend fun getAllImages(): List<ImageMetadata>
+    suspend fun getAllImages(): List<ImageGenImageMetadata>
 
     /**
      * Method to update an element in the 'imageGenMetadata_table' database
      * @param ImageMetadata Image metadata which gets updated
      * */
     @Update
-    suspend fun updateImage(ImageMetadata: ImageMetadata)
+    suspend fun updateImage(ImageMetadata: ImageGenImageMetadata)
 
     /**
      * Method to get the count of images from the 'imageGenMetadata_table' database
@@ -43,7 +43,7 @@ interface ImageGenDao {
      * @param ImageMetadata Image metadata which gets deleted
      * */
     @Delete
-    suspend fun deleteImage(ImageMetadata: ImageMetadata)
+    suspend fun deleteImage(ImageMetadata: ImageGenImageMetadata)
 
     /**
      * Method to delete all elements from the 'imageGenMetadata_table' database
@@ -57,5 +57,5 @@ interface ImageGenDao {
      * @return ImageMetadata
      * */
     @Query("SELECT * FROM imageGenMetadata_table WHERE id = :imageID")
-    suspend fun getImageMetadata(imageID: Long): ImageMetadata
+    suspend fun getImageMetadata(imageID: Long): ImageGenImageMetadata
 }

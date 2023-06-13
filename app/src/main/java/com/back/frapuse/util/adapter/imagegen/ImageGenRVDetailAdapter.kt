@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.back.frapuse.ui.imagegen.ImageGenViewModel
-import com.back.frapuse.data.imagegen.models.ImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
 import com.back.frapuse.databinding.ImageGenRvDetailItemBinding
 import com.back.frapuse.ui.imagegen.ImageGenRVDetailFragmentDirections
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,13 +17,13 @@ class ImageGenRVDetailAdapter(
     // ViewModel to interact with shared methods
     private val viewModel: ImageGenViewModel,
     // Dataset which provides the wanted data
-    private var dataset: List<ImageMetadata>,
+    private var dataset: List<ImageGenImageMetadata>,
     // Set context
     private val context: Context
 ) : RecyclerView.Adapter<ImageGenRVDetailAdapter.ImageGenRVDetailViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(list: List<ImageMetadata>) {
+    fun submitList(list: List<ImageGenImageMetadata>) {
         dataset = list
         notifyDataSetChanged()
     }

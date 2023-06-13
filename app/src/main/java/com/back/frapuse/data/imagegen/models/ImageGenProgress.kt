@@ -1,6 +1,6 @@
 package com.back.frapuse.data.imagegen.models
 
-data class Progress(
+data class ImageGenProgress(
     val progress: Double,
     val current_image: String ?
 )

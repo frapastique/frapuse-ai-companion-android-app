@@ -357,7 +357,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error saving Attachment:\n\t$e"
+                    "Error saving Attachment:" +
+                            "\n\t$e"
                 )
             }
         }
@@ -386,11 +387,19 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                 tokenCountCurrent += message.tokens.toInt()
             }
             if (tokenCountCurrent > 1700) {
-                Log.e(TAG, "Current token count:\n\t$tokenCountCurrent")
+                Log.e(
+                    TAG,
+                    "Current token count:" +
+                            "\n\t$tokenCountCurrent"
+                )
                 do {
                     tokenCountCurrent -= currentChatLibrary.first().tokens.toInt()
                     currentChatLibrary.removeFirst()
-                    Log.e(TAG, "New token count:\n\t$tokenCountCurrent")
+                    Log.e(
+                        TAG,
+                        "New token count:" +
+                                "\n\t$tokenCountCurrent"
+                    )
                 } while (tokenCountCurrent > 1700)
             }
 
@@ -403,7 +412,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             Log.e(
                 TAG,
-                "Final Prompt:\n\t${_prompt.value!!.prompt}"
+                "Final Prompt:" +
+                        "\n\t${_prompt.value!!.prompt}"
             )
             checkTokensCount()
             _createPromptStatus.value = AppStatus.DONE
@@ -445,7 +455,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error inserting operation in chat library:\r\t$e"
+                    "Error inserting operation in chat library:" +
+                            "\r\t$e"
                 )
             }
         }
@@ -468,7 +479,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error updating operation in chat library:\r\t$e"
+                    "Error updating operation in chat library:" +
+                            "\r\t$e"
                 )
             }
         }
@@ -560,7 +572,11 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun updateAIChat(messageID: Long, message: String) {
-        Log.e(TAG, "Latest response:\n\t$message")
+        Log.e(
+            TAG,
+            "Latest response:" +
+                    "\n\t$message"
+        )
         setAIContext("ASSISTANT: ${message.drop(1)}")
 
         viewModelScope.launch {
@@ -639,7 +655,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error loading response holder:\n\t$e"
+                    "Error loading response holder:" +
+                            "\n\t$e"
                 )
             }
             try {
@@ -677,7 +694,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error loading response text from holder:\n\t$e"
+                    "Error loading response text from holder:" +
+                            "\n\t$e"
                 )
             }
         }
@@ -803,7 +821,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         } catch (e: Exception) {
             Log.e(
                 TAG,
-                "Error deleting files:\n\t$e"
+                "Error deleting files:" +
+                        "\n\t$e"
             )
         }
     }
@@ -853,7 +872,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             .addOnFailureListener { e ->
                 Log.e(
                     TAG,
-                    "Error extracting text:\n\t$e"
+                    "Error extracting text:" +
+                            "\n\t$e"
                 )
             }
     }
@@ -907,7 +927,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error uploading documents:\n\t$e"
+                    "Error uploading documents:" +
+                            "\n\t$e"
                 )
             }
         }
@@ -930,7 +951,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "Error resetting document operation:\n\t$e"
+                    "Error resetting document operation:" +
+                            "\n\t$e"
                 )
             }
         }
@@ -954,7 +976,8 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.d(
                     TAG,
-                    "Error querying haystack database:\n\t$e"
+                    "Error querying haystack database:" +
+                            "\n\t$e"
                 )
             }
         }
@@ -1003,22 +1026,26 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             val query = haystackResponse.query
             Log.e(
                 TAG,
-                "Query:\n\t$query"
+                "Query:" +
+                        "\n\t$query"
             )
             val documentName = haystackResponse.documents.first().meta.name
             Log.e(
                 TAG,
-                "Document Name:\n\t$documentName"
+                "Document Name:" +
+                        "\n\t$documentName"
             )
             val documentAuthor = haystackResponse.documents.first().meta.author
             Log.e(
                 TAG,
-                "Document Author:\n\t$documentAuthor"
+                "Document Author:" +
+                        "\n\t$documentAuthor"
             )
             val documentContent = haystackResponse.documents.first().content
             Log.e(
                 TAG,
-                "Document Content:\n\t$documentContent"
+                "Document Content:" +
+                        "\n\t$documentContent"
             )
 
             _relevantDocumentName.value = documentName

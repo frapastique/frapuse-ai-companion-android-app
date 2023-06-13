@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.back.frapuse.data.imagegen.models.ImageMetadata
+import com.back.frapuse.data.imagegen.models.ImageGenImageMetadata
 
 /**
  * ImageGenDatabase as RoomDatabase for storing image metadata
  * */
-@Database(entities = [ImageMetadata::class], version = 1)
+@Database(entities = [ImageGenImageMetadata::class], version = 1)
 abstract class ImageGenDatabase : RoomDatabase() {
 
     /**

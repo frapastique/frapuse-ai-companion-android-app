@@ -1,6 +1,6 @@
 package com.back.frapuse.data.imagegen.models
 
-data class TextToImageRequest(
+data class ImageGenTextToImageRequest(
     val prompt: String,
     val seed: Long,
     val sampler_name: String,

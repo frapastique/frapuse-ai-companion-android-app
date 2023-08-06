@@ -66,7 +66,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/f313a61e-7284-433a-8b46-e4f9cc11eab2"
         alt="Home Screen"
         width="75%"
-        height="75%"
         title="Home Screen"
       />
     </td>

@@ -76,7 +76,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c441cabb-0783-4efb-b581-932d0af7daad"
         alt="Chat Screen Base"
         width="75%"
-        height="75%"
         title="Chat Screen Base"
       />
     </td>
@@ -88,7 +87,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/71554819-2127-4af4-9b42-8091748d9320"
         alt="Chat Screen Image Gen"
         width="75%"
-        height="75%"
         title="Chat Screen Image Gen"
       />
     </td>
@@ -98,7 +96,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/cbddef0c-f9d8-4bff-b557-49c6f4e72bd3"
         alt="PDF Upload Screen"
         width="75%"
-        height="75%"
         title="PDF Upload Screen"
       />
     </td>
@@ -110,7 +107,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c47a56bb-70ba-471c-bc95-80f536ffa7d4"
         alt="Chat Settings Screen"
         width="75%"
-        height="75%"
         title="Chat Settings Screen"
       />
     </td>
@@ -120,7 +116,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/cd9ff384-d097-408b-b597-c0934245b249"
         alt="Chat Screen Document Search"
         width="75%"
-        height="75%"
         title="Chat Screen Document Search"
       />
     </td>
@@ -132,7 +127,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/054167f4-7812-4e13-ac27-f00c3e235eb6"
         alt="Document View Screen"
         width="75%"
-        height="75%"
         title="Document View Screen"
       />
     </td>
@@ -142,7 +136,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c8f39713-7aed-4385-8b36-2334ff8dabe9"
         alt="Image Generation Screen"
         width="75%"
-        height="75%"
         title="Image Generation Screen"
       />
     </td>
@@ -154,7 +147,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/3e7e8a90-dd64-4299-834e-2401a851bc84"
         alt="Image Library Small Screen"
         width="75%"
-        height="75%"
         title="Image Library Small Screen"
       />
     </td>
@@ -164,7 +156,6 @@ This is frapuse (short for frappante muse) an android app project that I created
         src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/719ef542-2722-47b7-a94a-9e30cdccb96e"
         alt="Image Library Big Screen"
         width="75%"
-        height="75%"
         title="Image Library Big Screen"
       />
     </td>

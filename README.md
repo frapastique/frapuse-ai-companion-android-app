@@ -39,9 +39,10 @@ This is frapuse (short for frappante muse) an android app project that I created
     
 6. Run App on your Android Phone.
 
-## Limitations
+## Limitations / Caveats / Known Issues
 
 - *IMPORTANT*: To clear the chat history you have to long press the send button in chat next to the prompt text field.
+- Sometimes, when the phone is under heavy load, some of the first tokens are omitted.
 - The prompt template is adjusted to [vicuna](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ#prompt-template-vicuna) (most of the testing was performed with wizard-vicuna and its varying models), changing the template is a tidious task and also has to be done directly from inside the code. Note that other models still can be used but wont perform at their best.
 - Generation parameters of llm must be adjusted inside of the code
   ([llm chat](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L512),
@@ -50,7 +51,7 @@ This is frapuse (short for frappante muse) an android app project that I created
 - Currently it is only possible to stream the response (*Note*: You still need to adjust the blocking api address else the app crashes).
 - The prompt examples for image generation within the chat must be adjusted inside of the [code](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L1175).
 - To disable calling image generation with the keyword ```generate``` within the chat you have to change the [code](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L328).
-- It is not possible to save generated images which are bigger then the size of 768x768. If the width OR height is adjusted over this value, the other has to be adjusted accordingly.
+- It is not possible to save generated images larger than the size of 768x768. If the width OR height is adjusted beyond this value, the other must be adjusted accordingly.
 - The code is not optimized and at parts it can be a bit messy. Please excuse this, I am still learning and improoving my code style and habbits.
 
 ## App Demo

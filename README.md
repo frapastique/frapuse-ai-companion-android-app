@@ -13,10 +13,10 @@ This is frapuse (short for frappante muse) an android app project that I created
 ## Installation
 
 1. Prerequisites
-    - In order to use the text generation capabilities you also need to install [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui).
+    - In order to use the text generation capabilities you need to install [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui).
       - [Installation](https://github.com/oobabooga/text-generation-webui#installation)
 
-    - For the use of image generation you need to install [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
+    - For the use of image generation you also need to install [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
       - [Installation and Running](https://github.com/AUTOMATIC1111/stable-diffusion-webui#installation-and-running)
 
     - If you want to extract information of PDFs and chat about the context with your llm you also need to install [deepset-ai/haystack](https://github.com/deepset-ai/haystack/).
@@ -54,8 +54,124 @@ This is frapuse (short for frappante muse) an android app project that I created
 - It is not possible to save generated images larger than the size of 768x768. If the width OR height is adjusted beyond this value, the other must be adjusted accordingly.
 - The code is not optimized and at parts it can be a bit messy. Please excuse this, I am still learning and improoving my code style and habbits.
 
-## App Demo
+## App Previews
 
+### Screenshots:
+
+<table>
+  <tr align="center">
+    <td>
+      <p>Home Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/f313a61e-7284-433a-8b46-e4f9cc11eab2"
+        alt="Home Screen"
+        width="75%"
+        height="75%"
+        title="Home Screen"
+      />
+    </td>
+    <td>
+      <p>Chat Screen Base</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c441cabb-0783-4efb-b581-932d0af7daad"
+        alt="Chat Screen Base"
+        width="75%"
+        height="75%"
+        title="Chat Screen Base"
+      />
+    </td>
+  </tr>
+  <tr align="center">
+    <td>
+      <p>Chat Screen Image Gen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/71554819-2127-4af4-9b42-8091748d9320"
+        alt="Chat Screen Image Gen"
+        width="75%"
+        height="75%"
+        title="Chat Screen Image Gen"
+      />
+    </td>
+    <td>
+      <p>PDF Upload Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/cbddef0c-f9d8-4bff-b557-49c6f4e72bd3"
+        alt="PDF Upload Screen"
+        width="75%"
+        height="75%"
+        title="PDF Upload Screen"
+      />
+    </td>
+  </tr>
+  <tr align="center">
+    <td>
+      <p>Chat Settings Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c47a56bb-70ba-471c-bc95-80f536ffa7d4"
+        alt="Chat Settings Screen"
+        width="75%"
+        height="75%"
+        title="Chat Settings Screen"
+      />
+    </td>
+    <td>
+      <p>Chat Screen Document Search</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/cd9ff384-d097-408b-b597-c0934245b249"
+        alt="Chat Screen Document Search"
+        width="75%"
+        height="75%"
+        title="Chat Screen Document Search"
+      />
+    </td>
+  </tr>
+  <tr align="center">
+    <td>
+      <p>Document View Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/054167f4-7812-4e13-ac27-f00c3e235eb6"
+        alt="Document View Screen"
+        width="75%"
+        height="75%"
+        title="Document View Screen"
+      />
+    </td>
+    <td>
+      <p>Image Generation Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c8f39713-7aed-4385-8b36-2334ff8dabe9"
+        alt="Image Generation Screen"
+        width="75%"
+        height="75%"
+        title="Image Generation Screen"
+      />
+    </td>
+  </tr>
+  <tr align="center">
+    <td>
+      <p>Image Library Small Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/3e7e8a90-dd64-4299-834e-2401a851bc84"
+        alt="Image Library Small Screen"
+        width="75%"
+        height="75%"
+        title="Image Library Small Screen"
+      />
+    </td>
+    <td>
+      <p>Image Library Big Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/719ef542-2722-47b7-a94a-9e30cdccb96e"
+        alt="Image Library Big Screen"
+        width="75%"
+        height="75%"
+        title="Image Library Big Screen"
+      />
+    </td>
+  </tr>
+</table>
+
+### Video:
 [YouTube Link](https://www.youtube.com/shorts/Z3cNasTxsbY)
 
 ##

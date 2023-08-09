@@ -29,7 +29,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/black"
-                    app:layout_scrollFlags="scroll|enterAlways|snap"
                     app:navigationIcon="@drawable/back_icon"
                     app:title="Settings"
                     app:titleTextColor="@color/white" />
@@ -196,6 +195,52 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/mcb_document_search" />
 
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/mtv_image_generation_keyword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Image Generation Keyword"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toBottomOf="@id/mcb_image_generation_keyword"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/mcb_image_generation_keyword" />
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/mcb_image_generation_keyword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            app:checkedState="checked"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/mcb_image_generation" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_image_generation_keyword"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Image Generation Keyword"
+                            android:visibility="gone"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/mcb_image_generation_keyword">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_image_generation_keyword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="text"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <com.google.android.material.divider.MaterialDivider
@@ -270,7 +315,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/ti_instructions_agent_haystack"
+                            android:id="@+id/ti_negative_prompt"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -281,6 +326,31 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/ti_instructions"
+                            tools:text="NEGATIVE PROMPT CHAT">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_negative_prompt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="NEGATIVE PROMPT CHAT"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_instructions_agent_haystack"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt"
                             tools:text="@string/instruction_db_agent">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -288,6 +358,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="@string/instruction_db_agent"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_negative_prompt_haystack"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_instructions_agent_haystack"
+                            tools:text="NEGATIVE PROMPT DB AGENT">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_negative_prompt_haystack"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="NEGATIVE PROMPT DB AGENT"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp" />
@@ -305,7 +400,7 @@
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_instructions_agent_haystack"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_negative_prompt_haystack"
                             tools:text="@string/instructions_after_db_agent">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -333,9 +428,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_parameters"
-                        android:visibility="gone"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/md_instructions">
 
@@ -380,31 +474,29 @@
                                 android:inputType="number"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
-                                android:paddingBottom="8dp"
-                                android:text="250" />
+                                android:paddingBottom="8dp" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/ti_temparature"
+                            android:id="@+id/ti_temperature"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:hint="@string/temparature"
                             app:endIconContentDescription="Reset"
                             app:endIconDrawable="@drawable/reset_icon"
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/ti_new_max_tokens">
+                            app:layout_constraintTop_toBottomOf="@id/sw_do_sample">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/et_temparature"
+                                android:id="@+id/et_temperature"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
+                                android:inputType="numberDecimal|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -424,14 +516,14 @@
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_temparature">
+                            app:layout_constraintTop_toBottomOf="@+id/ti_temperature">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_top_p"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
+                                android:inputType="numberDecimal|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -458,7 +550,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
+                                android:inputType="numberDecimal|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -478,14 +570,14 @@
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_typical_p">
+                            app:layout_constraintTop_toBottomOf="@+id/ti_top_a">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_repetition_penalty"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
+                                android:inputType="numberDecimal|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -505,14 +597,14 @@
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_repetition_penalty">
+                            app:layout_constraintTop_toBottomOf="@+id/ti_encoder_repetition_penalty">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_top_k"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="number"
+                                android:inputType="number|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -566,7 +658,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="number"
+                                android:inputType="number|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -593,7 +685,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="number"
+                                android:inputType="number|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -620,7 +712,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
+                                android:inputType="numberDecimal|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -640,14 +732,14 @@
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_penalty_alpha">
+                            app:layout_constraintTop_toBottomOf="@+id/ti_guidance_scale">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_seed"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:imeOptions="actionDone"
-                                android:inputType="number"
+                                android:inputType="number|numberSigned"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
                                 android:paddingBottom="8dp"
@@ -660,14 +752,13 @@
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:hint="Truncation Length"
                             app:endIconContentDescription="Reset"
                             app:endIconDrawable="@drawable/reset_icon"
                             app:endIconMode="none"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/ti_seed">
+                            app:layout_constraintTop_toBottomOf="@+id/sw_skip_special_tokens">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_truncation_length"
@@ -677,13 +768,384 @@
                                 android:inputType="number"
                                 android:paddingStart="8dp"
                                 android:paddingEnd="8dp"
-                                android:paddingBottom="8dp"
-                                android:text="2048" />
+                                android:paddingBottom="8dp" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_length_penalty"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Length Penalty"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_penalty_alpha">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_length_penalty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_auto_max_new_tokens"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:textSize="16dp"
+                            android:checked="false"
+                            android:text="Auto Max New Tokens"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_new_max_tokens" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_epsilon_cutoff"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Epsilon Cutoff"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_typical_p">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_epsilon_cutoff"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_eta_cutoff"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Eta Cutoff"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_epsilon_cutoff">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_eta_cutoff"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_tfs"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="TFS"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_eta_cutoff">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_tfs"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_top_a"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Top A"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_tfs">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_top_a"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_repetition_penalty_range"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Repetition Penalty Range"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_repetition_penalty">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_repetition_penalty_range"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_encoder_repetition_penalty"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Encoder Repetition Penalty"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_repetition_penalty_range">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_encoder_repetition_penalty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_mirostat_mode"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Mirostat Mode"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/sw_early_stopping">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_mirostat_mode"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="number|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_mirostat_tau"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Mirostat Tau"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_mirostat_mode">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_mirostat_tau"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_mirostat_eta"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Mirostat Eta"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_mirostat_tau">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_mirostat_eta"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/ti_guidance_scale"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Guidance Scale"
+                            app:endIconContentDescription="Reset"
+                            app:endIconDrawable="@drawable/reset_icon"
+                            app:endIconMode="none"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_mirostat_eta">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_guidance_scale"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal|numberSigned"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_do_sample"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:checked="false"
+                            android:text="Do Sample"
+                            android:textSize="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/sw_auto_max_new_tokens" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_early_stopping"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:checked="false"
+                            android:text="Early Stopping"
+                            android:textSize="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_length_penalty" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_add_bos_token"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:checked="false"
+                            android:text="Add BOS Token"
+                            android:textSize="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ti_seed" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_ban_eos_token"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:textSize="16dp"
+                            android:checked="false"
+                            android:text="Ban EOS Token"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/sw_add_bos_token"/>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/sw_skip_special_tokens"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:textSize="16dp"
+                            android:checked="false"
+                            android:text="Skip Special Tokens"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/sw_ban_eos_token"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/md_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:dividerColor="@color/purple_1000"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/cl_parameters" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>

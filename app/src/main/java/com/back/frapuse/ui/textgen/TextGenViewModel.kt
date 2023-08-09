@@ -99,6 +99,165 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val finalStreamResponse: LiveData<String>
         get() = _finalStreamResponse
 
+
+    /* _______ Text Generation Parameters ______________________________________________ */
+
+    private val _max_new_tokens = MutableLiveData(250)
+    val max_new_tokens: LiveData<Int>
+        get() = _max_new_tokens
+    val max_new_tokens_base = 250
+
+    private val _auto_max_new_tokens = MutableLiveData(false)
+    val auto_max_new_tokens: LiveData<Boolean>
+        get() = _auto_max_new_tokens
+    val auto_max_new_tokens_base = false
+
+    private val _do_sample = MutableLiveData(true)
+    val do_sample: LiveData<Boolean>
+        get() = _do_sample
+    val do_sample_base = true
+
+    private val _temperature = MutableLiveData(1.31)
+    val temperature: LiveData<Double>
+        get() = _temperature
+    val temperature_base = 1.31
+
+    private val _top_p = MutableLiveData(0.14)
+    val top_p: LiveData<Double>
+        get() = _top_p
+    val top_p_base = 0.14
+
+    private val _typical_p = MutableLiveData(1.0)
+    val typical_p: LiveData<Double>
+        get() = _typical_p
+    val typical_p_base = 1.0
+
+    private val _repetition_penalty = MutableLiveData(1.17)
+    val repetition_penalty: LiveData<Double>
+        get() = _repetition_penalty
+    val repetition_penalty_base = 1.17
+
+    private val _top_k = MutableLiveData(49)
+    val top_k: LiveData<Int>
+        get() = _top_k
+    val top_k_base = 49
+
+    private val _min_length = MutableLiveData(0)
+    val min_length: LiveData<Int>
+        get() = _min_length
+    val min_length_base = 0
+
+    private val _no_repeat_ngram_size = MutableLiveData(0)
+    val no_repeat_ngram_size: LiveData<Int>
+        get() = _no_repeat_ngram_size
+    val no_repeat_ngram_size_base = 0
+
+    private val _num_beams = MutableLiveData(1)
+    val num_beams: LiveData<Int>
+        get() = _num_beams
+    val num_beams_base = 1
+
+    private val _penalty_alpha = MutableLiveData(0.0)
+    val penalty_alpha: LiveData<Double>
+        get() = _penalty_alpha
+    val penalty_alpha_base = 0.0
+
+    private val _length_penalty = MutableLiveData(1.0)
+    val length_penalty: LiveData<Double>
+        get() = _length_penalty
+    val length_penalty_base = 1.0
+
+    private val _early_stopping = MutableLiveData(false)
+    val early_stopping: LiveData<Boolean>
+        get() = _early_stopping
+    val early_stopping_base = false
+
+    private val _seed = MutableLiveData(-1)
+    val seed: LiveData<Int>
+        get() = _seed
+    val seed_base = -1
+
+    private val _add_bos_token = MutableLiveData(true)
+    val add_bos_token: LiveData<Boolean>
+        get() = _add_bos_token
+    val add_bos_token_base = true
+
+    private val _truncation_length = MutableLiveData(2048)
+    val truncation_length: LiveData<Int>
+        get() = _truncation_length
+    val truncation_length_base = 2048
+
+    private val _ban_eos_token = MutableLiveData(false)
+    val ban_eos_token: LiveData<Boolean>
+        get() = _ban_eos_token
+    val ban_eos_token_base = false
+
+    private val _skip_special_tokens = MutableLiveData(true)
+    val skip_special_tokens: LiveData<Boolean>
+        get() = _skip_special_tokens
+    val skip_special_tokens_base = true
+
+    private val _epsilon_cutoff = MutableLiveData(0.0)
+    val epsilon_cutoff: LiveData<Double>
+        get() = _epsilon_cutoff
+    val epsilon_cutoff_base = 0.0
+
+    private val _eta_cutoff = MutableLiveData(0.0)
+    val eta_cutoff: LiveData<Double>
+        get() = _eta_cutoff
+    val eta_cutoff_base = 0.0
+
+    private val _tfs = MutableLiveData(1.0)
+    val tfs: LiveData<Double>
+        get() = _tfs
+    val tfs_base = 1.0
+
+    private val _top_a = MutableLiveData(0.0)
+    val top_a: LiveData<Double>
+        get() = _top_a
+    val top_a_base = 0.0
+
+    private val _repetition_penalty_range = MutableLiveData(0)
+    val repetition_penalty_range: LiveData<Int>
+        get() = _repetition_penalty_range
+    val repetition_penalty_range_base = 0
+
+    private val _encoder_repetition_penalty = MutableLiveData(1.0)
+    val encoder_repetition_penalty: LiveData<Double>
+        get() = _encoder_repetition_penalty
+    val encoder_repetition_penalty_base = 1.0
+
+    private val _mirostat_mode = MutableLiveData(0)
+    val mirostat_mode: LiveData<Int>
+        get() = _mirostat_mode
+    val mirostat_mode_base = 0
+
+    private val _mirostat_tau = MutableLiveData(5.0)
+    val mirostat_tau: LiveData<Double>
+        get() = _mirostat_tau
+    val mirostat_tau_base = 5.0
+
+    private val _mirostat_eta = MutableLiveData(0.1)
+    val mirostat_eta: LiveData<Double>
+        get() = _mirostat_eta
+    val mirostat_eta_base = 0.1
+
+    private val _guidance_scale = MutableLiveData(1.0)
+    val guidance_scale: LiveData<Double>
+        get() = _guidance_scale
+    val guidance_scale_base = 1.0
+
+    private val _negative_prompt = MutableLiveData("")
+    val negative_prompt: LiveData<String>
+        get() = _negative_prompt
+    val negative_prompt_base = ""
+
+    private val _custom_stopping_strings = MutableLiveData("")
+    val custom_stopping_strings: LiveData<String>
+        get()= _custom_stopping_strings
+    val custom_stopping_strings_base = ""
+
+
     /* _______ Extensions ______________________________________________________________ */
 
     // Haystack (document search) extension on/off holder
@@ -111,6 +270,17 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
     val extensionImageGen: LiveData<Boolean>
         get() = _extensionImageGen
 
+    // Image generation extension on/off holder
+    private val _extensionImageGenKeyword = MutableLiveData(true)
+    val extensionImageGenKeyword: LiveData<Boolean>
+        get() = _extensionImageGenKeyword
+
+    // Image generation keyword holder
+    private val _extensionImageGenKey = MutableLiveData("generate")
+    val extensionImageGenKey: LiveData<String>
+        get() = _extensionImageGenKey
+    val extensionImageGenKeyBase = "generate"
+
 
     /* _______ Prompts _________________________________________________________________ */
 
@@ -121,7 +291,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
     // Standard instructions prompt
     val standardInstruction = "A chat between a curious user and an artificial intelligence" +
-            " assistant. The assistant gives helpful, detailed, and " +
+            " assistant. The assistant gives helpful, detailed and " +
             "polite answers to the user's questions."
 
     private val _instructionContextTokenCount = MutableLiveData<String>()
@@ -222,14 +392,102 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         when (extension) {
             "haystack" -> {
                 _extensionHaystack.value = _extensionHaystack.value != true
+                _extensionImageGenKeyword.value = false
+                _extensionImageGen.value = false
             }
             "imageGen" -> {
                 _extensionImageGen.value = _extensionImageGen.value != true
+                if (_extensionImageGen.value!!) {
+                    _extensionImageGenKeyword.value = true
+                } else {
+                    _extensionImageGenKeyword.value = false
+                }
+                _extensionHaystack.value = false
+            }
+            "imageGenKey" -> {
+                _extensionImageGenKeyword.value = _extensionImageGenKeyword.value != true
+                _extensionImageGen.value = false
+                _extensionHaystack.value = false
             }
         }
     }
 
+    fun changeImageGenKeyword(key: String) {
+        if (key.isEmpty()) {
+            _extensionImageGenKey.value = "generate"
+        } else {
+            _extensionImageGenKey.value = key
+        }
+    }
+
     /* _______ Generation Parameters ___________________________________________________ */
+
+    fun updateGenerationParameters(
+        max_new_tokens: Int? = null,
+        auto_max_new_tokens: Boolean? = null,
+        do_sample: Boolean? = null,
+        temperature: Double? = null,
+        top_p: Double? = null,
+        typical_p: Double? = null,
+        epsilon_cutoff: Double? = null,
+        eta_cutoff: Double? = null,
+        tfs: Double? = null,
+        top_a: Double? = null,
+        repetition_penalty: Double? = null,
+        repetition_penalty_range: Int? = null,
+        encoder_repetition_penalty: Double? = null,
+        top_k: Int? = null,
+        min_length: Int? = null,
+        no_repeat_ngram_size: Int? = null,
+        num_beams: Int? = null,
+        penalty_alpha: Double? = null,
+        length_penalty: Double? = null,
+        early_stopping: Boolean? = null,
+        mirostat_mode: Int? = null,
+        mirostat_tau: Double? = null,
+        mirostat_eta: Double? = null,
+        guidance_scale: Double? = null,
+        negative_prompt: String? = null,
+        seed: Int? = null,
+        add_bos_token: Boolean? = null,
+        truncation_length: Int? = null,
+        ban_eos_token: Boolean? = null,
+        skip_special_tokens: Boolean? = null,
+        custom_stopping_strings: String? = null,
+        stopping_strings: List<String>? = null
+    ) {
+        max_new_tokens?.let { _max_new_tokens.value=it}
+        auto_max_new_tokens?.let { _auto_max_new_tokens.value=it}
+        do_sample?.let {_do_sample.value=it}
+        temperature?.let {_temperature.value=it}
+        top_p?.let {_top_p.value=it}
+        typical_p?.let {_typical_p.value=it}
+        epsilon_cutoff?.let {_epsilon_cutoff.value=it}
+        eta_cutoff?.let {_eta_cutoff.value=it}
+        tfs?.let {_tfs.value=it}
+        top_a?.let {_top_a.value=it}
+        repetition_penalty?.let {_repetition_penalty.value=it}
+        repetition_penalty_range?.let {_repetition_penalty_range.value=it}
+        encoder_repetition_penalty?.let {_encoder_repetition_penalty.value=it}
+        top_k?.let { _top_k.value = it }
+        min_length?.let { _min_length.value = it }
+        no_repeat_ngram_size?.let { _no_repeat_ngram_size.value = it }
+        num_beams?.let { _num_beams.value = it }
+        penalty_alpha?.let { _penalty_alpha.value = it }
+        length_penalty?.let { _length_penalty.value = it }
+        early_stopping?.let { _early_stopping.value = it }
+        mirostat_mode?.let { _mirostat_mode.value=it}
+        mirostat_tau?.let { _mirostat_tau.value=it}
+        mirostat_eta?.let { _mirostat_eta.value=it}
+        guidance_scale?.let { _guidance_scale.value=it}
+        negative_prompt?.let { _negative_prompt.value=it}
+        seed?.let { _seed.value = it }
+        add_bos_token?.let { _add_bos_token.value = it }
+        truncation_length?.let { _truncation_length.value = it }
+        ban_eos_token?.let { _ban_eos_token.value = it }
+        skip_special_tokens?.let { _skip_special_tokens.value = it }
+        custom_stopping_strings ?. let{  _custom_stopping_strings .value  =  it  }
+    }
 
     private fun setInstructionsContext(instructions: String) {
         _instructionsContext.value = instructions
@@ -325,11 +583,14 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             )
             getAllChats()
 
-            val messageGenCheck = message.lowercase().split(" ").contains("generate")
+            val messageGenCheck = message.lowercase().split(" ")
+                .contains(_extensionImageGenKey.value!!)
 
-            if (extensionHaystack.value == true) {
+            if (_extensionHaystack.value == true) {
                 queryHaystack(message)
-            } else if (extensionImageGen.value == true || messageGenCheck) {
+            } else if (_extensionImageGen.value == true) {
+                agentImageGen(message)
+            } else if (messageGenCheck && _extensionImageGenKeyword.value!!) {
                 agentImageGen(message)
             } else {
                 createFinalPrompt()
@@ -386,7 +647,7 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
             for (message in currentChatLibrary) {
                 tokenCountCurrent += message.tokens.toInt()
             }
-            if (tokenCountCurrent > 1700) {
+            if (tokenCountCurrent > (_truncation_length.value!! - _max_new_tokens.value!! - 50)) {
                 Log.e(
                     TAG,
                     "Current token count:" +
@@ -400,7 +661,9 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
                         "New token count:" +
                                 "\n\t$tokenCountCurrent"
                     )
-                } while (tokenCountCurrent > 1700)
+                } while (
+                    tokenCountCurrent > (_truncation_length.value!! - _max_new_tokens.value!! - 50)
+                )
             }
 
             for (message in currentChatLibrary) {
@@ -511,24 +774,37 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = _prompt.value!!.prompt,
-                max_new_tokes = 250,
-                do_sample = true,
-                temperature = 1.3,
-                top_p = 0.1,
-                typical_p = 1.0,
-                repetition_penalty = 1.18,
-                top_k = 40,
-                min_length = 0,
-                no_repeat_ngram_size = 0,
-                num_beams = 1,
-                penalty_alpha = 0.0,
-                length_penalty = 1.0,
-                early_stopping = false,
-                seed = -1,
-                add_bos_token = true,
-                truncation_length = 2048,
-                ban_eos_token = false,
-                skip_special_tokens = true,
+                max_new_tokens = _max_new_tokens.value!!,
+                auto_max_new_tokens = _auto_max_new_tokens.value!!,
+                do_sample = _do_sample.value!!,
+                temperature = _temperature.value!!,
+                top_p = _top_p.value!!,
+                typical_p = _typical_p.value!!,
+                epsilon_cutoff = _epsilon_cutoff.value!!,
+                eta_cutoff = _eta_cutoff.value!!,
+                tfs = _tfs.value!!,
+                top_a = _top_a.value!!,
+                repetition_penalty = _repetition_penalty.value!!,
+                repetition_penalty_range = _repetition_penalty_range.value!!,
+                encoder_repetition_penalty = _encoder_repetition_penalty.value!!,
+                top_k = _top_k.value!!,
+                min_length = _min_length.value!!,
+                no_repeat_ngram_size = _no_repeat_ngram_size.value!!,
+                num_beams = _num_beams.value!!,
+                penalty_alpha = _penalty_alpha.value!!,
+                length_penalty = _length_penalty.value!!,
+                early_stopping = _early_stopping.value!!,
+                mirostat_mode = _mirostat_mode.value!!,
+                mirostat_tau = _mirostat_tau.value!!,
+                mirostat_eta = _mirostat_eta.value!!,
+                guidance_scale = _guidance_scale.value!!,
+                negative_prompt = _negative_prompt.value!!,
+                seed = _seed.value!!,
+                add_bos_token = _add_bos_token.value!!,
+                truncation_length = _truncation_length.value!!,
+                ban_eos_token = _ban_eos_token.value!!,
+                skip_special_tokens = _skip_special_tokens.value!!,
+                custom_stopping_strings = "",
                 stopping_strings = listOf()
             )
 
@@ -630,26 +906,40 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = _prompt.value!!.prompt,
-                max_new_tokes = 250,
-                do_sample = true,
-                temperature = 1.3,
-                top_p = 0.1,
-                typical_p = 1.0,
-                repetition_penalty = 1.18,
-                top_k = 40,
-                min_length = 0,
-                no_repeat_ngram_size = 0,
-                num_beams = 1,
-                penalty_alpha = 0.0,
-                length_penalty = 1.0,
-                early_stopping = false,
-                seed = -1,
-                add_bos_token = true,
-                truncation_length = 2048,
-                ban_eos_token = false,
-                skip_special_tokens = true,
+                max_new_tokens = _max_new_tokens.value!!,
+                auto_max_new_tokens = _auto_max_new_tokens.value!!,
+                do_sample = _do_sample.value!!,
+                temperature = _temperature.value!!,
+                top_p = _top_p.value!!,
+                typical_p = _typical_p.value!!,
+                epsilon_cutoff = _epsilon_cutoff.value!!,
+                eta_cutoff = _eta_cutoff.value!!,
+                tfs = _tfs.value!!,
+                top_a = _top_a.value!!,
+                repetition_penalty = _repetition_penalty.value!!,
+                repetition_penalty_range = _repetition_penalty_range.value!!,
+                encoder_repetition_penalty = _encoder_repetition_penalty.value!!,
+                top_k = _top_k.value!!,
+                min_length = _min_length.value!!,
+                no_repeat_ngram_size = _no_repeat_ngram_size.value!!,
+                num_beams = _num_beams.value!!,
+                penalty_alpha = _penalty_alpha.value!!,
+                length_penalty = _length_penalty.value!!,
+                early_stopping = _early_stopping.value!!,
+                mirostat_mode = _mirostat_mode.value!!,
+                mirostat_tau = _mirostat_tau.value!!,
+                mirostat_eta = _mirostat_eta.value!!,
+                guidance_scale = _guidance_scale.value!!,
+                negative_prompt = _negative_prompt.value!!,
+                seed = _seed.value!!,
+                add_bos_token = _add_bos_token.value!!,
+                truncation_length = _truncation_length.value!!,
+                ban_eos_token = _ban_eos_token.value!!,
+                skip_special_tokens = _skip_special_tokens.value!!,
+                custom_stopping_strings = "",
                 stopping_strings = listOf()
             )
+
             try {
                 _genResponseHolder.value = repository.generateBlockText(_genRequestBody.value!!)
             } catch (e: Exception) {
@@ -1078,24 +1368,37 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
                 _genRequestBody.value = TextGenGenerateRequest(
                     prompt = databaseAgentPrompt,
-                    max_new_tokes = 700,
-                    do_sample = true,
-                    temperature = 1.3,
-                    top_p = 0.1,
-                    typical_p = 1.0,
-                    repetition_penalty = 1.18,
-                    top_k = 40,
-                    min_length = 0,
-                    no_repeat_ngram_size = 0,
-                    num_beams = 1,
-                    penalty_alpha = 0.0,
-                    length_penalty = 1.0,
-                    early_stopping = false,
-                    seed = -1,
-                    add_bos_token = true,
-                    truncation_length = 2048,
-                    ban_eos_token = false,
-                    skip_special_tokens = true,
+                    max_new_tokens = _max_new_tokens.value!!,
+                    auto_max_new_tokens = _auto_max_new_tokens.value!!,
+                    do_sample = _do_sample.value!!,
+                    temperature = _temperature.value!!,
+                    top_p = _top_p.value!!,
+                    typical_p = _typical_p.value!!,
+                    epsilon_cutoff = _epsilon_cutoff.value!!,
+                    eta_cutoff = _eta_cutoff.value!!,
+                    tfs = _tfs.value!!,
+                    top_a = _top_a.value!!,
+                    repetition_penalty = _repetition_penalty.value!!,
+                    repetition_penalty_range = _repetition_penalty_range.value!!,
+                    encoder_repetition_penalty = _encoder_repetition_penalty.value!!,
+                    top_k = _top_k.value!!,
+                    min_length = _min_length.value!!,
+                    no_repeat_ngram_size = _no_repeat_ngram_size.value!!,
+                    num_beams = _num_beams.value!!,
+                    penalty_alpha = _penalty_alpha.value!!,
+                    length_penalty = _length_penalty.value!!,
+                    early_stopping = _early_stopping.value!!,
+                    mirostat_mode = _mirostat_mode.value!!,
+                    mirostat_tau = _mirostat_tau.value!!,
+                    mirostat_eta = _mirostat_eta.value!!,
+                    guidance_scale = _guidance_scale.value!!,
+                    negative_prompt = _negative_prompt.value!!,
+                    seed = _seed.value!!,
+                    add_bos_token = _add_bos_token.value!!,
+                    truncation_length = _truncation_length.value!!,
+                    ban_eos_token = _ban_eos_token.value!!,
+                    skip_special_tokens = _skip_special_tokens.value!!,
+                    custom_stopping_strings = "",
                     stopping_strings = listOf()
                 )
 
@@ -1254,24 +1557,37 @@ class TextGenViewModel(application: Application) : AndroidViewModel(application)
 
             _genRequestBody.value = TextGenGenerateRequest(
                 prompt = imageGenPrompt,
-                max_new_tokes = 300,
-                do_sample = true,
-                temperature = 1.3,
-                top_p = 0.1,
-                typical_p = 1.0,
-                repetition_penalty = 1.18,
-                top_k = 40,
-                min_length = 0,
-                no_repeat_ngram_size = 0,
-                num_beams = 1,
-                penalty_alpha = 0.0,
-                length_penalty = 1.0,
-                early_stopping = false,
-                seed = -1,
-                add_bos_token = true,
-                truncation_length = 2048,
-                ban_eos_token = false,
-                skip_special_tokens = true,
+                max_new_tokens = _max_new_tokens.value!!,
+                auto_max_new_tokens = _auto_max_new_tokens.value!!,
+                do_sample = _do_sample.value!!,
+                temperature = _temperature.value!!,
+                top_p = _top_p.value!!,
+                typical_p = _typical_p.value!!,
+                epsilon_cutoff = _epsilon_cutoff.value!!,
+                eta_cutoff = _eta_cutoff.value!!,
+                tfs = _tfs.value!!,
+                top_a = _top_a.value!!,
+                repetition_penalty = _repetition_penalty.value!!,
+                repetition_penalty_range = _repetition_penalty_range.value!!,
+                encoder_repetition_penalty = _encoder_repetition_penalty.value!!,
+                top_k = _top_k.value!!,
+                min_length = _min_length.value!!,
+                no_repeat_ngram_size = _no_repeat_ngram_size.value!!,
+                num_beams = _num_beams.value!!,
+                penalty_alpha = _penalty_alpha.value!!,
+                length_penalty = _length_penalty.value!!,
+                early_stopping = _early_stopping.value!!,
+                mirostat_mode = _mirostat_mode.value!!,
+                mirostat_tau = _mirostat_tau.value!!,
+                mirostat_eta = _mirostat_eta.value!!,
+                guidance_scale = _guidance_scale.value!!,
+                negative_prompt = _negative_prompt.value!!,
+                seed = _seed.value!!,
+                add_bos_token = _add_bos_token.value!!,
+                truncation_length = _truncation_length.value!!,
+                ban_eos_token = _ban_eos_token.value!!,
+                skip_special_tokens = _skip_special_tokens.value!!,
+                custom_stopping_strings = "",
                 stopping_strings = listOf()
             )
 

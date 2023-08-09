@@ -60,7 +60,7 @@
     <string name="response_block">Block</string>
     <string name="response_stream">Stream</string>
     <string name="instruction_db_agent">INSTRUCTION DB AGENT</string>
-    <string name="instructions_after_db_agent">INSTRUCTION AFTER DB AGENT</string>
+    <string name="instructions_after_db_agent">INSTRUCTION CHAT AFTER DB AGENT</string>
     <string name="new_max_tokens">New Max Tokens</string>
     <string name="temparature">Temparature</string>
     <string name="frappante_muse">FRAPPANTE\nMUSE</string>

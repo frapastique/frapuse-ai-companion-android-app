@@ -2,12 +2,19 @@ package com.back.frapuse.data.textgen.models.llm
 
 data class TextGenGenerateRequest(
     val prompt: String,
-    val max_new_tokes: Int,
+    val max_new_tokens: Int,
+    val auto_max_new_tokens: Boolean,
     val do_sample: Boolean,
     val temperature: Double,
     val top_p: Double,
     val typical_p: Double,
+    val epsilon_cutoff: Double,
+    val eta_cutoff: Double,
+    val tfs: Double,
+    val top_a: Double,
     val repetition_penalty: Double,
+    val repetition_penalty_range: Int,
+    val encoder_repetition_penalty: Double,
     val top_k: Int,
     val min_length: Int,
     val no_repeat_ngram_size: Int,
@@ -15,35 +22,16 @@ data class TextGenGenerateRequest(
     val penalty_alpha: Double,
     val length_penalty: Double,
     val early_stopping: Boolean,
+    val mirostat_mode: Int,
+    val mirostat_tau: Double,
+    val mirostat_eta: Double,
+    val guidance_scale: Double,
+    val negative_prompt: String,
     val seed: Int,
     val add_bos_token: Boolean,
     val truncation_length: Int,
     val ban_eos_token: Boolean,
     val skip_special_tokens: Boolean,
+    val custom_stopping_strings: String,
     val stopping_strings: List<String>
 )
-
-/*
-{
-    "prompt": " ",
-    "max_new_tokens": 250,
-    "do_sample": true,
-    "temperature": 1.3,
-    "top_p": 0.1,
-    "typical_p": 1,
-    "repetition_penalty": 1.18,
-    "top_k": 40,
-    "min_length": 0,
-    "no_repeat_ngram_size": 0,
-    "num_beams": 1,
-    "penalty_alpha": 0,
-    "length_penalty": 1,
-    "early_stopping": false,
-    "seed": -1,
-    "add_bos_token": true,
-    "truncation_length": 2048,
-    "ban_eos_token": false,
-    "skip_special_tokens": true,
-    "stopping_strings": []
-}
-*/

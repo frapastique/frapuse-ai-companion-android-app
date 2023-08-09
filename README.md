@@ -43,14 +43,9 @@ This is frapuse (short for frappante muse) an android app project that I created
 
 - *IMPORTANT*: To clear the chat history you have to long press the send button in chat next to the prompt text field.
 - Sometimes, when the phone is under heavy load, some of the first tokens are omitted.
-- The prompt template is adjusted to [vicuna](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ#prompt-template-vicuna) (most of the testing was performed with wizard-vicuna and its varying models), changing the template is a tidious task and also has to be done directly from inside the code. Note that other models still can be used but wont perform at their best.
-- Generation parameters of llm must be adjusted inside of the code
-  ([llm chat](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L512),
-  [llm image](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L1255),
-  [llm haystack](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L1079)).
-- Currently it is only possible to stream the response (*Note*: You still need to adjust the blocking api address else the app crashes).
+- The prompt template is adjusted to [vicuna](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ#prompt-template-vicuna) (most of the testing was performed with wizard-vicuna and its varying models), changing the template is a tidious task and also has to be done directly from inside the code. Note that other models still can be used but wont perform at their best. (*Fix on next Update*)
+- Currently it is only possible to stream the response (*Note*: You still need to adjust the blocking api address to make the app work!).
 - The prompt examples for image generation within the chat must be adjusted inside of the [code](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L1175).
-- To disable calling image generation with the keyword ```generate``` within the chat you have to change the [code](https://github.com/frapastique/frapuse-ai-companion-android-app/blob/master/app/src/main/java/com/back/frapuse/ui/textgen/TextGenViewModel.kt#L328).
 - It is not possible to save generated images larger than the size of 768x768. If the width OR height is adjusted beyond this value, the other must be adjusted accordingly.
 - The code is not optimized and at parts it can be a bit messy. Please excuse this, I am still learning and improoving my code style and habbits.
 
@@ -101,12 +96,32 @@ This is frapuse (short for frappante muse) an android app project that I created
   </tr>
   <tr align="center">
     <td>
-      <p>Chat Settings Screen</p>
+      <p>Chat Settings Extensions Screen</p>
       <img
-        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c47a56bb-70ba-471c-bc95-80f536ffa7d4"
-        alt="Chat Settings Screen"
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/c8aca048-4ba8-4271-967e-4246f74afcfa"
+        alt="Chat Settings Extensions Screen"
         width="75%"
-        title="Chat Settings Screen"
+        title="Chat Settings Extensions Screen"
+      />
+    </td>
+    <td>
+      <p>Chat Settings Instructions Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/129bcaaf-9de7-4b5a-9663-0133525214df"
+        alt="Chat Settings Instructions Screen"
+        width="75%"
+        title="Chat Settings Instructions Screen"
+      />
+    </td>
+  </tr>
+  <tr align="center">
+    <td>
+      <p>Chat Settings Parameters Screen</p>
+      <img
+        src="https://github.com/frapastique/frapuse-ai-companion-android-app/assets/66075561/62c3bf3c-3e89-48ec-b76a-6b1292a17ee4"
+        alt="Chat Settings Parameters Screen"
+        width="75%"
+        title="Chat Settings Parameters Screen"
       />
     </td>
     <td>

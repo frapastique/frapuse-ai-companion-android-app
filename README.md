@@ -15,6 +15,7 @@ This is frapuse (short for frappante muse) an android app project that I created
 1. Prerequisites
     - In order to use the text generation capabilities you need to install [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui).
       - [Installation](https://github.com/oobabooga/text-generation-webui#installation)
+      - Follow this [issue](https://github.com/oobabooga/text-generation-webui/issues/4581#issuecomment-1810232103) in order to set up old API extension (Needed in order to work!)
 
     - For the use of image generation you also need to install [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
       - [Installation and Running](https://github.com/AUTOMATIC1111/stable-diffusion-webui#installation-and-running)
@@ -41,6 +42,7 @@ This is frapuse (short for frappante muse) an android app project that I created
 
 ## Limitations / Caveats / Known Issues
 
+- *IMPORTANT*: In order for this App to work you need to follow this [issue](https://github.com/oobabooga/text-generation-webui/issues/4581#issuecomment-1810232103) from [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui) and install/enable the old API Extension.
 - *IMPORTANT*: To clear the chat history you have to long press the send button in chat next to the prompt text field.
 - Sometimes, when the phone is under heavy load, some of the first tokens are omitted.
 - The prompt template is adjusted to [vicuna](https://huggingface.co/TheBloke/Wizard-Vicuna-7B-Uncensored-GPTQ#prompt-template-vicuna) (most of the testing was performed with wizard-vicuna and its varying models), changing the template is a tidious task and also has to be done directly from inside the code. Note that other models still can be used but wont perform at their best. (*Fix on next Update*)
